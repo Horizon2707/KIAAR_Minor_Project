@@ -1,0 +1,46 @@
+.container {
+  position: relative;
+  margin-top: 2vh;
+  width: 200vh;
+  margin-left: 10vh;
+  border: 1px solid #000;
+  border-radius: 2vh;
+  padding: 3vh;
+}
+.item {
+  display: flex;
+  align-items: center;
+  border: 1px solid #000;
+  padding: 10px;
+  border-radius: 2vh;
+}
+
+.centering {
+display: flex;
+  justify-content: center;
+}
+
+.common {
+  margin-top: 3vh;
+  display: flex;
+  justify-content: space-start;
+}
+.row2 {
+  gap: 30vh;
+}
+.row1 {
+  gap: 40vh;
+}
+.row3 {
+  gap: 2vh;
+}
+.row4 {
+  gap: 15vh;
+}
+.row5 {
+  gap: 15vh;
+}
+.row6 {
+  gap: 15vh;
+}
+
