@@ -1,9 +1,12 @@
 import "../Styles/Form.css";
 import { Select, Input, Button } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
 export function Form() {
+  const navigate = useNavigate();
   const obj = {
     width: "20vh",
   };
+
   return (
     <>
       <div className="container">
@@ -48,11 +51,11 @@ export function Form() {
             />
           </div>
           <div className="item">
-            <h5>xnxxxaxxxxmxxex</h5>
+            <h4>xnxxxaxxxxmxxex</h4>
           </div>
           <div className="item">
-            <h5>MOBIL no. :</h5>
-            <h6>xxxxxxxxxx</h6>
+            <h4>MOBIL no. :</h4>
+            <h4>xxxxxxxxxx</h4>
           </div>
         </div>
         <div className="row3 common">
@@ -101,10 +104,28 @@ export function Form() {
       </div>
       <br />
       <hr />
+      <br />
       <div className="centering">
-        <Button colorScheme='whatsapp' size="md">
+        <Button
+          onClick={() => {
+            navigate("/recommendations");
+          }}
+          colorScheme="whatsapp"
+          size="md"
+        >
+          Go
+        </Button>
+        <Button
+          onClick={() => {
+            navigate("/crops");
+          }}
+          colorScheme="whatsapp"
+          size="md"
+        >
           Show the crop to be grown
         </Button>
+        <br />
+        <br />
       </div>
     </>
   );

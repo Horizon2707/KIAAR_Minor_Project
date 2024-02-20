@@ -1,0 +1,51 @@
+.recom {
+  display: flex;
+  position: relative;
+  border: 0.25vh solid #000000;
+  margin-top: 5vh;
+  margin-left: 5vh;
+  margin-right: 5vh;
+  border-radius: 2vh;
+  justify-content: flex-start;
+  padding: 2vh;
+}
+
+.gridForClass {
+  position: relative;
+  margin-top: 2vh;
+  display: flex;
+  flex-direction: column;
+  margin-left: 5vh;
+  margin-right: 5vh;
+  border: 1px solid #000;
+  border-radius: 2vh;
+}
+
+
+
+.spaced {
+  display: flex;
+  gap: 2vh;
+  margin-top: 2vh;
+}
+
+.head {
+  gap: 10vh;
+  margin-top: 3vh;
+  display: flex;
+  margin-left: 2vh;
+  flex-direction: row;
+  gap: 18vh;
+  padding-left: 10vh;
+}
+
+.similar {
+  margin-top: 3vh;
+  display: flex;
+  margin-left: 2vh;
+  flex-direction: row;
+  gap: 30vh;
+  padding-left: 10vh;
+}
+
+

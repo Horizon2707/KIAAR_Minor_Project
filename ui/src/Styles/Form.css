@@ -16,8 +16,9 @@
 }
 
 .centering {
-display: flex;
+  display: flex;
   justify-content: center;
+  gap: 10vh;
 }
 
 .common {
@@ -38,9 +39,8 @@ display: flex;
   gap: 15vh;
 }
 .row5 {
-  gap: 15vh;
+  gap: 10vh;
 }
 .row6 {
   gap: 15vh;
 }
-
