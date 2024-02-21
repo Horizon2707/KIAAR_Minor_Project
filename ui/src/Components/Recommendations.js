@@ -20,6 +20,9 @@ function Recommendations() {
   };
   return (
     <>
+      <h3 style={{ marginTop: "0.5vh", color: "black" }}>
+        Soil Water Test Entry Form
+      </h3>
       <div className="recom">
         <Tabs
           align="center"
@@ -80,7 +83,9 @@ function Recommendations() {
                 Primary Nutrients
               </h2>
               <div className="spaced">
-                <label style={o} htmlFor="nitrogen">Nitrogen</label>
+                <label style={o} htmlFor="nitrogen">
+                  Nitrogen
+                </label>
                 <Input
                   size="md"
                   id="nitrogen"

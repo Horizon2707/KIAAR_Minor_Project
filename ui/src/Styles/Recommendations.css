@@ -21,8 +21,6 @@
   border-radius: 2vh;
 }
 
-
-
 .spaced {
   display: flex;
   gap: 2vh;
@@ -47,5 +45,3 @@
   gap: 30vh;
   padding-left: 10vh;
 }
-
-

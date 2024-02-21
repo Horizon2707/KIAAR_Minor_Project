@@ -3,15 +3,17 @@
   margin-top: 2vh;
   width: 200vh;
   margin-left: 10vh;
-  border: 1px solid #000;
+  border: 1px solid #D3D3D3; /* Light gray border */
   border-radius: 2vh;
   padding: 3vh;
+  background-color: #F9F9F9; /* Off-white/light gray background */
 }
 .item {
+  color: #333333; /* Dark gray text color */
   display: flex;
   align-items: center;
-  border: 1px solid #000;
-  padding: 10px;
+  border: 1px solid #D3D3D3; /* Light gray border */
+  padding: 1vh;
   border-radius: 2vh;
 }
 
@@ -19,28 +21,36 @@
   display: flex;
   justify-content: center;
   gap: 10vh;
+  /* Consider adding a background color similar to the form container */
 }
 
 .common {
-  margin-top: 3vh;
+  margin-top: 2vh;
   display: flex;
   justify-content: space-start;
-}
-.row2 {
-  gap: 30vh;
-}
-.row1 {
-  gap: 40vh;
-}
-.row3 {
-  gap: 2vh;
-}
-.row4 {
-  gap: 15vh;
-}
-.row5 {
   gap: 10vh;
 }
-.row6 {
-  gap: 15vh;
+
+.litspace {
+  gap: 1vh;
+}
+
+.morspace {
+  gap: 5vh;
+}
+
+.big{
+  background-color: #333333;
+}
+
+.row5 {
+  margin-top: 2vh;
+  display: flex;
+  gap: 2vh;
+}
+
+.error {
+  color: #FF4D4F;
+  font-size: 14px;
+  margin-top: 5px;
 }
