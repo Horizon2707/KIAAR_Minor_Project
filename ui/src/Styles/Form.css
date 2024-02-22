@@ -3,25 +3,24 @@
   margin-top: 2vh;
   width: 200vh;
   margin-left: 10vh;
-  border: 1px solid #D3D3D3; /* Light gray border */
-  border-radius: 2vh;
+  /* border: 1px solid #d3d3d3; */
+  /* border-radius: 2vh; */
   padding: 3vh;
-  background-color: #F9F9F9; /* Off-white/light gray background */
+  background-color: #f9f9f9;
 }
 .item {
-  color: #333333; /* Dark gray text color */
+  color: #333333;
   display: flex;
   align-items: center;
-  border: 1px solid #D3D3D3; /* Light gray border */
+  /* border: 1px solid #0d0d0d; */
   padding: 1vh;
-  border-radius: 2vh;
+  /* border-radius: 2vh; */
 }
 
 .centering {
   display: flex;
   justify-content: center;
   gap: 10vh;
-  /* Consider adding a background color similar to the form container */
 }
 
 .common {
@@ -39,10 +38,6 @@
   gap: 5vh;
 }
 
-.big{
-  background-color: #333333;
-}
-
 .row5 {
   margin-top: 2vh;
   display: flex;
@@ -50,7 +45,7 @@
 }
 
 .error {
-  color: #FF4D4F;
+  color: #ff4d4f;
   font-size: 10px;
   margin-top: 2px;
   font-weight: bold;
