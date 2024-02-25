@@ -1,11 +1,9 @@
 .recom {
   display: flex;
   position: relative;
-  border: 0.25vh solid #000000;
-  margin-top: 5vh;
+  margin-top: 2vh;
   margin-left: 5vh;
   margin-right: 5vh;
-  border-radius: 2vh;
   justify-content: flex-start;
   padding: 2vh;
 }
@@ -17,8 +15,6 @@
   flex-direction: column;
   margin-left: 5vh;
   margin-right: 5vh;
-  border: 1px solid #000;
-  border-radius: 2vh;
 }
 
 .spaced {
@@ -44,4 +40,12 @@
   flex-direction: row;
   gap: 30vh;
   padding-left: 10vh;
+}
+
+.buttongrp{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  margin-left: 10vh;
+  gap: 2vh;
 }
