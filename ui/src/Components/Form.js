@@ -96,7 +96,10 @@ export function Form() {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-  
+  let sessionPush = ()=>{
+    sessionStorage.setItem("values",JSON.stringify(values));
+    console.log(values)
+  }
 
   return (
     <>
@@ -449,6 +452,7 @@ export function Form() {
           onClick={() => {
             if (validate()) {
               navigate("/recommendations");
+              sessionPush();
             }
           }}
           background="#CCE5FF"

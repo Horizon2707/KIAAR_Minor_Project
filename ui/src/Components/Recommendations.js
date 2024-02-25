@@ -12,15 +12,40 @@ import {
 import {
   Table,
   Thead,
-  Tbody,
-  Tfoot,
-  Tr,
+  Tbody,  Tr,
   Th,
   Td,
-  TableCaption,
   TableContainer,
 } from "@chakra-ui/react";
 function Recommendations() {
+  let postData = () =>{
+  fetch("http://localhost:5000/api/soilwater", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      soilph: document.getElementById("soilph").value,
+      electricalConductivity: document.getElementById("electricalConductivity")
+        .value,
+      organicCarbon: document.getElementById("organicCarbon").value,
+      nitrogen: document.getElementById("nitrogen").value,
+      phosphorus: document.getElementById("phosphorus").value,
+      potassium: document.getElementById("potassium").value,
+      calcium: document.getElementById("calcium").value,
+      magnesium: document.getElementById("magnesium").value,
+      sulphur: document.getElementById("sulphur").value,
+      zinc: document.getElementById("zinc").value,
+      iron: document.getElementById("iron").value,
+      manganese: document.getElementById("manganese").value,
+      copper: document.getElementById("copper").value,
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+    });
+  }
   return (
     <>
       <h1
