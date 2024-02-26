@@ -1,16 +1,17 @@
 const express = require('express')
 const app = express()
 
-app.get('/',(req,res) => {
+app.post('/',(req,res) => {
     const parameters = req.params
 
-    const PN_phos = parameters.phosphorous
-    const PN_pota = parameters.potassium
-    const PN_nitr = parameters.nitrogen
+    const phos = parameters.phosphorous
+    const pota = parameters.potassium
+    const nitr = parameters.nitrogen
 
-    res.send('jkdhkuhdfk')
+    
 
-    calculations(phos,pota,nitr,SYT_S,SYT_P,SYT_A)
+    const recomm_obj = calculations(phos,pota,nitr,SYT_S,SYT_P,SYT_A)
+    res.json(recomm_obj)
 })
 
 app.listen(5000, () =>{
@@ -279,6 +280,286 @@ function calculations(){
         c4_UREA_TA4_S=(c4_UREA_TA1_S*0.2)
         c4_UREA_TA5_S=(c4_UREA_TA1_S*0.25)
         c4_UREA_TA6_S=(c4_UREA_TA1_S*0.25)
+        
+    
+    recomm_dict = {
+    "c1": {
+        "DAP": {
+            "A": {
+                "TA1": c1_DAP_TA1_A,
+                "TA2": (phos_A * 100) / 46
+            },
+            "P": {
+                "TA1": c1_DAP_TA1_P,
+                "TA2": c1_DAP_TA2_P,
+            },
+            "S": {
+                "TA1": c1_DAP_TA1_S,
+                "TA2": c1_DAP_TA2_S,
+            }
+        },
+        "MOP": {
+            "A": {
+                "TA1": c1_MOP_TA1_A,
+                "TA2": c1_MOP_TA2_A,
+                "TA3": c1_MOP_TA3_A,
+                "TA4": c1_MOP_TA4_A,
+                "TA5": c1_MOP_TA5_A,
+                "TA6": c1_MOP_TA6_A,
+            },
+            "P": {
+                "TA1": c1_MOP_TA1_P,
+                "TA2": c1_MOP_TA2_P,
+                "TA3": c1_MOP_TA3_P,
+                "TA4": c1_MOP_TA4_P,
+                "TA5": c1_MOP_TA5_P,
+                "TA6": c1_MOP_TA6_P,
+            },
+            "S": {
+                "TA1": c1_MOP_TA1_S,
+                "TA2": c1_MOP_TA2_S,
+                "TA3": c1_MOP_TA3_S,
+                "TA4": c1_MOP_TA4_S,
+                "TA5": c1_MOP_TA5_S,
+                "TA6": c1_MOP_TA6_S,
+            }
+        },
+        "UREA": {
+            "A": {
+                "TA1": c1_UREA_TA1_A,
+                "TA2": c1_UREA_TA2_A,
+                "TA3": c1_UREA_TA3_A,
+                "TA4": c1_UREA_TA4_A,
+                "TA5": c1_UREA_TA5_A,
+                "TA6": c1_UREA_TA6_A,
+            },
+            "P": {
+                "TA1": c1_UREA_TA1_P,
+                "TA2": c1_UREA_TA2_P,
+                "TA3": c1_UREA_TA3_P,
+                "TA4": c1_UREA_TA4_P,
+                "TA5": c1_UREA_TA5_P,
+                "TA6": c1_UREA_TA6_P,
+            },
+            "S": {
+                "TA1": c1_UREA_TA1_S,
+                "TA2": c1_UREA_TA2_S,
+                "TA3": c1_UREA_TA3_S,
+                "TA4": c1_UREA_TA4_S,
+                "TA5": c1_UREA_TA5_S,
+                "TA6": c1_UREA_TA6_S,
+            }
+        }
+    },
+    "c2": {
+        "SSP": {
+            "A": {
+                "TA1": c2_SSP_TA1_A,
+                "TA2": c2_SSP_TA2_A,
+            },
+            "P": {
+                "TA1": c2_SSP_TA1_P,
+                "TA2": c2_SSP_TA2_P,
+            },
+            "S": {
+                "TA1": c2_SSP_TA1_S,
+                "TA2": c2_SSP_TA2_S,
+            }
+        },
+        "MOP": {
+            "A": {
+                "TA1": c2_MOP_TA1_A,
+                "TA2": c2_MOP_TA2_A,
+                "TA3": c2_MOP_TA3_A,
+                "TA4": c2_MOP_TA4_A,
+                "TA5": c2_MOP_TA5_A,
+                "TA6": c2_MOP_TA6_A,
+            },
+            "P": {
+                "TA1": c2_MOP_TA1_P,
+                "TA2": c2_MOP_TA2_P,
+                "TA3": c2_MOP_TA3_P,
+                "TA4": c2_MOP_TA4_P,
+                "TA5": c2_MOP_TA5_P,
+                "TA6": c2_MOP_TA6_P,
+            },
+            "S": {
+                "TA1": c2_MOP_TA1_S,
+                "TA2": c2_MOP_TA2_S,
+                "TA3": c2_MOP_TA3_S,
+                "TA4": c2_MOP_TA4_S,
+                "TA5": c2_MOP_TA5_S,
+                "TA6": c2_MOP_TA6_S,
+            }
+        },
+        "UREA": {
+            "A": {
+                "TA1": c2_UREA_TA1_A,
+                "TA2": c2_UREA_TA2_A,
+                "TA3": c2_UREA_TA3_A,
+                "TA4": c2_UREA_TA4_A,
+                "TA5": c2_UREA_TA5_A,
+                "TA6": c2_UREA_TA6_A,
+            },
+            "P": {
+                "TA1": c2_UREA_TA1_P,
+                "TA2": c2_UREA_TA2_P,
+                "TA3": c2_UREA_TA3_P,
+                "TA4": c2_UREA_TA4_P,
+                "TA5": c2_UREA_TA5_P,
+                "TA6": c2_UREA_TA6_P,
+            },
+            "S": {
+                "TA1": c2_UREA_TA1_S,
+                "TA2": c2_UREA_TA2_S,
+                "TA3": c2_UREA_TA3_S,
+                "TA4": c2_UREA_TA4_S,
+                "TA5": c2_UREA_TA5_S,
+                "TA6": c2_UREA_TA6_S,
+            }
+        }
+    },
+    "c3": {
+        "12": {
+            "A": {
+                "TA1": c3_12_TA1_A,
+                "TA2": c3_12_TA2_A,
+            },
+            "P": {
+                "TA1": c3_12_TA1_P,
+                "TA2": c3_12_TA2_P,
+            },
+            "S": {
+                "TA1": c3_12_TA1_S,
+                "TA2": c3_12_TA2_S,
+            }
+        },
+        "MOP": {
+            "A": {
+                "TA1": c3_MOP_TA1_A,
+                "TA2": c3_MOP_TA2_A,
+                "TA3": c3_MOP_TA3_A,
+                "TA4": c3_MOP_TA4_A,
+                "TA5": c3_MOP_TA5_A,
+                "TA6": c3_MOP_TA6_A,
+            },
+            "P": {
+                "TA1": c3_MOP_TA1_P,
+                "TA2": c3_MOP_TA2_P,
+                "TA3": c3_MOP_TA3_P,
+                "TA4": c3_MOP_TA4_P,
+                "TA5": c3_MOP_TA5_P,
+                "TA6": c3_MOP_TA6_P,
+            },
+            "S": {
+                "TA1": c3_MOP_TA1_S,
+                "TA2": c3_MOP_TA2_S,
+                "TA3": c3_MOP_TA3_S,
+                "TA4": c3_MOP_TA4_S,
+                "TA5": c3_MOP_TA5_S,
+                "TA6": c3_MOP_TA6_S,
+            }
+        },
+        "UREA": {
+            "A": {
+                "TA1": c3_UREA_TA1_A,
+                "TA2": c3_UREA_TA2_A,
+                "TA3": c3_UREA_TA3_A,
+                "TA4": c3_UREA_TA4_A,
+                "TA5": c3_UREA_TA5_A,
+                "TA6": c3_UREA_TA6_A,
+            },
+            "P": {
+                "TA1": c3_UREA_TA1_P,
+                "TA2": c3_UREA_TA2_P,
+                "TA3": c3_UREA_TA3_P,
+                "TA4": c3_UREA_TA4_P,
+                "TA5": c3_UREA_TA5_P,
+                "TA6": c3_UREA_TA6_P,
+            },
+            "S": {
+                "TA1": c3_UREA_TA1_S,
+                "TA2": c3_UREA_TA2_S,
+                "TA3": c3_UREA_TA3_S,
+                "TA4": c3_UREA_TA4_S,
+                "TA5": c3_UREA_TA5_S,
+                "TA6": c3_UREA_TA6_S,
+            }
+        }
+    },
+    "c4": {
+        "10": {
+            "A": {
+                "TA1": c4_10_TA1_A,
+                "TA2": c4_10_TA2_A,
+            },
+            "P": {
+                "TA1": c4_10_TA1_P,
+                "TA2": c4_10_TA2_P,
+            },
+            "S": {
+                "TA1": c4_10_TA1_S,
+                "TA2": c4_10_TA2_S,
+            }
+        },
+        "MOP": {
+            "A": {
+                "TA1": c4_MOP_TA1_A,
+                "TA2": c4_MOP_TA2_A,
+                "TA3": c4_MOP_TA3_A,
+                "TA4": c4_MOP_TA4_A,
+                "TA5": c4_MOP_TA5_A,
+                "TA6": c4_MOP_TA6_A,
+            },
+            "P": {
+                "TA1": c4_MOP_TA1_P,
+                "TA2": c4_MOP_TA2_P,
+                "TA3": c4_MOP_TA3_P,
+                "TA4": c4_MOP_TA4_P,
+                "TA5": c4_MOP_TA5_P,
+                "TA6": c4_MOP_TA6_P,
+            },
+            "S": {
+                "TA1": c4_MOP_TA1_S,
+                "TA2": c4_MOP_TA2_S,
+                "TA3": c4_MOP_TA3_S,
+                "TA4": c4_MOP_TA4_S,
+                "TA5": c4_MOP_TA5_S,
+                "TA6": c4_MOP_TA6_S,
+            }
+        },
+        "UREA": {
+            "A": {
+                "TA1": c4_UREA_TA1_A,
+                "TA2": c4_UREA_TA2_A,
+                "TA3": c4_UREA_TA3_A,
+                "TA4": c4_UREA_TA4_A,
+                "TA5": c4_UREA_TA5_A,
+                "TA6": c4_UREA_TA6_A,
+            },
+            "P": {
+                "TA1": c4_UREA_TA1_P,
+                "TA2": c4_UREA_TA2_P,
+                "TA3": c4_UREA_TA3_P,
+                "TA4": c4_UREA_TA4_P,
+                "TA5": c4_UREA_TA5_P,
+                "TA6": c4_UREA_TA6_P,
+            },
+            "S": {
+                "TA1": c4_UREA_TA1_S,
+                "TA2": c4_UREA_TA2_S,
+                "TA3": c4_UREA_TA3_S,
+                "TA4": c4_UREA_TA4_S,
+                "TA5": c4_UREA_TA5_S,
+                "TA6": c4_UREA_TA6_S,
+            }
+        }
+    }
+}
+
+
+
+return recomm_dict;
 
     }
 
