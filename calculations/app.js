@@ -1,24 +1,28 @@
 const express = require('express')
+const bodyParser = require('body-parser');
 const app = express()
+app.use(bodyParser.json());
+app.post('/api',(req,res) => {
+    const parameters = req.body
 
-app.post('/',(req,res) => {
-    const parameters = req.params
+    const nitr = parameters.nitr
+    const phos = parameters.phos
+    const pota = parameters.pota
 
-    const phos = parameters.phosphorous
-    const pota = parameters.potassium
-    const nitr = parameters.nitrogen
+    const SYT_A = 70;
+    const SYT_P = 50;
+    const SYT_S = 40;
 
-    
-
+    // const recomm_obj = calculations(8.33,203.04,117.9,40,50,70)
     const recomm_obj = calculations(phos,pota,nitr,SYT_S,SYT_P,SYT_A)
     res.json(recomm_obj)
 })
 
-app.listen(5000, () =>{
+app.listen(5002, () =>{
     console.log('server')
 })
 
-function calculations(){
+function calculations(phos,pota,nitr,SYT_S,SYT_P,SYT_A){
         nitr_A=(4.39*SYT_A)-(1.56*nitr)
         nitr_P=(4.76*SYT_P)-(1.34*nitr)        
         nitr_S=(4.76*SYT_S)-(1.34*nitr)               
