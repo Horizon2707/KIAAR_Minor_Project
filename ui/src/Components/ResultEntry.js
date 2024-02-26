@@ -17,9 +17,9 @@ import {
   Td,
   TableContainer,
 } from "@chakra-ui/react";
-function Recommendations() {
+function ResultEntry() {
   let postData = () =>{
-  fetch("http://localhost:5000/api/soilwater", {
+  fetch("http://localhost:5000/api/result_entry", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -347,4 +347,4 @@ function Recommendations() {
   );
 }
 
-export default Recommendations;
+export default ResultEntry;
