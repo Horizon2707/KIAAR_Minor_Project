@@ -18,7 +18,7 @@ app.post('/api',(req,res) => {
     res.json(recomm_obj)
 })
 
-app.listen(5002, () =>{
+app.listen(5000, () =>{
     console.log('server')
 })
 
