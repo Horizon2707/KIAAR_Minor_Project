@@ -1,0 +1,8 @@
+### GET Request
+POST http://localhost:5000/farmerId
+Content-Type: application/json
+
+{
+    "farmerId": 342111,
+    
+}
