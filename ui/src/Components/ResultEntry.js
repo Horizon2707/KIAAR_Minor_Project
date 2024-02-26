@@ -1,6 +1,7 @@
-import React from "react";
-import "../Styles/Recommendations.css";
+import React, { useState } from "react";
+import "../Styles/ResultEntry.css";
 import { Button } from "@chakra-ui/react";
+import { useNavigate } from 'react-router-dom';
 import {
   Tabs,
   TabList,
@@ -12,40 +13,90 @@ import {
 import {
   Table,
   Thead,
-  Tbody,  Tr,
+  Tbody,
+  Tr,
   Th,
   Td,
   TableContainer,
 } from "@chakra-ui/react";
+
 function ResultEntry() {
-  let postData = () =>{
-  fetch("http://localhost:5000/api/result_entry", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      soilph: document.getElementById("soilph").value,
-      electricalConductivity: document.getElementById("electricalConductivity")
-        .value,
-      organicCarbon: document.getElementById("organicCarbon").value,
-      nitrogen: document.getElementById("nitrogen").value,
-      phosphorus: document.getElementById("phosphorus").value,
-      potassium: document.getElementById("potassium").value,
-      calcium: document.getElementById("calcium").value,
-      magnesium: document.getElementById("magnesium").value,
-      sulphur: document.getElementById("sulphur").value,
-      zinc: document.getElementById("zinc").value,
-      iron: document.getElementById("iron").value,
-      manganese: document.getElementById("manganese").value,
-      copper: document.getElementById("copper").value,
-    }),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log(data);
-    });
-  }
+  var navigate = useNavigate();
+  var [Errors, setErrors] = useState({});
+  var [resValues, ressetValues] = useState({
+    soilph: "",
+    electricalConductivity: "",
+    organicCarbon: "",
+    nitrogen: "",
+    phosphorus: "",
+    potassium: "",
+    calcium: "",
+    magnesium: "",
+    sulphur: "",
+    zinc: "",
+    iron: "",
+    manganese: "",
+    copper: "",
+  });
+  let [calc,setCalc]=useState({});
+  let validate =( )=>{
+    console.log('what is this ??')
+    const Errors = {}
+    if(resValues.soilph === "") {
+      Errors.soilph = "Soil pH is required"
+    }
+    if(resValues.electricalConductivity === "") {
+      Errors.electricalConductivity = "Electrical Conductivity is required"
+    }
+    if(resValues.organicCarbon === "") {
+      Errors.organicCarbon = "Organic Carbon is required"
+    }
+    if(resValues.nitrogen === "") {
+      Errors.nitrogen = "Nitrogen is required"
+    }
+    if(resValues.phosphorus === "") {
+      Errors.phosphorus = "Phosphorus is required"
+    }
+    if(resValues.potassium === "") {
+      Errors.potassium = "Potassium is required"
+    }
+    if(resValues.calcium === "") {
+      Errors.calcium = "Calcium is required"
+    }
+    if(resValues.magnesium === "") {
+      Errors.magnesium = "Magnesium is required"
+    }
+    if(resValues.sulphur === "") {
+      Errors.sulphur = "Sulphur is required"
+    }
+    if(resValues.zinc === "") {
+      Errors.zinc = "Zinc is required"
+    }
+    if(resValues.iron === "") {
+      Errors.iron = "Iron is required"
+    }
+    if(resValues.manganese === "") {
+      Errors.manganese = "Manganese is required"
+    }
+    if(resValues.copper === "") {
+      Errors.copper = "Copper is required"
+    }
+    setErrors(Errors)
+    return Object.keys(Errors).length === 0;
+  } 
+  let postData = () => {
+    fetch("http://localhost:5000/api/result_entry", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(resValues),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+       setCalc(data);
+      });
+  };
   return (
     <>
       <h1
@@ -68,13 +119,13 @@ function ResultEntry() {
           colorScheme="blue"
         >
           <TabList>
-            <Tab>Recommendations</Tab>
+            <Tab>Result Entry</Tab>
             <Tab>Suggestions</Tab>
           </TabList>
           <TabPanels>
             <TabPanel>
               <TableContainer>
-                <Table colorScheme="red" size="sm" variant="simple">
+                <Table size="sm" variant="simple">
                   <Thead>
                     <Tr>
                       <Th>Parameters</Th>
@@ -99,7 +150,12 @@ function ResultEntry() {
                           width="auto"
                           variant="filled"
                           placeholder="Enter pH"
+                          value={resValues.soilph}
+                          onChange={(e) => {
+                            ressetValues({ ...resValues, soilph: e.target.value });
+                          }}
                         ></Input>
+                        {Errors.soilph && <p style={{color: "red"}}>{Errors.soilph}</p>}
                       </Td>
                       <Td>&lt;6.5</Td>
                       <Td>6.5-7.5</Td>
@@ -116,7 +172,12 @@ function ResultEntry() {
                           width="auto"
                           variant="filled"
                           placeholder="in dS/m"
+                          value={resValues.electricalConductivity}
+                          onChange={(e) => {
+                            ressetValues({...resValues, electricalConductivity: e.target.value});
+                          }}
                         ></Input>
+                        {Errors.electricalConductivity && <p style={{color: "red"}}>{Errors.electricalConductivity}</p>}
                       </Td>
                       <Td>&lt;1</Td>
                       <Td>1-2</Td>
@@ -133,7 +194,12 @@ function ResultEntry() {
                           width="auto"
                           variant="filled"
                           placeholder="in %"
+                          value={resValues.organicCarbon}
+                          onChange={(e) => {
+                            ressetValues({...resValues, organicCarbon: e.target.value});
+                          }}
                         ></Input>
+                        {Errors.organicCarbon && <p style={{color: "red"}}>{Errors.organicCarbon}</p>}
                       </Td>
                       <Td>&lt;0.5</Td>
                       <Td>0.5-7.5</Td>
@@ -152,7 +218,12 @@ function ResultEntry() {
                           width="auto"
                           variant="filled"
                           placeholder="in kg/acre"
+                          value={resValues.nitrogen}
+                          onChange={(e) => {
+                            ressetValues({...resValues, nitrogen: e.target.value});
+                          }}
                         ></Input>
+                        {Errors.nitrogen && <p style={{color: "red"}}>{Errors.nitrogen}</p>}
                       </Td>
                       <Td>&lt;112</Td>
                       <Td>112-224</Td>
@@ -168,7 +239,12 @@ function ResultEntry() {
                           width="auto"
                           variant="filled"
                           placeholder="in kg/acre"
+                          value={resValues.phosphorus}
+                          onChange={(e) => {
+                            ressetValues({...resValues, phosphorus: e.target.value});
+                          }}
                         ></Input>
+                        {Errors.phosphorus && <p style={{color: "red"}}>{Errors.phosphorus}</p>}
                       </Td>
                       <Td>&lt;8.0</Td>
                       <Td>8.0-20.0</Td>
@@ -184,7 +260,12 @@ function ResultEntry() {
                           width="auto"
                           variant="filled"
                           placeholder="in kg/acre"
+                          value={resValues.potassium}
+                          onChange={(e) => {
+                            ressetValues({...resValues, potassium: e.target.value});
+                          }}
                         ></Input>
+                        {Errors.potassium && <p style={{color: "red"}}>{Errors.potassium}</p>}
                       </Td>
                       <Td>&lt;45.0</Td>
                       <Td>45.0-136</Td>
@@ -203,7 +284,12 @@ function ResultEntry() {
                           width="auto"
                           variant="filled"
                           placeholder="in m.e/100g"
+                          value={resValues.calcium}
+                          onChange={(e) => {
+                            ressetValues({...resValues, calcium: e.target.value});
+                          }}
                         ></Input>
+                        {Errors.calcium && <p style={{color: "red"}}>{Errors.calcium}</p> }
                       </Td>
                       <Td>-</Td>
                       <Td>-</Td>
@@ -219,7 +305,12 @@ function ResultEntry() {
                           width="auto"
                           variant="filled"
                           placeholder="in m.e/100g"
+                          value={resValues.magnesium}
+                          onChange={(e) => {
+                            ressetValues({...resValues, magnesium: e.target.value});
+                          }}
                         ></Input>
+                        {Errors.magnesium && <p style={{color: "red"}}>{Errors.magnesium}</p>}
                       </Td>
                       <Td>-</Td>
                       <Td>-</Td>
@@ -235,7 +326,12 @@ function ResultEntry() {
                           width="auto"
                           variant="filled"
                           placeholder="in ppm"
+                          value={resValues.sulphur}
+                          onChange={(e) => {
+                            ressetValues({...resValues, sulphur: e.target.value});
+                          }}
                         ></Input>
+                        {Errors.sulphur && <p style={{color: "red"}}>{Errors.sulphur}</p>}
                       </Td>
                       <Td>&lt;10</Td>
                       <Td>10-20</Td>
@@ -254,7 +350,12 @@ function ResultEntry() {
                           width="auto"
                           variant="filled"
                           placeholder="in ppm"
+                          value={resValues.zinc}
+                          onChange={(e) => {
+                            ressetValues({...resValues, zinc: e.target.value});
+                          }}
                         ></Input>
+                        {Errors.zinc && <p style={{color: "red"}}>{Errors.zinc}</p>}
                       </Td>
                       <Td>&lt;0.6</Td>
                       <Td>0.6-1.5</Td>
@@ -270,7 +371,12 @@ function ResultEntry() {
                           width="auto"
                           variant="filled"
                           placeholder="in ppm"
+                          value={resValues.iron}
+                          onChange={(e) => {
+                            ressetValues({...resValues, iron: e.target.value});
+                          }}
                         ></Input>
+                        {Errors.iron && <p style={{color: "red"}}>{Errors.iron}</p>}
                       </Td>
                       <Td>&lt;2.5</Td>
                       <Td>2.5-4.5</Td>
@@ -286,7 +392,12 @@ function ResultEntry() {
                           width="auto"
                           variant="filled"
                           placeholder="in ppm"
+                          value={resValues.manganese}
+                          onChange={(e) => {
+                            ressetValues({...resValues, manganese: e.target.value});
+                          }}
                         ></Input>
+                        {Errors.manganese && <p style={{color: "red"}}>{Errors.manganese}</p>}
                       </Td>
                       <Td>&lt;2</Td>
                       <Td>2-4</Td>
@@ -302,7 +413,12 @@ function ResultEntry() {
                           width="auto"
                           variant="filled"
                           placeholder="in ppm"
+                          value={resValues.copper}
+                          onChange={(e) => {
+                            ressetValues({...resValues, copper: e.target.value});
+                          }}
                         ></Input>
+                        {Errors.copper && <p style={{color: "red"}}>{Errors.copper}</p>}
                       </Td>
                       <Td>&lt;0.2</Td>
                       <Td>0.2-0.5</Td>
@@ -323,26 +439,27 @@ function ResultEntry() {
           background="#CCE5FF"
           color="#000000"
           size="md"
-          type="submit"
           onClick={() => {
-            console.log("Save Button Clicked");
+            //if(validate()){
+              //postData();
+              navigate('/recommendations',{state: calc})
+            //}
+            console.log("Recom Button Clicked");
           }}
         >
-          Save
+          Go to Recommendations
         </Button>
-   
         <Button
           background="#CCE5FF"
           color="#000000"
           size="md"
           onClick={() => {
-            console.log("Print Button Clicked");
+            console.log("Save");
           }}
-        >
-         Print
-        </Button>
+        >Save</Button>
       </div>
-      <br /><br />
+      <br />
+      <br />
     </>
   );
 }

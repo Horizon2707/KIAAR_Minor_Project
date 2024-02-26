@@ -1,0 +1,7 @@
+.recomTable{
+    display: flex;
+    margin-top: 2vh;
+    margin-left:5vh ;
+    flex-direction: column;
+    gap: 2vh;
+}

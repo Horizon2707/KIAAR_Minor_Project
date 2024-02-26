@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { EditIcon } from "@chakra-ui/icons";
 import { useState } from "react";
 export function Form() {
-  var [newErrors, setErrors] = useState({});
+   var [newErrors, setErrors] = useState({});
   var [values, setValues] = useState({
     farmerId: "",
     labNo: "",
@@ -163,6 +163,7 @@ export function Form() {
               <option value="x">x</option>
               <option value="y">y</option>
             </Select>
+            {newErrors.labNo && <div className="error">{newErrors.labNo}</div>}
           </div>
           <div className="item litspace">
             <label  className="mLabel" htmlFor="HEWFno">
@@ -451,7 +452,7 @@ export function Form() {
         <Button
           onClick={() => {
             if (validate()) {
-              navigate("/recommendations");
+              navigate("/resultentry");
               sessionPush();
             }
           }}
