@@ -2,9 +2,9 @@ import "../Styles/Form.css";
 import { Select, Input, Button } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { EditIcon } from "@chakra-ui/icons";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 export function Form() {
-   var [newErrors, setErrors] = useState({});
+  var [newErrors, setErrors] = useState({});
   var [values, setValues] = useState({
     farmerId: "",
     labNo: "",
@@ -24,6 +24,12 @@ export function Form() {
     templateNo: "4",
     HEWFno: "",
   });
+  useEffect(() => {
+    const maxLength = 6;
+    if (values.farmerId.length === maxLength) {
+      setValues({ ...values, farmerId: values.farmerId });
+    }
+  }, [values.farmerId]);
 
   var navigate = useNavigate();
   const o = {
@@ -38,10 +44,9 @@ export function Form() {
   let validate = () => {
     const newErrors = {};
     if (values.farmerId.length !== 6) {
-      if(values.farmerId === ""){
+      if (values.farmerId === "") {
         newErrors.farmerId = "Farmer Id is required";
-      }
-      else{
+      } else {
         newErrors.farmerId = "Farmer Id should be 6 digits";
       }
     } else if (isNaN(values.farmerId)) {
@@ -53,7 +58,7 @@ export function Form() {
     if (values.cluster === "") {
       newErrors.cluster = "Cluster is required";
     }
-    if(values.labNo === ""){
+    if (values.labNo === "") {
       newErrors.labNo = "Lab No is required";
     }
     // if (values.village === "") {
@@ -85,7 +90,7 @@ export function Form() {
     }
     if (values.dtOfSampling === "") {
       newErrors.dtOfSampling = "Date of Sampling is required";
-    }// else if (values.dtOfSampling > values.dtOfSamplingReceipt) {
+    } // else if (values.dtOfSampling > values.dtOfSamplingReceipt) {
     //   newErrors.dtOfSampling =
     //     "Date of Sampling should be less than Date of Sampling Receipt";
     // }
@@ -96,14 +101,14 @@ export function Form() {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-  let sessionPush = ()=>{
-    sessionStorage.setItem("values",JSON.stringify(values));
-    console.log(values)
-  }
+  let sessionPush = () => {
+    sessionStorage.setItem("values", JSON.stringify(values));
+    console.log(values);
+  };
 
   return (
     <>
-      <h1 style={{ marginTop: "0.5vh", color: "black" } }>
+      <h1 style={{ marginTop: "0.5vh", color: "black" }}>
         Soil Water Test Entry Form
       </h1>
       <div className="container">
@@ -129,7 +134,7 @@ export function Form() {
             {newErrors.test && <div className="error">{newErrors.test}</div>}
           </div>
           <div className="item litspace">
-            <label  className="mLabel" htmlFor="templateNo">
+            <label className="mLabel" htmlFor="templateNo">
               Templete No:-
             </label>
             <Select
@@ -138,7 +143,6 @@ export function Form() {
               onChange={(e) => {
                 setValues({ ...values, templateNo: e.target.value });
               }}
-              
               variant="filled"
               id="templateNo"
             >
@@ -147,7 +151,7 @@ export function Form() {
             </Select>
           </div>
           <div className="item litspace">
-            <label  className="mLabel" htmlFor="labNo">
+            <label className="mLabel" htmlFor="labNo">
               Lab No.
             </label>
             <Select
@@ -166,7 +170,7 @@ export function Form() {
             {newErrors.labNo && <div className="error">{newErrors.labNo}</div>}
           </div>
           <div className="item litspace">
-            <label  className="mLabel" htmlFor="HEWFno">
+            <label className="mLabel" htmlFor="HEWFno">
               HEWF no.
             </label>
             <Input
@@ -183,7 +187,7 @@ export function Form() {
         </div>
         <div className="common">
           <div className=" item centering">
-            <label  className="mLabel" htmlFor="farmerId">
+            <label className="mLabel" htmlFor="farmerId">
               Farmer ID
             </label>
             <Input
@@ -191,14 +195,15 @@ export function Form() {
                 setValues({ ...values, farmerId: e.target.value });
               }}
               value={values.farmerId}
-              type="number"
               id="farmerId"
               size="md"
               variant="filled"
-              maxLength="6"
+              maxLength={6}
               placeholder="Enter 6 digits Farmer Id"
             />
-            {newErrors.farmerId && <div className="error">{newErrors.farmerId}</div>}
+            {newErrors.farmerId && (
+              <div className="error">{newErrors.farmerId}</div>
+            )}
           </div>
           <div className="item litspace">
             <h5>xnxxxaxxxxmxxex</h5>
@@ -217,7 +222,7 @@ export function Form() {
         </div>
         <div className="common ">
           <div className="item morspace">
-            <label  className="mLabel" htmlFor="cluster">
+            <label className="mLabel" htmlFor="cluster">
               Cluster
             </label>
             <Select
@@ -233,14 +238,13 @@ export function Form() {
               <option value="x">x</option>
               <option value="y">y</option>
             </Select>
-            {newErrors.cluster && <div className="error">{newErrors.cluster}</div>}
+            {newErrors.cluster && (
+              <div className="error">{newErrors.cluster}</div>
+            )}
           </div>
-          <div className="item">
-            Village:
-            xxxxxx
-          </div>
+          <div className="item">Village: xxxxxx</div>
           <div className="item morspace">
-            <label  className="mLabel" htmlFor="plotNo">
+            <label className="mLabel" htmlFor="plotNo">
               Plot No.
             </label>
             <Select
@@ -256,10 +260,12 @@ export function Form() {
               <option value="x">x</option>
               <option value="y">y</option>
             </Select>
-            {newErrors.plotNo && <div className="error">{newErrors.plotNo}</div>}
+            {newErrors.plotNo && (
+              <div className="error">{newErrors.plotNo}</div>
+            )}
           </div>
           <div className="item morspace">
-            <label  className="mLabel" htmlFor="area">
+            <label className="mLabel" htmlFor="area">
               Area
             </label>
             <Select
@@ -280,7 +286,7 @@ export function Form() {
         </div>
         <div className="row5">
           <div className="item litspace">
-            <label  className="mLabel" htmlFor="drainage">
+            <label className="mLabel" htmlFor="drainage">
               Drainage
             </label>
             <Select
@@ -297,10 +303,12 @@ export function Form() {
               <option value="poor">Poor</option>
               <option value="none">none</option>
             </Select>
-            {newErrors.drainage && <div className="error">{newErrors.drainage}</div>}
+            {newErrors.drainage && (
+              <div className="error">{newErrors.drainage}</div>
+            )}
           </div>
           <div className="item litspace">
-            <label  className="mLabel" htmlFor="soilType">
+            <label className="mLabel" htmlFor="soilType">
               Soil Type
             </label>
             <Select
@@ -316,10 +324,12 @@ export function Form() {
               <option value="x">x</option>
               <option value="y">y</option>
             </Select>
-            {newErrors.soilType && <div className="error">{newErrors.soilType}</div>}
+            {newErrors.soilType && (
+              <div className="error">{newErrors.soilType}</div>
+            )}
           </div>
           <div className="item litspace">
-            <label  className="mLabel" htmlFor="waterType">
+            <label className="mLabel" htmlFor="waterType">
               Water Type
             </label>
             <Select
@@ -335,10 +345,12 @@ export function Form() {
               <option value="x">x</option>
               <option value="y">y</option>
             </Select>
-            {newErrors.waterType && <div className="error">{newErrors.waterType}</div>}
+            {newErrors.waterType && (
+              <div className="error">{newErrors.waterType}</div>
+            )}
           </div>
           <div className="item litspace">
-            <label  className="mLabel" htmlFor="irrigationSource">
+            <label className="mLabel" htmlFor="irrigationSource">
               Irrigation Source
             </label>
             <Select
@@ -354,10 +366,12 @@ export function Form() {
               <option value="x">x</option>
               <option value="y">y</option>
             </Select>
-            {newErrors.irrigationSource && <div className="error">{newErrors.irrigationSource}</div>}
+            {newErrors.irrigationSource && (
+              <div className="error">{newErrors.irrigationSource}</div>
+            )}
           </div>
           <div className="item litspace">
-            <label  className="mLabel" htmlFor="cultivationType">
+            <label className="mLabel" htmlFor="cultivationType">
               Cultivation Type
             </label>
             <Select
@@ -373,12 +387,14 @@ export function Form() {
               <option value="x">x</option>
               <option value="y">y</option>
             </Select>
-            {newErrors.cultivationType && <div className="error">{newErrors.cultivationType}</div>}
+            {newErrors.cultivationType && (
+              <div className="error">{newErrors.cultivationType}</div>
+            )}
           </div>
         </div>
         <div className="common">
           <div className="item litspace">
-            <label  className="mLabel" htmlFor="previousCrop">
+            <label className="mLabel" htmlFor="previousCrop">
               Previous Crop
             </label>
             <Select
@@ -394,10 +410,12 @@ export function Form() {
               <option value="x">x</option>
               <option value="y">y</option>
             </Select>
-            {newErrors.previousCrop && <div className="error">{newErrors.previousCrop}</div>}
+            {newErrors.previousCrop && (
+              <div className="error">{newErrors.previousCrop}</div>
+            )}
           </div>
           <div className="item lispace">
-            <label  className="mLabel" htmlFor="cropToBeGrown">
+            <label className="mLabel" htmlFor="cropToBeGrown">
               Crop to be grown
             </label>
             <Select
@@ -413,10 +431,12 @@ export function Form() {
               <option value="x">x</option>
               <option value="y">y</option>
             </Select>
-            {newErrors.cropToBeGrown && <div className="error">{newErrors.cropToBeGrown}</div>}
+            {newErrors.cropToBeGrown && (
+              <div className="error">{newErrors.cropToBeGrown}</div>
+            )}
           </div>
           <div className="item litspace">
-            <label  className="mLabel" htmlFor="dtOfSampling">
+            <label className="mLabel" htmlFor="dtOfSampling">
               Dt of Sampling
             </label>
             <Input
@@ -428,10 +448,12 @@ export function Form() {
               size="sm"
               id="dtOfSampling"
             ></Input>
-            {newErrors.dtOfSampling && <div className="error">{newErrors.dtOfSampling}</div>}
+            {newErrors.dtOfSampling && (
+              <div className="error">{newErrors.dtOfSampling}</div>
+            )}
           </div>
           <div className="item litspace">
-            <label  className="mLabel" htmlFor="dtOfSamplingReceipt">
+            <label className="mLabel" htmlFor="dtOfSamplingReceipt">
               Dt of Sampling Receipt
             </label>
             <Input
@@ -443,7 +465,9 @@ export function Form() {
               size="sm"
               id="dtOfSamplingReceipt"
             ></Input>
-            {newErrors.dtOfSamplingReceipt && <div className="error">{newErrors.dtOfSamplingReceipt}</div>}
+            {newErrors.dtOfSamplingReceipt && (
+              <div className="error">{newErrors.dtOfSamplingReceipt}</div>
+            )}
           </div>
         </div>
         {/* </form> */}
