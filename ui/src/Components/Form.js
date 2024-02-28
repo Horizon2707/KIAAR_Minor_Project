@@ -24,10 +24,32 @@ export function Form() {
     templateNo: "4",
     HEWFno: "",
   });
+   var [change,setChange]=useState({
+    name:'NAME',
+    MBLNO:'xxxxxxxxxx',
+    PAddress:'ADDRESSADDRESSADDRESSADDRESSADDRESSADDRESS',
+    village:'VILLAGE'
+   });
   useEffect(() => {
     const maxLength = 6;
     if (values.farmerId.length === maxLength) {
       setValues({ ...values, farmerId: values.farmerId });
+      fetch("http://localhost:5000/farmerId", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ farmerId: values.farmerId }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          setChange({
+            name: data.FARMER_NAME,
+            MBLNO: data.MBLNO,
+            PAddress: data.P_ADDRESS,
+          });
+        });
     }
   }, [values.farmerId]);
 
@@ -206,18 +228,18 @@ export function Form() {
             )}
           </div>
           <div className="item litspace">
-            <h5>xnxxxaxxxxmxxex</h5>
+            <h5>{change.name}</h5>
           </div>
           <div className="item litspace">
             <h5>Mbl. :</h5>
-            <h5>xxxxxxxxxx</h5>
+            <h5>{change.MBLNO}</h5>
           </div>
           <div className="item litspace">Sy No. xxxx</div>
         </div>
         <div className="common">
           <div className="item">
             P Address:
-            xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+            {change.PAddress}
           </div>
         </div>
         <div className="common ">
@@ -242,7 +264,7 @@ export function Form() {
               <div className="error">{newErrors.cluster}</div>
             )}
           </div>
-          <div className="item">Village: xxxxxx</div>
+          <div className="item">Village: {change.village}</div>
           <div className="item morspace">
             <label className="mLabel" htmlFor="plotNo">
               Plot No.

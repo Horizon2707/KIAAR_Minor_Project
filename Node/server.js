@@ -34,6 +34,7 @@ app.post("/farmerId", async (req, res) => {
 
     if (farmer) {
       console.log(farmer);
+      res.json(farmer);
     } else {
       res.status(404).json({ message: "Farmer not found" });
     }

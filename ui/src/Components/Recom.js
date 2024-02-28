@@ -12,7 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { Button } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-function Recom({data}) {
+function Recom({ data }) {
   var navigate = useNavigate();
   return (
     <>
@@ -39,389 +39,393 @@ function Recom({data}) {
         </Table>
         <Table size="md" variant="simple">
           <TableCaption placement="top">Nutrients (in kg/acre)</TableCaption>
-          <Tr>
-            <Th>Nitrogen</Th>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-          </Tr>
-          <Tr>
-            <Th>Phosphorus</Th>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-          </Tr>
-          <Tr>
-            <Th>Potash</Th>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-          </Tr>
+          <Tbody>
+            <Tr>
+              <Th>Nitrogen</Th>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+            </Tr>
+            <Tr>
+              <Th>Phosphorus</Th>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+            </Tr>
+            <Tr>
+              <Th>Potash</Th>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+            </Tr>
+          </Tbody>
         </Table>
         <Table size="md" variant="simple">
-          <TableCaption placement="top">
-            Recommended dose of straight and complex fertilizers (kg/acre)
-          </TableCaption>
-          <Tr>
-            <Th>Sugarcane Season</Th>
-            <Th colSpan="3" borderRight="1px solid #ddd" textAlign="center">
-              Adsali
-            </Th>
-            <Th colSpan="3" borderRight="1px solid #ddd" textAlign="center">
-              Pre-Seasional
-            </Th>
-            <Th colSpan="3" borderRight="1px solid #ddd" textAlign="center">
-              Seasional
-            </Th>
-          </Tr>
-          <Tr>
-            <Th>Combination-01</Th>
-          </Tr>
-          <Tr>
-            <Th>Time of application</Th>
-            <Th>DAP</Th>
-            <Th>MOP</Th>
-            <Th borderRight="1px solid #ddd">Urea</Th>
-            <Th>DAP</Th>
-            <Th>MOP</Th>
-            <Th borderRight="1px solid #ddd">Urea</Th>
-            <Th>DAP</Th>
-            <Th>MOP</Th>
-            <Th>Urea</Th>
-          </Tr>
-          <Tr>
-            <Th>Total</Th>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-          </Tr>
-          <Tr>
-            <Th>At Plantating</Th>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-          </Tr>
-          <Tr>
-            <Th>30-40</Th>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-          </Tr>
-          <Tr>
-            <Th>60-75</Th>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-          </Tr>
-          <Tr>
-            <Th>100-120</Th>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-          </Tr>
-          <Tr>
-            <Th>150-180</Th>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-          </Tr>
-          <Tr>
-            <Th>Combination-02</Th>
-          </Tr>
-          <Tr>
-            <Th>Time of application</Th>
-            <Th>SSP</Th>
-            <Th>MOP</Th>
-            <Th borderRight="1px solid #ddd">Urea</Th>
-            <Th>SSP</Th>
-            <Th>MOP</Th>
-            <Th borderRight="1px solid #ddd">Urea</Th>
-            <Th>SSP</Th>
-            <Th>MOP</Th>
-            <Th>Urea</Th>
-          </Tr>
-          <Tr>
-            <Th>Total</Th>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-          </Tr>
-          <Tr>
-            <Th>At Plantating</Th>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-          </Tr>
-          <Tr>
-            <Th>30-40</Th>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-          </Tr>
-          <Tr>
-            <Th>60-75</Th>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-          </Tr>
-          <Tr>
-            <Th>100-120</Th>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-          </Tr>
-          <Tr>
-            <Th>150-180</Th>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-          </Tr>
-          <Tr>
-            <Th>Combination-03</Th>
-          </Tr>
-          <Tr>
-            <Th>Time of application</Th>
-            <Th>12:32:16</Th>
-            <Th>MOP</Th>
-            <Th borderRight="1px solid #ddd">Urea</Th>
-            <Th>12:32:16</Th>
-            <Th>MOP</Th>
-            <Th borderRight="1px solid #ddd">Urea</Th>
-            <Th>12:32:16</Th>
-            <Th>MOP</Th>
-            <Th>Urea</Th>
-          </Tr>
-          <Tr>
-            <Th>Total</Th>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-          </Tr>
-          <Tr>
-            <Th>At Plantating</Th>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-          </Tr>
-          <Tr>
-            <Th>30-40</Th>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-          </Tr>
-          <Tr>
-            <Th>60-75</Th>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-          </Tr>
-          <Tr>
-            <Th>100-120</Th>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-          </Tr>
-          <Tr>
-            <Th>150-180</Th>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-          </Tr>
-          <Tr>
-            <Th>Combination-04</Th>
-          </Tr>
-          <Tr>
-            <Th>Time of application</Th>
-            <Th>10:26:26</Th>
-            <Th>MOP</Th>
-            <Th borderRight="1px solid #ddd">Urea</Th>
-            <Th>10:26:26</Th>
-            <Th>MOP</Th>
-            <Th borderRight="1px solid #ddd">Urea</Th>
-            <Th>10:26:26</Th>
-            <Th>MOP</Th>
-            <Th>Urea</Th>
-          </Tr>
-          <Tr>
-            <Th>Total</Th>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-          </Tr>
-          <Tr>
-            <Th>At Plantating</Th>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-          </Tr>
-          <Tr>
-            <Th>30-40</Th>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-          </Tr>
-          <Tr>
-            <Th>60-75</Th>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-          </Tr>
-          <Tr>
-            <Th>100-120</Th>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-          </Tr>
-          <Tr>
-            <Th>150-180</Th>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td borderRight="1px solid #ddd">x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-            <Td>x</Td>
-          </Tr>
+          <Tbody>
+            <TableCaption placement="top">
+              Recommended dose of straight and complex fertilizers (kg/acre)
+            </TableCaption>
+            <Tr>
+              <Th>Sugarcane Season</Th>
+              <Th colSpan="3" borderRight="1px solid #ddd" textAlign="center">
+                Adsali
+              </Th>
+              <Th colSpan="3" borderRight="1px solid #ddd" textAlign="center">
+                Pre-Seasional
+              </Th>
+              <Th colSpan="3" borderRight="1px solid #ddd" textAlign="center">
+                Seasional
+              </Th>
+            </Tr>
+            <Tr>
+              <Th>Combination-01</Th>
+            </Tr>
+            <Tr>
+              <Th>Time of application</Th>
+              <Th>DAP</Th>
+              <Th>MOP</Th>
+              <Th borderRight="1px solid #ddd">Urea</Th>
+              <Th>DAP</Th>
+              <Th>MOP</Th>
+              <Th borderRight="1px solid #ddd">Urea</Th>
+              <Th>DAP</Th>
+              <Th>MOP</Th>
+              <Th>Urea</Th>
+            </Tr>
+            <Tr>
+              <Th>Total</Th>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+            </Tr>
+            <Tr>
+              <Th>At Plantating</Th>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+            </Tr>
+            <Tr>
+              <Th>30-40</Th>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+            </Tr>
+            <Tr>
+              <Th>60-75</Th>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+            </Tr>
+            <Tr>
+              <Th>100-120</Th>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+            </Tr>
+            <Tr>
+              <Th>150-180</Th>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+            </Tr>
+            <Tr>
+              <Th>Combination-02</Th>
+            </Tr>
+            <Tr>
+              <Th>Time of application</Th>
+              <Th>SSP</Th>
+              <Th>MOP</Th>
+              <Th borderRight="1px solid #ddd">Urea</Th>
+              <Th>SSP</Th>
+              <Th>MOP</Th>
+              <Th borderRight="1px solid #ddd">Urea</Th>
+              <Th>SSP</Th>
+              <Th>MOP</Th>
+              <Th>Urea</Th>
+            </Tr>
+            <Tr>
+              <Th>Total</Th>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+            </Tr>
+            <Tr>
+              <Th>At Plantating</Th>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+            </Tr>
+            <Tr>
+              <Th>30-40</Th>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+            </Tr>
+            <Tr>
+              <Th>60-75</Th>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+            </Tr>
+            <Tr>
+              <Th>100-120</Th>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+            </Tr>
+            <Tr>
+              <Th>150-180</Th>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+            </Tr>
+            <Tr>
+              <Th>Combination-03</Th>
+            </Tr>
+            <Tr>
+              <Th>Time of application</Th>
+              <Th>12:32:16</Th>
+              <Th>MOP</Th>
+              <Th borderRight="1px solid #ddd">Urea</Th>
+              <Th>12:32:16</Th>
+              <Th>MOP</Th>
+              <Th borderRight="1px solid #ddd">Urea</Th>
+              <Th>12:32:16</Th>
+              <Th>MOP</Th>
+              <Th>Urea</Th>
+            </Tr>
+            <Tr>
+              <Th>Total</Th>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+            </Tr>
+            <Tr>
+              <Th>At Plantating</Th>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+            </Tr>
+            <Tr>
+              <Th>30-40</Th>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+            </Tr>
+            <Tr>
+              <Th>60-75</Th>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+            </Tr>
+            <Tr>
+              <Th>100-120</Th>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+            </Tr>
+            <Tr>
+              <Th>150-180</Th>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+            </Tr>
+            <Tr>
+              <Th>Combination-04</Th>
+            </Tr>
+            <Tr>
+              <Th>Time of application</Th>
+              <Th>10:26:26</Th>
+              <Th>MOP</Th>
+              <Th borderRight="1px solid #ddd">Urea</Th>
+              <Th>10:26:26</Th>
+              <Th>MOP</Th>
+              <Th borderRight="1px solid #ddd">Urea</Th>
+              <Th>10:26:26</Th>
+              <Th>MOP</Th>
+              <Th>Urea</Th>
+            </Tr>
+            <Tr>
+              <Th>Total</Th>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+            </Tr>
+            <Tr>
+              <Th>At Plantating</Th>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+            </Tr>
+            <Tr>
+              <Th>30-40</Th>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+            </Tr>
+            <Tr>
+              <Th>60-75</Th>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+            </Tr>
+            <Tr>
+              <Th>100-120</Th>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+            </Tr>
+            <Tr>
+              <Th>150-180</Th>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td borderRight="1px solid #ddd">x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+              <Td>x</Td>
+            </Tr>
+          </Tbody>
         </Table>
         <Table size="md" variant="simple">
           <TableCaption placement="top">Micronutrients</TableCaption>
