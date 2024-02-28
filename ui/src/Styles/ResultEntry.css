@@ -49,3 +49,8 @@
   margin-left: 10vh;
   gap: 2vh;
 }
+.panel{
+  display: flex;
+  flex-direction:column;
+  gap: 10vh;
+}

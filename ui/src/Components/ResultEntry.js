@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import "../Styles/ResultEntry.css";
 import { Button } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
+import { Select } from "@chakra-ui/react";
+
 import {
   Tabs,
   TabList,
@@ -15,21 +17,36 @@ import {
   Thead,
   Tbody,
   Tr,
+  TableCaption,
   Th,
   Td,
   TableContainer,
 } from "@chakra-ui/react";
 import Recom from "./Recom";
-
+var o = [
+  {
+    suggestion1: "xxxxxxxx",
+  },
+  {
+    suggestion2: "yyyyyyyy",
+  },
+  {
+    suggestion3: "zzzzzzzz",
+  },
+];
 function ResultEntry() {
   var navigate = useNavigate();
+  var valueO = "";
   useEffect(() => {
-    let result = localStorage.getItem("result");
+    let result = sessionStorage.getItem("result");
     if (result) {
       ressetValues(JSON.parse(result));
     }
-  },);
-
+  });
+  var [Remarks, setRemarks] = useState({
+    suggestion: o ,
+    final: "",
+  });
   var [Errors, setErrors] = useState({});
   var [toggle, setToggle] = useState(false);
   var [resValues, ressetValues] = useState({
@@ -136,7 +153,7 @@ function ResultEntry() {
             >
               <TabList>
                 <Tab>Result Entry</Tab>
-                <Tab>Suggestions</Tab>
+                <Tab>Suggestions and Remarks</Tab>
               </TabList>
               <TabPanels>
                 <TabPanel>
@@ -516,7 +533,67 @@ function ResultEntry() {
                   </TableContainer>
                 </TabPanel>
                 <TabPanel>
-                  <h1 style={{ fontSize: "10vh" }}>UNDER CONSTRUCTION</h1>
+                  <div className="panel">
+                    <div className="Suggestions">
+                      <Select
+                        onChange={(e) => {
+                          valueO = e.target.value;
+                          setRemarks({
+                            ...Remarks,
+                            suggestion: {
+                              ...Remarks.suggestion,
+                              valueO: e.target.value,
+                            },
+                          });
+                          console.log(Remarks);
+                        }}
+                        size="sm"
+                        variant="filled"
+                        id="suggestionId"
+                        placeholder="select suggestion"
+                      >
+                        <option value="suggestion1">Suggestion 1</option>
+                        <option value="suggestion2">Suggestion 2</option>
+                        <option value="suggestion3">Suggestion 3</option>
+                      </Select>
+                      <TableContainer>
+                        <Table size="md" variant="simple">
+                          <TableCaption placement="top">
+                            Suggestions
+                          </TableCaption>
+                          {o.map((i) => (
+                            <>
+                              <Thead>
+                                <Tr>
+                                  <Th
+                                    border="1px solid #ddd"
+                                    textAlign="center"
+                                  >
+                                    Suggestion Value Name
+                                  </Th>
+                                  <Th
+                                    border="1px solid #ddd"
+                                    textAlign="center"
+                                  >
+                                    Included/Exlucded
+                                  </Th>
+                                </Tr>
+                              </Thead>
+                              <Tbody>
+                                <Tr border="1px solid #ddd">
+                                  <Td>{o}</Td>
+                                  <Td></Td>
+                                </Tr>
+                              </Tbody>
+                            </>
+                          ))}
+                        </Table>
+                      </TableContainer>
+                    </div>
+                    <div className="final">
+                      <h3>Final Remarks</h3>
+                    </div>
+                  </div>
                 </TabPanel>
               </TabPanels>
             </Tabs>
@@ -530,7 +607,7 @@ function ResultEntry() {
                 if (validate()) {
                   //postData();
                   navigate("/recommendations");
-                  localStorage.setItem("result", JSON.stringify(resValues));
+                  sessionStorage.setItem("result", JSON.stringify(resValues));
                   setToggle(!toggle);
                 }
               }}
