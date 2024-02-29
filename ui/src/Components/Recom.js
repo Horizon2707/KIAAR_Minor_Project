@@ -61,10 +61,10 @@ function Recom({ data }) {
           </Tbody>
         </Table>
         <Table size="md" variant="simple">
-          <Tbody>
             <TableCaption placement="top">
               Recommended dose of straight and complex fertilizers (kg/acre)
             </TableCaption>
+          <Tbody>
             <Tr>
               <Th>Sugarcane Season</Th>
               <Th colSpan="3" borderRight="1px solid #ddd" textAlign="center">

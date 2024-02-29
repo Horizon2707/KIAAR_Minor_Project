@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import "../Styles/ResultEntry.css";
 import { Button } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import { Select } from "@chakra-ui/react";
 import { Checkbox } from "@chakra-ui/react";
+import { Textarea } from "@chakra-ui/react";
 import {
   Tabs,
   TabList,
@@ -548,36 +548,51 @@ function ResultEntry() {
                           <Thead>
                             <Tr border="1px solid #ddd">
                               <Th border="1px solid #ddd"> Suggestions</Th>
-                              <Th border="1px solid #ddd">Included/Excluded</Th>
                             </Tr>
                           </Thead>
                           <Tbody>
-                            <Tr border="1px solid #ddd">
-                              {sugArr.map((element) => (
-                                <Td border="1px solid #ddd">{element.name}</Td>
-                              ))}
-                              <Td border="1px solid #ddd">
-                                {/* <Checkbox
-                                  size="md"
-                                  colorScheme="green"
-                                  onChange={(e) => {
-                                    if (e.target.checked) {
-                                      setRemarks(
-                                        ...Remarks,
-                                        (Remarks.suggestion.);
-                                      console.log(Remarks.suggestion);
-                                    }
-                                  }}
-                                ></Checkbox> */}
-                                asdfghjkl
-                              </Td>
-                            </Tr>
+                            {sugArr.map((suggestion) => {
+                              return (
+                                <>
+                                  <Tr border="1px solid #ddd">
+                                    <Checkbox
+                                      size="lg"
+                                      id={suggestion.id}
+                                      value={suggestion.selected}
+                                      onChange={(e) => {
+                                        setRemarks({
+                                          ...Remarks,
+                                          suggestion: Remarks.suggestion.map(
+                                            (s) =>
+                                              s.id === suggestion.id
+                                                ? {
+                                                    ...s,
+                                                    selected: e.target.checked,
+                                                  }
+                                                : s
+                                          ),
+                                        });
+                                        console.log(Remarks);
+                                      }}
+                                    >
+                                      {suggestion.name}
+                                    </Checkbox>
+                                  </Tr>
+                                </>
+                              );
+                            })}
                           </Tbody>
                         </Table>
                       </TableContainer>
                     </div>
                     <div className="final">
                       <h3>Final Remarks</h3>
+                      <Textarea
+                        placeholder="Multiline"
+                        resize="none"
+                        rows={7} // Set the number of rows to 7
+                        variant="filled"
+                      />
                     </div>
                   </div>
                 </TabPanel>
