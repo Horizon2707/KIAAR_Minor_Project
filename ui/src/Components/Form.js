@@ -7,7 +7,7 @@ export function Form() {
   var [newErrors, setErrors] = useState({});
   var [values, setValues] = useState({
     farmerId: "",
-    labNo: "",
+    //labNo: "",
     test: "",
     cluster: "",
     village: "",
@@ -28,7 +28,8 @@ export function Form() {
     name:'NAME',
     MBLNO:'xxxxxxxxxx',
     PAddress:'ADDRESSADDRESSADDRESSADDRESSADDRESSADDRESS',
-    village:'VILLAGE'
+    village:'VILLAGE',
+    labNo:'LABNO'
    });
   useEffect(() => {
     const maxLength = 6;
@@ -48,6 +49,7 @@ export function Form() {
             name: data.FARMER_NAME,
             MBLNO: data.MBLNO,
             PAddress: data.P_ADDRESS,
+            labNo:data.LAB_TRAN_NO
           });
         });
     }
@@ -80,9 +82,9 @@ export function Form() {
     if (values.cluster === "") {
       newErrors.cluster = "Cluster is required";
     }
-    if (values.labNo === "") {
-      newErrors.labNo = "Lab No is required";
-    }
+    //if (values.labNo === "") {
+    //  newErrors.labNo = "Lab No is required";
+    //}
     // if (values.village === "") {
     //   newErrors.village = "Village is required";
     // }
@@ -174,12 +176,12 @@ export function Form() {
           </div>
           <div className="item litspace">
             <label className="mLabel" htmlFor="labNo">
-              Lab No.
+              Lab No:{change.labNo}
             </label>
-            <Select
+            {/* <Select
               size="sm"
               id="labNo"
-              placeholder="Select one..."
+              placeholder='Select one...'
               variant="filled"
               onChange={(e) => {
                 setValues({ ...values, labNo: e.target.value });
@@ -188,7 +190,7 @@ export function Form() {
             >
               <option value="x">x</option>
               <option value="y">y</option>
-            </Select>
+            </Select>  */}
             {newErrors.labNo && <div className="error">{newErrors.labNo}</div>}
           </div>
           <div className="item litspace">

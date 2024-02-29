@@ -3,7 +3,7 @@ import "../Styles/ResultEntry.css";
 import { Button } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { Select } from "@chakra-ui/react";
-
+import { Checkbox } from "@chakra-ui/react";
 import {
   Tabs,
   TabList,
@@ -23,28 +23,33 @@ import {
   TableContainer,
 } from "@chakra-ui/react";
 import Recom from "./Recom";
-var o = [
-  {
-    suggestion1: "xxxxxxxx",
-  },
-  {
-    suggestion2: "yyyyyyyy",
-  },
-  {
-    suggestion3: "zzzzzzzz",
-  },
-];
 function ResultEntry() {
   var navigate = useNavigate();
-  var valueO = "";
   useEffect(() => {
     let result = sessionStorage.getItem("result");
     if (result) {
       ressetValues(JSON.parse(result));
     }
   });
+  var sugArr = [
+    {
+      id: 1,
+      name: "Suggestion 1",
+      selected: 0,
+    },
+    {
+      id: 2,
+      name: "Suggestion 2",
+      selected: 0,
+    },
+    {
+      id: 3,
+      name: "Suggestion 1",
+      selected: 0,
+    },
+  ];
   var [Remarks, setRemarks] = useState({
-    suggestion: o ,
+    suggestion: sugArr,
     final: "",
   });
   var [Errors, setErrors] = useState({});
@@ -535,58 +540,39 @@ function ResultEntry() {
                 <TabPanel>
                   <div className="panel">
                     <div className="Suggestions">
-                      <Select
-                        onChange={(e) => {
-                          valueO = e.target.value;
-                          setRemarks({
-                            ...Remarks,
-                            suggestion: {
-                              ...Remarks.suggestion,
-                              valueO: e.target.value,
-                            },
-                          });
-                          console.log(Remarks);
-                        }}
-                        size="sm"
-                        variant="filled"
-                        id="suggestionId"
-                        placeholder="select suggestion"
-                      >
-                        <option value="suggestion1">Suggestion 1</option>
-                        <option value="suggestion2">Suggestion 2</option>
-                        <option value="suggestion3">Suggestion 3</option>
-                      </Select>
                       <TableContainer>
                         <Table size="md" variant="simple">
                           <TableCaption placement="top">
                             Suggestions
                           </TableCaption>
-                          {o.map((i) => (
-                            <>
-                              <Thead>
-                                <Tr>
-                                  <Th
-                                    border="1px solid #ddd"
-                                    textAlign="center"
-                                  >
-                                    Suggestion Value Name
-                                  </Th>
-                                  <Th
-                                    border="1px solid #ddd"
-                                    textAlign="center"
-                                  >
-                                    Included/Exlucded
-                                  </Th>
-                                </Tr>
-                              </Thead>
-                              <Tbody>
-                                <Tr border="1px solid #ddd">
-                                  <Td>{o}</Td>
-                                  <Td></Td>
-                                </Tr>
-                              </Tbody>
-                            </>
-                          ))}
+                          <Thead>
+                            <Tr border="1px solid #ddd">
+                              <Th border="1px solid #ddd"> Suggestions</Th>
+                              <Th border="1px solid #ddd">Included/Excluded</Th>
+                            </Tr>
+                          </Thead>
+                          <Tbody>
+                            <Tr border="1px solid #ddd">
+                              {sugArr.map((element) => (
+                                <Td border="1px solid #ddd">{element.name}</Td>
+                              ))}
+                              <Td border="1px solid #ddd">
+                                {/* <Checkbox
+                                  size="md"
+                                  colorScheme="green"
+                                  onChange={(e) => {
+                                    if (e.target.checked) {
+                                      setRemarks(
+                                        ...Remarks,
+                                        (Remarks.suggestion.);
+                                      console.log(Remarks.suggestion);
+                                    }
+                                  }}
+                                ></Checkbox> */}
+                                asdfghjkl
+                              </Td>
+                            </Tr>
+                          </Tbody>
                         </Table>
                       </TableContainer>
                     </div>
