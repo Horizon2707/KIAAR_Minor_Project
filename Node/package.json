@@ -17,5 +17,8 @@
     "instantclient": "^1.0.2",
     "oracledb": "^6.3.0",
     "session": "^0.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
   }
 }

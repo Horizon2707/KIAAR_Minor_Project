@@ -2,7 +2,7 @@ import "../Styles/Form.css";
 import { Select, Input, Button } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { EditIcon } from "@chakra-ui/icons";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 export function Form() {
   var [newErrors, setErrors] = useState({});
   var [values, setValues] = useState({
@@ -24,13 +24,13 @@ export function Form() {
     templateNo: "4",
     HEWFno: "",
   });
-   var [change,setChange]=useState({
-    name:'NAME',
-    MBLNO:'xxxxxxxxxx',
-    PAddress:'ADDRESSADDRESSADDRESSADDRESSADDRESSADDRESS',
-    village:'VILLAGE',
-    labNo:'LABNO'
-   });
+  var [change, setChange] = useState({
+    name: "NAME",
+    MBLNO: "xxxxxxxxxx",
+    PAddress: "ADDRESSADDRESSADDRESSADDRESSADDRESSADDRESS",
+    village: "VILLAGE",
+    labNo: "LABNO",
+  });
   useEffect(() => {
     const maxLength = 6;
     if (values.farmerId.length === maxLength) {
@@ -49,7 +49,8 @@ export function Form() {
             name: data.FARMER_NAME,
             MBLNO: data.MBLNO,
             PAddress: data.P_ADDRESS,
-            labNo:data.LAB_TRAN_NO
+            labNo: data.LAB_TRAN_NO,
+            village: data.VILLAGE_CD,
           });
         });
     }

@@ -22,19 +22,42 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.post("/farmerId", async (req, res) => {
-  const { farmerId } = req.body;
+let fieldsToExtract = [
+  "CLUSTER_CD",
+  "VILLAGE_CD",
+  "PLOT_NO",
+  "DRAINAGE",
+  "SOIL_TYPE_CD",
+  "WATER_TYPE_CD",
+  "IRRIGATION_CD",
+  "TYPE_OF_CULTIVATION",
+  "PREVIOUS_CROP",
+  "CROPS_TO_BE_GROWN",
+];
 
+function extractUniqueValues(data, field) {
+  let uniqueValues = new Set();
+  data.forEach((obj) => {
+    uniqueValues.add(obj[field]);
+  });
+  return Array.from(uniqueValues);
+}
+
+app.post("/farmerId", async (req, res) => {
+  const { farmerId, plotId } = req.body;
+  
   try {
     const connection = await dbConnection;
     const result = await connection.execute(
       `SELECT * FROM GSMAGRI.SW_TRAN_HEAD WHERE FARMER_ID =${farmerId}`
     );
-    const farmer = result.rows[0];
-
-    if (farmer) {
-      console.log(farmer);
-      res.json(farmer);
+    const farmers = result.rows;
+    let uniqueValuesList = {};
+    if (farmers.length > 0) {
+      fieldsToExtract.forEach((field) => {
+        uniqueValuesList[field] = extractUniqueValues(farmers, field);
+      });
+      res.json(uniqueValuesList)
     } else {
       res.status(404).json({ message: "Farmer not found" });
     }

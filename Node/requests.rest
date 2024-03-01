@@ -3,6 +3,5 @@ POST http://localhost:5000/farmerId
 Content-Type: application/json
 
 {
-    "farmerId": 342111,
-    
+    "farmerId" : 100003
 }
