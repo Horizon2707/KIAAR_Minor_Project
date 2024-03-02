@@ -5,7 +5,7 @@ import { EditIcon } from "@chakra-ui/icons";
 import { useState, useEffect } from "react";
 export function Form() {
   var [newErrors, setErrors] = useState({});
-  var [wild,setWild] = useState({})
+  var [wild, setWild] = useState([]);
   var [values, setValues] = useState({
     farmerId: "",
     //labNo: "",
@@ -25,14 +25,14 @@ export function Form() {
     templateNo: "4",
     HEWFno: "",
   });
-  var [change, setChange] = useState({
-    name: "NAME",
+  var [farmInfo, setfarmInfo] = useState({
+    name: "",
     MBLNO: "",
-    PAddress: "ADDRESS",
-    village: "VILLAGE",
-    labNo: "LABNO",
+    PAddress: "",
+    village: "",
+    labNo: "",
   });
-  
+
   useEffect(() => {
     const maxLength = 6;
     if (values.farmerId.length === maxLength) {
@@ -47,7 +47,7 @@ export function Form() {
         .then((res) => res.json())
         .then((data) => {
           console.log(data);
-          setChange({
+          setfarmInfo({
             name: data.FARMER_NAME,
             MBLNO: data.MBLNO,
             PAddress: data.P_ADDRESS,
@@ -57,19 +57,18 @@ export function Form() {
         });
     }
   }, [values.farmerId]);
-  useEffect(()=>{
-    fetch('https://localhost:5000/init',{
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-      }
-    }).then((res)=>res.json)
-    .then((data=>{
-      setWild({
-        testName:''
-      })
-    }))
-  })
+  useEffect(() => {
+    fetch("https://localhost:5000/init", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json)
+      .then((data) => {
+        setWild(data);
+      });
+  });
 
   var navigate = useNavigate();
   const o = {
@@ -166,10 +165,22 @@ export function Form() {
               value={values.test}
               onChange={(e) => {
                 setValues({ ...values, test: e.target.value });
+                fetch("http://localhost:5000/temp_no", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({ test: e.target.value }),
+                })
+                  .then((res) => res.json())
+                  .then((data) => {
+                   setfarmInfo({ ...farmInfo, labNo: data.LAB_TRAN_NO });
+                })
               }}
             >
-              <option value="waterTest">Water Test</option>
-              <option value="soilTest">Soil Test</option>
+              {wild.map((item) => {
+                return <option value={item.TEST_CD}>{item.TEST_NAME}</option>;
+              })}
             </Select>
             {newErrors.test && <div className="error">{newErrors.test}</div>}
           </div>
@@ -192,7 +203,7 @@ export function Form() {
           </div>
           <div className="item litspace">
             <label className="mLabel" htmlFor="labNo">
-              Lab No:{change.labNo}
+              Lab No:{farmInfo.labNo}
             </label>
             {/* <Select
               size="sm"
@@ -246,18 +257,18 @@ export function Form() {
             )}
           </div>
           <div className="item litspace">
-            <h5>{change.name}</h5>
+            <h5>{farmInfo.name}</h5>
           </div>
           <div className="item litspace">
             <h5>Mbl. :</h5>
-            <h5>{change.MBLNO}</h5>
+            <h5>{farmInfo.MBLNO}</h5>
           </div>
           <div className="item litspace">Sy No. xxxx</div>
         </div>
         <div className="common">
           <div className="item">
             P Address:
-            {change.PAddress}
+            {farmInfo.PAddress}
           </div>
         </div>
         <div className="common ">
@@ -282,7 +293,7 @@ export function Form() {
               <div className="error">{newErrors.cluster}</div>
             )}
           </div>
-          <div className="item">Village: {change.village}</div>
+          <div className="item">Village: {farmInfo.village}</div>
           <div className="item morspace">
             <label className="mLabel" htmlFor="plotNo">
               Plot No.

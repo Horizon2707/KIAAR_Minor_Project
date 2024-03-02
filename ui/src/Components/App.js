@@ -5,12 +5,14 @@ import ResultEntry from "./ResultEntry";
 import NotDefined from "./NotDefined";
 import Crops from "./Crops";
 import Recom from "./Recom";
+import Login from "./Login";
 function App() {
   return (
     <div className="App">
       <Router>
         <Routes>
-          <Route path="/" element={<Form />} />
+          <Route path="/form" element={<Form />} />
+          <Route path="/" element={<Login />} />
           <Route path="/resultentry" element={<ResultEntry/>} />
           <Route path="/crops" element={<Crops />} />
           <Route path="/recommendations" element={<Recom/>}></Route>
