@@ -5,11 +5,8 @@ import { EditIcon } from "@chakra-ui/icons";
 import { useState, useEffect } from "react";
 export function Form() {
   var [newErrors, setErrors] = useState({});
-  var [k,setk]=useState({
-    drainage: [],
-    cultivationType: [],
-    cropToBeGrown: [],
-  })
+  var [k, setk] = useState([]);
+  var [cultivationType, setCultivationType] = useState([]);
   var [wild, setWild] = useState([]);
   var [values, setValues] = useState({
     farmerId: "",
@@ -37,7 +34,7 @@ export function Form() {
     village: "",
     labNo: "",
   });
-
+  var [cropToBeGrown, setCropToBeGrown] = useState([]);
   useEffect(() => {
     const maxLength = 6;
     if (values.farmerId.length === maxLength) {
@@ -66,9 +63,9 @@ export function Form() {
           // });
           setk({
             drainage: data.DRAINAGE,
-            cultivationType: data.CULTIVATION_TYPE,
-            cropToBeGrown: data.CROP_TO_BE_GROWN,
           });
+          setCultivationType({ cultivationType: data.CULTIVATION_TYPE });
+          setCropToBeGrown({ cropToBeGrown: data.CROP_TO_BE_GROWN });
         });
     }
   }, [values.farmerId]);
@@ -149,7 +146,7 @@ export function Form() {
     if (values.cultivationType.length === 0) {
       newErrors.cultivationType = "Cultivation Type is required";
     }
-    
+
     if (values.previousCrop === "") {
       newErrors.previousCrop = "Previous Crop is required";
     }
@@ -374,11 +371,9 @@ export function Form() {
               {/* {values.drainage.map((item) => {
                 <option value={item}>{item}</option>;
               })} */}
-              {
-                k.drainage.map((item) => {
-                  return <option value={item}>{item}</option>;
-                })
-              }
+              {k.drainage.map((item) => {
+                return <option value={item}>{item}</option>;
+              })}
             </Select>
             {newErrors.drainage && (
               <div className="error">{newErrors.drainage}</div>
@@ -461,11 +456,8 @@ export function Form() {
               }}
               value={values.cultivationType}
             >
-              {/* {values.cultivationType.map((item) => {
-                <option value={item}>{item}</option>;
-              })} */}
-              {k.cultivationType.map((item) => {
-                <option value={item}>{item}</option>;
+              {cultivationType.cultivationType.map((item) => {
+               return <option value={item}>{item}</option>;
               })}
             </Select>
             {newErrors.cultivationType && (
@@ -509,11 +501,8 @@ export function Form() {
               }}
               value={values.cropToBeGrown}
             >
-              {/* {values.cropToBeGrown.map((item) => {
-                <option value={item}>{item}</option>;
-              })} */}
-              {k.cropToBeGrown.map((item) => {
-                <option value={item}>{item}</option>;
+              {cropToBeGrown.cropToBeGrown.map((item) => {
+                return <option value={item}>{item}</option>;
               })}
             </Select>
             {newErrors.cropToBeGrown && (
