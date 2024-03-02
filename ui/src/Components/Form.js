@@ -464,6 +464,9 @@ export function Form() {
               {/* {values.cultivationType.map((item) => {
                 <option value={item}>{item}</option>;
               })} */}
+              {k.cultivationType.map((item) => {
+                <option value={item}>{item}</option>;
+              })}
             </Select>
             {newErrors.cultivationType && (
               <div className="error">{newErrors.cultivationType}</div>
@@ -509,6 +512,9 @@ export function Form() {
               {/* {values.cropToBeGrown.map((item) => {
                 <option value={item}>{item}</option>;
               })} */}
+              {k.cropToBeGrown.map((item) => {
+                <option value={item}>{item}</option>;
+              })}
             </Select>
             {newErrors.cropToBeGrown && (
               <div className="error">{newErrors.cropToBeGrown}</div>
