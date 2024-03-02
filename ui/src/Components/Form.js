@@ -55,10 +55,9 @@ export function Form() {
             MBLNO: data.MBLNO,
             PAddress: data.P_ADDRESS,
             labNo: data.LAB_TRAN_NO,
-            drainage: data.DRAINAGE,
-            cultivationType: data.TYPE_OF_CULTIVATION,
-            cropToBeGrown: data.CROP_TO_BE_GROWN,
+            
           });
+          setValues({...values,drainage:data.DRAINAGE,cultivationType:data.CULTIVATION_TYPE,cropToBeGrown:data.CROP_TO_BE_GROWN})
         });
     }
   }, [values.farmerId]);
@@ -121,12 +120,6 @@ export function Form() {
     if (values.cluster === "") {
       newErrors.cluster = "Cluster is required";
     }
-    //if (values.labNo === "") {
-    //  newErrors.labNo = "Lab No is required";
-    //}
-    // if (values.village === "") {
-    //   newErrors.village = "Village is required";
-    // }
     if (values.plotNo === "") {
       newErrors.plotNo = "Plot No is required";
     }
@@ -366,7 +359,7 @@ export function Form() {
               }}
               value={values.drainage}
             >
-              {farmInfo.drainage.map((item) => {
+              {values.drainage.map((item) => {
                 return <option value={item}>{item}</option>;
               })}
             </Select>
@@ -451,7 +444,7 @@ export function Form() {
               }}
               value={values.cultivationType}
             >
-              {farmInfo.cultivationType.map((item) => {
+              {values.cultivationType.map((item) => {
                 return <option value={item}>{item}</option>;
               })}
             </Select>
@@ -496,7 +489,7 @@ export function Form() {
               }}
               value={values.cropToBeGrown}
             >
-             {farmInfo.cropToBeGrown.map((item) => {return <option value={item}>{item}</option>})}
+             {values.cropToBeGrown.map((item) => {return <option value={item}>{item}</option>})}
             </Select>
             {newErrors.cropToBeGrown && (
               <div className="error">{newErrors.cropToBeGrown}</div>
