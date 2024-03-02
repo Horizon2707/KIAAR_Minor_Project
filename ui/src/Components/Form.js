@@ -65,16 +65,28 @@ export function Form() {
           "Content-Type": "application/json",
         },
       })
-      .then((res) => res.json())
-      .then((data) => {
-        setWild(data);
-      });
+        .then((res) => res.json())
+        .then((data) => {
+          setWild(data);
+        });
     } catch (error) {
-      // Handle the error here
-      console.error('Error:', error);
+      console.error("Error:", error);
     }
   });
-  
+  useEffect(() => {
+    fetch("http://localhost:5000/temp_no", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ test: e.target.value }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setfarmInfo({ ...farmInfo, labNo: data.LAB_TRAN_NO });
+      });
+  }, [values.test]);
+
   var navigate = useNavigate();
   const o = {
     marginTop: "2vh",
@@ -170,17 +182,6 @@ export function Form() {
               value={values.test}
               onChange={(e) => {
                 setValues({ ...values, test: e.target.value });
-                fetch("http://localhost:5000/temp_no", {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({ test: e.target.value }),
-                })
-                  .then((res) => res.json())
-                  .then((data) => {
-                   setfarmInfo({ ...farmInfo, labNo: data.LAB_TRAN_NO });
-                })
               }}
             >
               {wild.map((item) => {
