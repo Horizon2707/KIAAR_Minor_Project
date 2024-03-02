@@ -5,6 +5,7 @@ import { EditIcon } from "@chakra-ui/icons";
 import { useState, useEffect } from "react";
 export function Form() {
   var [newErrors, setErrors] = useState({});
+  var [wild,setWild] = useState({})
   var [values, setValues] = useState({
     farmerId: "",
     //labNo: "",
@@ -26,11 +27,12 @@ export function Form() {
   });
   var [change, setChange] = useState({
     name: "NAME",
-    MBLNO: "xxxxxxxxxx",
-    PAddress: "ADDRESSADDRESSADDRESSADDRESSADDRESSADDRESS",
+    MBLNO: "",
+    PAddress: "ADDRESS",
     village: "VILLAGE",
     labNo: "LABNO",
   });
+  
   useEffect(() => {
     const maxLength = 6;
     if (values.farmerId.length === maxLength) {
@@ -55,6 +57,19 @@ export function Form() {
         });
     }
   }, [values.farmerId]);
+  useEffect(()=>{
+    fetch('https://localhost:5000/init',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+      }
+    }).then((res)=>res.json)
+    .then((data=>{
+      setWild({
+        testName:''
+      })
+    }))
+  })
 
   var navigate = useNavigate();
   const o = {
