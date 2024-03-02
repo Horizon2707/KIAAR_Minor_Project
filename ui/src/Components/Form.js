@@ -17,7 +17,7 @@ export function Form() {
     soilType: "",
     waterType: "",
     irrigationSource: "",
-    cultivationType:[],
+    cultivationType: [],
     previousCrop: "",
     cropToBeGrown: [],
     dtOfSampling: "",
@@ -33,7 +33,7 @@ export function Form() {
     labNo: "",
     drainage: [],
     cultivationType: [],
-    cropToBeGrown:[]
+    cropToBeGrown: [],
   });
 
   useEffect(() => {
@@ -55,9 +55,13 @@ export function Form() {
             MBLNO: data.MBLNO,
             PAddress: data.P_ADDRESS,
             labNo: data.LAB_TRAN_NO,
-            
           });
-          setValues({...values,drainage:data.DRAINAGE,cultivationType:data.CULTIVATION_TYPE,cropToBeGrown:data.CROP_TO_BE_GROWN})
+          setValues({
+            ...values,
+            drainage: data.DRAINAGE,
+            cultivationType: data.CULTIVATION_TYPE,
+            cropToBeGrown: data.CROP_TO_BE_GROWN,
+          });
         });
     }
   }, [values.farmerId]);
@@ -135,13 +139,14 @@ export function Form() {
     if (values.irrigationSource === "") {
       newErrors.irrigationSource = "Irrigation Source is required";
     }
-    if (values.cultivationType === "") {
+    if (values.cultivationType.length === 0) {
       newErrors.cultivationType = "Cultivation Type is required";
     }
+    
     if (values.previousCrop === "") {
       newErrors.previousCrop = "Previous Crop is required";
     }
-    if (values.cropToBeGrown === "") {
+    if (values.cropToBeGrown.length === 0) {
       newErrors.cropToBeGrown = "Crop to be grown is required";
     }
     if (values.dtOfSampling === "") {
@@ -360,7 +365,7 @@ export function Form() {
               value={values.drainage}
             >
               {values.drainage.map((item) => {
-                return <option value={item}>{item}</option>;
+                <option value={item}>{item}</option>;
               })}
             </Select>
             {newErrors.drainage && (
@@ -445,7 +450,7 @@ export function Form() {
               value={values.cultivationType}
             >
               {values.cultivationType.map((item) => {
-                return <option value={item}>{item}</option>;
+                <option value={item}>{item}</option>;
               })}
             </Select>
             {newErrors.cultivationType && (
@@ -489,7 +494,9 @@ export function Form() {
               }}
               value={values.cropToBeGrown}
             >
-             {values.cropToBeGrown.map((item) => {return <option value={item}>{item}</option>})}
+              {values.cropToBeGrown.map((item) => {
+                <option value={item}>{item}</option>;
+              })}
             </Select>
             {newErrors.cropToBeGrown && (
               <div className="error">{newErrors.cropToBeGrown}</div>
