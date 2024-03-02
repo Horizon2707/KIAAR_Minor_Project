@@ -58,18 +58,23 @@ export function Form() {
     }
   }, [values.farmerId]);
   useEffect(() => {
-    fetch("https://localhost:5000/init", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json)
+    try {
+      fetch("https://localhost:5000/init", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res) => res.json())
       .then((data) => {
         setWild(data);
       });
+    } catch (error) {
+      // Handle the error here
+      console.error('Error:', error);
+    }
   });
-
+  
   var navigate = useNavigate();
   const o = {
     marginTop: "2vh",
