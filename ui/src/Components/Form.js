@@ -22,7 +22,7 @@ export function Form() {
     cropToBeGrown: "",
     dtOfSampling: "",
     dtOfSamplingReceipt: "",
-    templateNo: "4",
+    templateNo: [],
     HEWFno: "",
   });
   var [farmInfo, setfarmInfo] = useState({
@@ -84,7 +84,7 @@ export function Form() {
     })
       .then((res) => res.json())
       .then((data) => {
-        setfarmInfo({ ...farmInfo, labNo: data.LAB_TRAN_NO });
+        setValues({...values, templateNo: data.TEMPLATE_NO});
       });
   }, [values]);
 
@@ -204,8 +204,7 @@ export function Form() {
               variant="filled"
               id="templateNo"
             >
-              <option value="4">4</option>
-              <option value="x">x</option>
+              {values.templateNo.map((item) => { return <option value={item}>{item}</option>; })}
             </Select>
           </div>
           <div className="item litspace">
