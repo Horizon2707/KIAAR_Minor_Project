@@ -85,7 +85,7 @@ export function Form() {
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
-        setValues({ ...values, templateNo: data.TEMPLATE_NO });
+        setValues({ ...values, templateNo: data });
       });
   }, [values.test]);
 
@@ -204,7 +204,13 @@ export function Form() {
               }}
               variant="filled"
               id="templateNo"
-            ></Select>
+            >
+              {values.templateNo.map((item) => {
+                return (
+                  <option value={item.TEMPLATE_NO}>{item.TEMPLATE_NO}</option>
+                );
+              })}
+            </Select>
           </div>
           <div className="item litspace">
             <label className="mLabel" htmlFor="labNo">
