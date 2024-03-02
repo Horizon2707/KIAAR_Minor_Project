@@ -70,7 +70,7 @@ app.post("/farmerId", async (req, res) => {
         dropdowns[field] = extractUniqueValues(farmers, field);
       });
       console.log("FARMER ID");
-      res.json(dropdowns);
+      console.log(dropdowns);
     } else {
       res.status(404).json({ message: "Farmer not found" });
     }
@@ -78,6 +78,40 @@ app.post("/farmerId", async (req, res) => {
       console.log(personal_info.rows);
     } else {
       console.log("Personal info not found");
+    }
+
+    const soilTypes = dropdowns.SOIL_TYPE_CD;
+    console.log(soilTypes);
+    const soil_types = [];
+    for (const i of soilTypes) {
+      const res = await connection.execute(
+        `SELECT DISTINCT SOIL_TYPE_NAME FROM GSMAGRI.SOIL_TYPE_DIR WHERE SOIL_TYPE_CD =:i`,
+        [i]
+      );
+      soil_types.push(res.rows[0]);
+    }
+
+    if (soil_types) {
+      console.log(soil_types);
+    } else {
+      console.log("Soil type not found");
+    }
+
+    const irrigationTypes = dropdowns.IRRIGATION_CD;
+    const irrigation_types = [];
+
+    for (const i of irrigationTypes) {
+      const res = await connection.execute(
+        `SELECT DISTINCT IRRIGATION_NAME FROM GSMAGRI.IRRIGATION_DIR WHERE IRRIGATION_CD IN (:i)`,
+        [i]
+      );
+
+      irrigation_types.push(res.rows[0]);
+    }
+    if (irrigation_types) {
+      console.log(irrigation_types);
+    } else {
+      console.log("Irrigation not found");
     }
   } catch (error) {
     console.error("Error searching for farmer:", error);
