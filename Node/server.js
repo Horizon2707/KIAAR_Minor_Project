@@ -101,7 +101,7 @@ app.post("/temp_no", async (req, res) => {
       [test_cd]
     );
     if (template_no) {
-      console.log(template_no.rows);
+      res.json(template_no.rows);
     } else {
       console.log("TEST CD not found");
     }

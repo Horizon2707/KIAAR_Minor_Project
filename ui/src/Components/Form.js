@@ -84,9 +84,10 @@ export function Form() {
     })
       .then((res) => res.json())
       .then((data) => {
-        setValues({...values, templateNo: data.TEMPLATE_NO});
+        console.log(data);
+        setValues({ ...values, templateNo: data.TEMPLATE_NO });
       });
-  }, [values]);
+  }, [values.test]);
 
   var navigate = useNavigate();
   const o = {
@@ -203,9 +204,7 @@ export function Form() {
               }}
               variant="filled"
               id="templateNo"
-            >
-              {values.templateNo.map((item) => { return <option value={item}>{item}</option>; })}
-            </Select>
+            ></Select>
           </div>
           <div className="item litspace">
             <label className="mLabel" htmlFor="labNo">
