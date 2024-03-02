@@ -5,3 +5,16 @@ Content-Type: application/json
 {
     "farmerId" : 100003
 }
+
+### Post request
+POST http://localhost:5000/init
+Content-Type: application/json
+
+
+### POST
+POST http://localhost:5000/temp_no
+Content-Type: application/json
+
+{
+    "test_cd" : 1
+}

@@ -59,7 +59,7 @@ export function Form() {
   }, [values.farmerId]);
   useEffect(() => {
     try {
-      fetch("https://localhost:5000/init", {
+      fetch("http://localhost:5000/init", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -74,18 +74,19 @@ export function Form() {
     }
   });
   useEffect(() => {
+    console.log(values.test);
     fetch("http://localhost:5000/temp_no", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ test: e.target.value }),
+      body: JSON.stringify({ test_cd: values.test }),
     })
       .then((res) => res.json())
       .then((data) => {
         setfarmInfo({ ...farmInfo, labNo: data.LAB_TRAN_NO });
       });
-  }, [values.test]);
+  }, [values]);
 
   var navigate = useNavigate();
   const o = {
