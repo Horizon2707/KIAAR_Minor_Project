@@ -31,6 +31,9 @@ export function Form() {
     PAddress: "",
     village: "",
     labNo: "",
+    drainage: [],
+    cultivationType: [],
+    cropToBeGrown:[]
   });
 
   useEffect(() => {
@@ -52,7 +55,9 @@ export function Form() {
             MBLNO: data.MBLNO,
             PAddress: data.P_ADDRESS,
             labNo: data.LAB_TRAN_NO,
-            village: data.VILLAGE_CD,
+            drainage: data.DRAINAGE,
+            cultivationType: data.TYPE_OF_CULTIVATION,
+            cropToBeGrown: data.CROP_TO_BE_GROWN,
           });
         });
     }
@@ -361,9 +366,9 @@ export function Form() {
               }}
               value={values.drainage}
             >
-              <option value="good">Good</option>
-              <option value="poor">Poor</option>
-              <option value="none">none</option>
+              {farmInfo.drainage.map((item) => {
+                return <option value={item}>{item}</option>;
+              })}
             </Select>
             {newErrors.drainage && (
               <div className="error">{newErrors.drainage}</div>
@@ -446,8 +451,9 @@ export function Form() {
               }}
               value={values.cultivationType}
             >
-              <option value="x">x</option>
-              <option value="y">y</option>
+              {farmInfo.cultivationType.map((item) => {
+                return <option value={item}>{item}</option>;
+              })}
             </Select>
             {newErrors.cultivationType && (
               <div className="error">{newErrors.cultivationType}</div>
@@ -490,8 +496,7 @@ export function Form() {
               }}
               value={values.cropToBeGrown}
             >
-              <option value="x">x</option>
-              <option value="y">y</option>
+             {farmInfo.cropToBeGrown.map((item) => {return <option value={item}>{item}</option>})}
             </Select>
             {newErrors.cropToBeGrown && (
               <div className="error">{newErrors.cropToBeGrown}</div>
