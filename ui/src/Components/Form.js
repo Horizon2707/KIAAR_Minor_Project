@@ -8,6 +8,7 @@ export function Form() {
   var [k, setk] = useState([]);
   var [cultivationType, setCultivationType] = useState([]);
   var [wild, setWild] = useState([]);
+  var [cropToBeGrown, setCropToBeGrown] = useState([]);
   var [values, setValues] = useState({
     farmerId: "",
     //labNo: "",
@@ -64,8 +65,8 @@ export function Form() {
           setk({
             drainage: data.DRAINAGE,
           });
-          setCultivationType({ cultivationType: data.CULTIVATION_TYPE });
-          setCropToBeGrown({ cropToBeGrown: data.CROP_TO_BE_GROWN });
+          setCultivationType({ cultivationType: data.TYPE_OF_CULTIVATION });
+          setCropToBeGrown({ cropToBeGrown: data.CROPS_TO_BE_GROWN });
         });
     }
   }, [values.farmerId]);
@@ -371,9 +372,10 @@ export function Form() {
               {/* {values.drainage.map((item) => {
                 <option value={item}>{item}</option>;
               })} */}
-              {k.drainage.map((item) => {
-                return <option value={item}>{item}</option>;
-              })}
+              {k.drainage &&
+                k.drainage.map((item) => {
+                  return <option value={item}>{item}</option>;
+                })}
             </Select>
             {newErrors.drainage && (
               <div className="error">{newErrors.drainage}</div>
@@ -456,9 +458,10 @@ export function Form() {
               }}
               value={values.cultivationType}
             >
-              {cultivationType.cultivationType.map((item) => {
-               return <option value={item}>{item}</option>;
-              })}
+              {cultivationType.cultivationType &&
+                cultivationType.cultivationType.map((item) => {
+                  return <option value={item}>{item}</option>;
+                })}
             </Select>
             {newErrors.cultivationType && (
               <div className="error">{newErrors.cultivationType}</div>
@@ -501,9 +504,10 @@ export function Form() {
               }}
               value={values.cropToBeGrown}
             >
-              {cropToBeGrown.cropToBeGrown.map((item) => {
-                return <option value={item}>{item}</option>;
-              })}
+              {cropToBeGrown.cropToBeGrown &&
+                cropToBeGrown.cropToBeGrown.map((item) => {
+                  return <option value={item}>{item}</option>;
+                })}
             </Select>
             {newErrors.cropToBeGrown && (
               <div className="error">{newErrors.cropToBeGrown}</div>

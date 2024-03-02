@@ -48,25 +48,36 @@ app.post("/farmerId", async (req, res) => {
 
   try {
     const connection = await dbConnection;
-    const farmer_info = await connection.execute(
-      `SELECT * FROM GSMAGRI.FARMER_LIST WHERE FARMER_ID =:farmerId`,
-      [farmerId]
-    );
+
     const result = await connection.execute(
       `SELECT * FROM GSMAGRI.SW_TRAN_HEAD WHERE FARMER_ID =:farmerId`,
       [farmerId]
     );
-    const farmers_info = farmer_info.rows;
+    const personal_info = await connection.execute(
+      `SELECT FARMER_NAME,F_ADDRESS,PHONE_NO FROM FARMER_LIST WHERE FARMER_ID =:farmerId`,
+      [farmerId]
+    );
+
     const farmers = result.rows;
-    let uniqueValuesList = {};
+    const labTranNos = farmers.map((item) => item.LAB_TRAN_NO);
+    console.log(labTranNos);
+    const survey_no_t = new Set(farmers.map((item) => item.SY_NO));
+    const survey_no = Array.from(survey_no_t);
+    console.log(survey_no);
+    let dropdowns = {};
     if (farmers.length > 0) {
       fieldsToExtract.forEach((field) => {
-        uniqueValuesList[field] = extractUniqueValues(farmers, field);
+        dropdowns[field] = extractUniqueValues(farmers, field);
       });
       console.log("FARMER ID");
-      res.json(uniqueValuesList);
+      res.json(dropdowns);
     } else {
       res.status(404).json({ message: "Farmer not found" });
+    }
+    if (personal_info) {
+      console.log(personal_info.rows);
+    } else {
+      console.log("Personal info not found");
     }
   } catch (error) {
     console.error("Error searching for farmer:", error);
@@ -110,6 +121,7 @@ app.post("/temp_no", async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
+
 app.post("/api", (req, res) => {
   const parameters = req.body;
 
