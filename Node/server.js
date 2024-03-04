@@ -34,7 +34,7 @@ let fieldsToExtract = [
   "PREVIOUS_CROP",
   "CROPS_TO_BE_GROWN",
 ];
-
+let dropdowns = {};
 function extractUniqueValues(data, field) {
   let uniqueValues = new Set();
   data.forEach((obj) => {
@@ -44,27 +44,36 @@ function extractUniqueValues(data, field) {
 }
 
 app.post("/farmerId", async (req, res) => {
-  const { farmerId, plotId } = req.body;
+  const { farmerId } = req.body;
 
   try {
     const connection = await dbConnection;
-
-    const result = await connection.execute(
+    //Farermer ID Retreival
+    const farmer_rows = await connection.execute(
       `SELECT * FROM GSMAGRI.SW_TRAN_HEAD WHERE FARMER_ID =:farmerId`,
       [farmerId]
     );
+    //Farmer Information Retreival
     const personal_info = await connection.execute(
       `SELECT FARMER_NAME,F_ADDRESS,PHONE_NO FROM FARMER_LIST WHERE FARMER_ID =:farmerId`,
       [farmerId]
     );
 
-    const farmers = result.rows;
+    if (personal_info) {
+      console.log(personal_info.rows);
+    } else {
+      console.log("Personal info not found");
+    }
+
+    const farmers = farmer_rows.rows;
+    //Lab Tran Numbers
     const labTranNos = farmers.map((item) => item.LAB_TRAN_NO);
     console.log(labTranNos);
+    //Survey Numbers
     const survey_no_t = new Set(farmers.map((item) => item.SY_NO));
     const survey_no = Array.from(survey_no_t);
     console.log(survey_no);
-    let dropdowns = {};
+    //DropDown Information Retreival
     if (farmers.length > 0) {
       fieldsToExtract.forEach((field) => {
         dropdowns[field] = extractUniqueValues(farmers, field);
@@ -74,29 +83,25 @@ app.post("/farmerId", async (req, res) => {
     } else {
       res.status(404).json({ message: "Farmer not found" });
     }
-    if (personal_info) {
-      console.log(personal_info.rows);
-    } else {
-      console.log("Personal info not found");
-    }
 
+    //Soil Type CD to Name
+    console.log(dropdowns.SOIL_TYPE_CD);
     const soilTypes = dropdowns.SOIL_TYPE_CD;
-    console.log(soilTypes);
     const soil_types = [];
-    for (const i of soilTypes) {
-      const res = await connection.execute(
-        `SELECT DISTINCT SOIL_TYPE_NAME FROM GSMAGRI.SOIL_TYPE_DIR WHERE SOIL_TYPE_CD =:i`,
-        [i]
-      );
-      soil_types.push(res.rows[0]);
-    }
+    // for (const i of soilTypes) {
+    //   const res = await connection.execute(
+    //     `SELECT DISTINCT SOIL_TYPE_NAME FROM GSMAGRI.SOIL_TYPE_DIR WHERE SOIL_TYPE_CD =:i`,
+    //     [i]
+    //   );
+    //   soil_types.push(res.rows[0]);
+    // }
 
     if (soil_types) {
       console.log(soil_types);
     } else {
       console.log("Soil type not found");
     }
-
+    //Irrigation Type CD to Name
     const irrigationTypes = dropdowns.IRRIGATION_CD;
     const irrigation_types = [];
 
@@ -156,6 +161,59 @@ app.post("/temp_no", async (req, res) => {
   }
 });
 
+app.post("/clusterInfo", async (req, res) => {
+  const { farmerId } = req.body;
+  try {
+    //Cluster Codes
+    const connection = await dbConnection;
+    const cluster_cd = await connection.execute(
+      `SELECT DISTINCT CLUSTER_CD,CLUSTER_NAME FROM GSMAGRI.FARMER_PLOTS WHERE FARMER_ID = :farmerId`,
+      [farmerId]
+    );
+    console.log(cluster_cd.rows);
+    //Cluster Codes to Names
+
+    const cluster_codes = cluster_cd.rows.map((item) => item.CLUSTER_CD);
+    let cluster_names = [];
+    for (const i of cluster_codes) {
+      const res = await connection.execute(
+        `SELECT DISTINCT CLUSTER_NAME FROM GSMAGRI.FARMER_PLOTS WHERE CLUSTER_CD IN (:i)`,
+        [i]
+      );
+
+      cluster_names.push(res.rows[0]);
+    }
+    console.log(cluster_names);
+  } catch (error) {
+    console.error("Cluster not found");
+  }
+});
+app.post("/villageInfo", async (req, res) => {
+  try {
+    const { clusterCd, farmerId } = req.body;
+    const connection = await dbConnection;
+    const village_names = await connection.execute(
+      `SELECT DISTINCT VILLAGE_CD,VILLAGE_NAME FROM FARMER_PLOTS WHERE FARMER_ID=:farmerId AND CLUSTER_CD=:clusterCd`,
+      [farmerId, clusterCd]
+    );
+    console.log(village_names.rows);
+  } catch (error) {
+    console.error("Village not found");
+  }
+});
+app.post("/plotNo", async (req, res) => {
+  try {
+    const { villageCd, farmerId } = req.body;
+    const connection = await dbConnection;
+    const plot_nos = await connection.execute(
+      `SELECT DISTINCT PLOT_NO,PLOT_AREA FROM FARMER_PLOTS WHERE FARMER_ID=:farmerId AND VILLAGE_CD=:villageCd`,
+      [farmerId, villageCd]
+    );
+    console.log(plot_nos.rows);
+  } catch (error) {
+    console.error("Plots  not found");
+  }
+});
 app.post("/api", (req, res) => {
   const parameters = req.body;
 

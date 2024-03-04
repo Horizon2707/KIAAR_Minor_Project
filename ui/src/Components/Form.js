@@ -5,10 +5,11 @@ import { EditIcon } from "@chakra-ui/icons";
 import { useState, useEffect } from "react";
 export function Form() {
   var [newErrors, setErrors] = useState({});
-  var [k, setk] = useState([]);
+  var [drainage, setdrainage] = useState([]);
   var [cultivationType, setCultivationType] = useState([]);
   var [wild, setWild] = useState([]);
   var [cropToBeGrown, setCropToBeGrown] = useState([]);
+
   var [values, setValues] = useState({
     farmerId: "",
     //labNo: "",
@@ -62,7 +63,7 @@ export function Form() {
           //   cultivationType: data.CULTIVATION_TYPE,
           //   cropToBeGrown: data.CROP_TO_BE_GROWN,
           // });
-          setk({
+          setdrainage({
             drainage: data.DRAINAGE,
           });
           setCultivationType({ cultivationType: data.TYPE_OF_CULTIVATION });
@@ -372,8 +373,8 @@ export function Form() {
               {/* {values.drainage.map((item) => {
                 <option value={item}>{item}</option>;
               })} */}
-              {k.drainage &&
-                k.drainage.map((item) => {
+              {drainage.drainage &&
+                drainage.drainage.map((item) => {
                   return <option value={item}>{item}</option>;
                 })}
             </Select>

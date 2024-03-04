@@ -18,3 +18,29 @@ Content-Type: application/json
 {
     "test_cd" : 1
 }
+
+### Cluster CODE
+POST http://localhost:5000/clusterInfo
+Content-Type: application/json
+
+{
+    "farmerId" : 108236
+}
+
+### Village CODE
+POST http://localhost:5000/villageInfo
+Content-Type: application/json
+
+{
+    "farmerId" : 108236,
+    "clusterCd" : 2
+}
+
+### PLOT Info
+POST http://localhost:5000/plotNo
+Content-Type: application/json
+
+{
+    "farmerId" : 108236,
+    "villageCd" : 901
+}
