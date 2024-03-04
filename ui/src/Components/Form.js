@@ -5,18 +5,20 @@ import { EditIcon } from "@chakra-ui/icons";
 import { useState, useEffect } from "react";
 export function Form() {
   var [newErrors, setErrors] = useState({});
+  var [wild, setWild] = useState([]);
   var [drainage, setdrainage] = useState([]);
   var [cultivationType, setCultivationType] = useState([]);
-  var [wild, setWild] = useState([]);
   var [cropToBeGrown, setCropToBeGrown] = useState([]);
-
+  var [cluster,setCluster] = useState([]);
+  var [village,setVillage] = useState([]);
+  var [plotNo,setplotNo] = useState([]);
   var [values, setValues] = useState({
     farmerId: "",
     //labNo: "",
     test: "",
-    cluster: "",
-    village: "",
-    plotNo: "",
+    cluster: [],
+    village: [],
+    plotNo: [],
     drainage: [],
     soilType: "",
     waterType: "",
@@ -57,18 +59,24 @@ export function Form() {
             PAddress: data.P_ADDRESS,
             labNo: data.LAB_TRAN_NO,
           });
-          // setValues({
-          //   ...values,
-          //   drainage: data.DRAINAGE,
-          //   cultivationType: data.CULTIVATION_TYPE,
-          //   cropToBeGrown: data.CROP_TO_BE_GROWN,
-          // });
           setdrainage({
             drainage: data.DRAINAGE,
           });
           setCultivationType({ cultivationType: data.TYPE_OF_CULTIVATION });
           setCropToBeGrown({ cropToBeGrown: data.CROPS_TO_BE_GROWN });
         });
+        fetch("http://localhost:5000/clusterInfo",{
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json",
+          },
+          body:JSON.stringify({farmerId: values.farmerId })
+        })
+        .then((res) => res.json())
+        .then((data)=>{
+          console.log(data);
+          setCluster(data)
+        })
     }
   }, [values.farmerId]);
   useEffect(() => {
@@ -102,7 +110,39 @@ export function Form() {
         setValues({ ...values, templateNo: data });
       });
   }, [values.test]);
-
+useEffect(()=>{
+  fetch("http://localhost:5000/villageInfo", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ cluster:values.cluster,
+        farmerId: values.farmerId
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        setVillage(data);
+      });
+},[values.cluster])
+useEffect(()=>{
+  fetch("http://localhost:5000/plotNo", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ 
+        farmerId: values.farmerId,
+        village:values.village
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        setplotNo(data);
+      });
+},[values.village])
   var navigate = useNavigate();
   const o = {
     marginTop: "2vh",
@@ -225,19 +265,6 @@ export function Form() {
             <label className="mLabel" htmlFor="labNo">
               Lab No:{farmInfo.labNo}
             </label>
-            {/* <Select
-              size="sm"
-              id="labNo"
-              placeholder='Select one...'
-              variant="filled"
-              onChange={(e) => {
-                setValues({ ...values, labNo: e.target.value });
-              }}
-              value={values.labNo}
-            >
-              <option value="x">x</option>
-              <option value="y">y</option>
-            </Select>  */}
             {newErrors.labNo && <div className="error">{newErrors.labNo}</div>}
           </div>
           <div className="item litspace">
@@ -306,14 +333,36 @@ export function Form() {
               }}
               value={values.cluster}
             >
-              <option value="x">x</option>
-              <option value="y">y</option>
+              {cluster.map((element)=>{
+                return <option value={element.CLUSTER_CD}>{element.CLUSTER_NAME}</option>
+              })}
             </Select>
             {newErrors.cluster && (
               <div className="error">{newErrors.cluster}</div>
             )}
           </div>
-          <div className="item">Village: {farmInfo.village}</div>
+          <div className="item morspace">
+            <label className="mLabel" htmlFor="cluster">
+              Cluster
+            </label>
+            <Select
+              size="sm"
+              id="cluster"
+              placeholder="Select one..."
+              variant="filled"
+              onChange={(e) => {
+                setValues({ ...values, village: e.target.value });
+              }}
+              value={values.village}
+            >
+              {village.map((element)=>{
+                return <option value={element.VILLAGE_CD}>{element.VILLAGE_NAME}</option>
+              })}
+            </Select>
+            {newErrors.village && (
+              <div className="error">{newErrors.village}</div>
+            )}
+          </div>
           <div className="item morspace">
             <label className="mLabel" htmlFor="plotNo">
               Plot No.
@@ -328,8 +377,9 @@ export function Form() {
               }}
               value={values.plotNo}
             >
-              <option value="x">x</option>
-              <option value="y">y</option>
+            {plotNo.map((element)=>{
+                return <option value={element}>{element}</option>
+              })}
             </Select>
             {newErrors.plotNo && (
               <div className="error">{newErrors.plotNo}</div>
@@ -370,9 +420,6 @@ export function Form() {
               }}
               value={values.drainage}
             >
-              {/* {values.drainage.map((item) => {
-                <option value={item}>{item}</option>;
-              })} */}
               {drainage.drainage &&
                 drainage.drainage.map((item) => {
                   return <option value={item}>{item}</option>;
