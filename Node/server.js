@@ -54,13 +54,13 @@ app.post("/farmerId", async (req, res) => {
       [farmerId]
     );
     //Farmer Information Retreival
-    const personal_info = await connection.execute(
+    const personal = await connection.execute(
       `SELECT FARMER_NAME,F_ADDRESS,PHONE_NO FROM FARMER_LIST WHERE FARMER_ID =:farmerId`,
       [farmerId]
     );
-
+    personal_info = personal.rows;
     if (personal_info) {
-      console.log(personal_info.rows);
+      console.log(personal_info);
     } else {
       console.log("Personal info not found");
     }
@@ -85,17 +85,18 @@ app.post("/farmerId", async (req, res) => {
     }
 
     //Soil Type CD to Name
-    console.log(dropdowns.SOIL_TYPE_CD);
+
     const soilTypes = dropdowns.SOIL_TYPE_CD;
     const soil_types = [];
-    // for (const i of soilTypes) {
-    //   const res = await connection.execute(
-    //     `SELECT DISTINCT SOIL_TYPE_NAME FROM GSMAGRI.SOIL_TYPE_DIR WHERE SOIL_TYPE_CD =:i`,
-    //     [i]
-    //   );
-    //   soil_types.push(res.rows[0]);
-    // }
 
+    for (let i = 0; i < soilTypes.length; i++) {
+      j = soilTypes[i];
+      const res = await connection.execute(
+        `SELECT DISTINCT SOIL_TYPE_NAME FROM GSMAGRI.SOIL_TYPE_DIR WHERE SOIL_TYPE_CD =:j`,
+        [j]
+      );
+      soil_types.push(res.rows[0]);
+    }
     if (soil_types) {
       console.log(soil_types);
     } else {
@@ -105,19 +106,36 @@ app.post("/farmerId", async (req, res) => {
     const irrigationTypes = dropdowns.IRRIGATION_CD;
     const irrigation_types = [];
 
-    for (const i of irrigationTypes) {
+    for (let i = 0; i < irrigationTypes.length; i++) {
+      j = irrigationTypes[i];
       const res = await connection.execute(
         `SELECT DISTINCT IRRIGATION_NAME FROM GSMAGRI.IRRIGATION_DIR WHERE IRRIGATION_CD IN (:i)`,
-        [i]
+        [j]
       );
-
       irrigation_types.push(res.rows[0]);
     }
+
     if (irrigation_types) {
       console.log(irrigation_types);
     } else {
       console.log("Irrigation not found");
     }
+
+    const response_obj = {
+      farmer_name: personal_info[0]?.FARMER_NAME ?? null,
+      farmer_address: personal_info[0]?.F_ADDRESS ?? null,
+      phone_no: personal_info[0]?.PHONE_NO ?? null,
+      tran_nos: labTranNos ?? null,
+      survey_nos: survey_no ?? null,
+      drainage: dropdowns.DRAINAGE ?? null,
+      type_of_cultivation: dropdowns.TYPE_OF_CULTIVATION ?? null,
+      previous_crop: dropdowns.PREVIOUS_CROP ?? null,
+      crop_to_be_grown: dropdowns.CROPS_TO_BE_GROWN ?? null,
+      soil_types: soil_types ?? null,
+      irrigation_types: irrigation_types ?? null,
+    };
+
+    res.json(response_obj);
   } catch (error) {
     console.error("Error searching for farmer:", error);
     res.status(500).json({ message: "Internal server error" });
