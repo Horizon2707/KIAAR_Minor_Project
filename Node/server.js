@@ -191,7 +191,7 @@ app.post("/clusterInfo", async (req, res) => {
       `SELECT DISTINCT CLUSTER_CD,CLUSTER_NAME FROM GSMAGRI.FARMER_PLOTS WHERE FARMER_ID = :farmerId`,
       [farmerId]
     );
-    console.log(cluster_cd.rows);
+    res.json(cluster_cd.rows);
     //Cluster Codes to Names
 
     const cluster_codes = cluster_cd.rows.map((item) => item.CLUSTER_CD);
@@ -212,12 +212,13 @@ app.post("/clusterInfo", async (req, res) => {
 app.post("/villageInfo", async (req, res) => {
   try {
     const { clusterCd, farmerId } = req.body;
+
     const connection = await dbConnection;
     const village_names = await connection.execute(
       `SELECT DISTINCT VILLAGE_CD,VILLAGE_NAME FROM FARMER_PLOTS WHERE FARMER_ID=:farmerId AND CLUSTER_CD=:clusterCd`,
       [farmerId, clusterCd]
     );
-    console.log(village_names.rows);
+    res.json(village_names.rows);
   } catch (error) {
     console.error("Village not found");
   }
@@ -225,12 +226,14 @@ app.post("/villageInfo", async (req, res) => {
 app.post("/plotNo", async (req, res) => {
   try {
     const { villageCd, farmerId } = req.body;
+    console.log(villageCd, farmerId);
     const connection = await dbConnection;
     const plot_nos = await connection.execute(
       `SELECT DISTINCT PLOT_NO,PLOT_AREA FROM FARMER_PLOTS WHERE FARMER_ID=:farmerId AND VILLAGE_CD=:villageCd`,
       [farmerId, villageCd]
     );
     console.log(plot_nos.rows);
+    res.json(plot_nos.rows);
   } catch (error) {
     console.error("Plots  not found");
   }

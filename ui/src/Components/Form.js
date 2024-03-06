@@ -6,9 +6,13 @@ import { useState, useEffect } from "react";
 export function Form() {
   var [newErrors, setErrors] = useState({});
   var [wild, setWild] = useState([]);
+  var [surveyNo, setSurveyNo] = useState([]);
   var [drainage, setdrainage] = useState([]);
   var [cultivationType, setCultivationType] = useState([]);
   var [cropToBeGrown, setCropToBeGrown] = useState([]);
+  var [irrigationSources, setIrrigationSources] = useState([]);
+  var [soilTypes, setSoilTypes] = useState([]);
+  var [previousCrop, setPreviousCrop] = useState([]);
   var [cluster, setCluster] = useState([]);
   var [village, setVillage] = useState([]);
   var [plotNo, setplotNo] = useState([]);
@@ -16,6 +20,7 @@ export function Form() {
     farmerId: "",
     //labNo: "",
     test: "",
+    surveyNo: [],
     cluster: [],
     village: [],
     plotNo: [],
@@ -26,10 +31,11 @@ export function Form() {
     cultivationType: [],
     previousCrop: "",
     cropToBeGrown: [],
-    dtOfSampling: "",
-    dtOfSamplingReceipt: "",
+    dtOfSampling: new Date().toISOString().split("T")[0],
+    dtOfSamplingReceipt: new Date().toISOString().split("T")[0],
     templateNo: [],
     HEWFno: "",
+    area: "",
   });
   var [farmInfo, setfarmInfo] = useState({
     name: "",
@@ -38,7 +44,7 @@ export function Form() {
     village: "",
     labNo: "",
   });
-  var [cropToBeGrown, setCropToBeGrown] = useState([]);
+
   useEffect(() => {
     const maxLength = 6;
     if (values.farmerId.length === maxLength) {
@@ -64,6 +70,10 @@ export function Form() {
           });
           setCultivationType({ cultivationType: data.type_of_cultivation });
           setCropToBeGrown({ cropToBeGrown: data.crop_to_be_grown });
+          setIrrigationSources(data.irrigation_types);
+          setSoilTypes(data.soil_types);
+          setPreviousCrop(data.previous_crop);
+          setSurveyNo(data.survey_nos);
         });
       fetch("http://localhost:5000/clusterInfo", {
         method: "POST",
@@ -117,7 +127,7 @@ export function Form() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        cluster: values.cluster,
+        clusterCd: values.cluster,
         farmerId: values.farmerId,
       }),
     })
@@ -128,6 +138,7 @@ export function Form() {
       });
   }, [values.cluster]);
   useEffect(() => {
+    console.log(values.village);
     fetch("http://localhost:5000/plotNo", {
       method: "POST",
       headers: {
@@ -135,7 +146,7 @@ export function Form() {
       },
       body: JSON.stringify({
         farmerId: values.farmerId,
-        village: values.village,
+        villageCd: values.village,
       }),
     })
       .then((res) => res.json())
@@ -144,6 +155,7 @@ export function Form() {
         setplotNo(data);
       });
   }, [values.village]);
+
   var navigate = useNavigate();
   const o = {
     marginTop: "2vh",
@@ -311,7 +323,31 @@ export function Form() {
             <h5>Mbl. :</h5>
             <h5>{farmInfo.MBLNO}</h5>
           </div>
-          <div className="item litspace">Sy No. xxxx</div>
+
+          <div className="item morspace">
+            <label className="mLabel" htmlFor="cluster">
+              SY No.
+            </label>
+            <Select
+              size="sm"
+              id="cluster"
+              placeholder="Select one..."
+              variant="filled"
+              onChange={(e) => {
+                setValues({ ...values, surveyNo: e.target.value });
+              }}
+              value={values.surveyNo}
+            >
+              {surveyNo.map((surveyNo, index) => (
+                <option key={index} value={surveyNo}>
+                  {surveyNo}
+                </option>
+              ))}
+            </Select>
+            {newErrors.cluster && (
+              <div className="error">{newErrors.cluster}</div>
+            )}
+          </div>
         </div>
         <div className="common">
           <div className="item">
@@ -382,13 +418,25 @@ export function Form() {
               placeholder="Select one..."
               variant="filled"
               onChange={(e) => {
-                setValues({ ...values, plotNo: e.target.value });
+                const selectedPlotNo = e.target.value;
+                const selectedPlot = plotNo.find(
+                  (plot) => parseInt(plot.PLOT_NO) === selectedPlotNo
+                );
+                setValues({
+                  ...values,
+                  plotNo: parseInt(e.target.value),
+                  area: selectedPlot ? selectedPlot.PLOT_AREA : "",
+                });
               }}
               value={values.plotNo}
             >
-              {plotNo.map((element) => {
-                return <option value={element}>{element}</option>;
-              })}
+              {plotNo
+                .sort((a, b) => parseInt(a.PLOT_NO) - parseInt(b.PLOT_NO))
+                .map((plot, index) => (
+                  <option key={index} value={parseInt(plot.PLOT_NO)}>
+                    {parseInt(plot.PLOT_NO)}
+                  </option>
+                ))}
             </Select>
             {newErrors.plotNo && (
               <div className="error">{newErrors.plotNo}</div>
@@ -452,8 +500,11 @@ export function Form() {
               }}
               value={values.soilType}
             >
-              <option value="x">x</option>
-              <option value="y">y</option>
+              {soilTypes.map((soilType, index) => (
+                <option key={index} value={soilType.SOIL_TYPE_NAME}>
+                  {soilType.SOIL_TYPE_NAME}
+                </option>
+              ))}
             </Select>
             {newErrors.soilType && (
               <div className="error">{newErrors.soilType}</div>
@@ -494,8 +545,11 @@ export function Form() {
               }}
               value={values.irrigationSource}
             >
-              <option value="x">x</option>
-              <option value="y">y</option>
+              {irrigationSources.map((irrigationType, index) => (
+                <option key={index} value={irrigationType.IRRIGATION_NAME}>
+                  {irrigationType.IRRIGATION_NAME}
+                </option>
+              ))}
             </Select>
             {newErrors.irrigationSource && (
               <div className="error">{newErrors.irrigationSource}</div>
@@ -540,8 +594,13 @@ export function Form() {
               }}
               value={values.previousCrop}
             >
-              <option value="x">x</option>
-              <option value="y">y</option>
+              {previousCrop.map((crop, index) =>
+                crop ? (
+                  <option key={index} value={crop}>
+                    {crop}
+                  </option>
+                ) : null
+              )}
             </Select>
             {newErrors.previousCrop && (
               <div className="error">{newErrors.previousCrop}</div>

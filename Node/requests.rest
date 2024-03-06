@@ -24,7 +24,7 @@ POST http://localhost:5000/clusterInfo
 Content-Type: application/json
 
 {
-    "farmerId" : 108236
+    "farmerId" : 153227
 }
 
 ### Village CODE
@@ -32,8 +32,8 @@ POST http://localhost:5000/villageInfo
 Content-Type: application/json
 
 {
-    "farmerId" : 108236,
-    "clusterCd" : 2
+    "farmerId" : 153227,
+    "clusterCd" : 3
 }
 
 ### PLOT Info
@@ -41,6 +41,6 @@ POST http://localhost:5000/plotNo
 Content-Type: application/json
 
 {
-    "farmerId" : 103070,
-    "villageCd" : 13
+    "farmerId" : 153227,
+    "villageCd" : 27
 }
