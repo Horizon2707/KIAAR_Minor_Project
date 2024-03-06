@@ -3,7 +3,7 @@ POST http://localhost:5000/farmerId
 Content-Type: application/json
 
 {
-    "farmerId" : 100003
+    "farmerId" : 153227
 }
 
 ### Post request
@@ -41,6 +41,6 @@ POST http://localhost:5000/plotNo
 Content-Type: application/json
 
 {
-    "farmerId" : 108236,
-    "villageCd" : 901
+    "farmerId" : 103070,
+    "villageCd" : 13
 }

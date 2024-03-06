@@ -89,13 +89,15 @@ app.post("/farmerId", async (req, res) => {
     const soilTypes = dropdowns.SOIL_TYPE_CD;
     const soil_types = [];
 
-    for (let i = 0; i < soilTypes.length; i++) {
-      j = soilTypes[i];
-      const res = await connection.execute(
-        `SELECT DISTINCT SOIL_TYPE_NAME FROM GSMAGRI.SOIL_TYPE_DIR WHERE SOIL_TYPE_CD =:j`,
-        [j]
-      );
-      soil_types.push(res.rows[0]);
+    if (soilTypes) {
+      for (let i = 0; i < soilTypes.length; i++) {
+        j = soilTypes[i];
+        const res = await connection.execute(
+          `SELECT DISTINCT SOIL_TYPE_NAME FROM GSMAGRI.SOIL_TYPE_DIR WHERE SOIL_TYPE_CD =:j`,
+          [j]
+        );
+        soil_types.push(res.rows[0]);
+      }
     }
     if (soil_types) {
       console.log(soil_types);
@@ -106,21 +108,22 @@ app.post("/farmerId", async (req, res) => {
     const irrigationTypes = dropdowns.IRRIGATION_CD;
     const irrigation_types = [];
 
-    for (let i = 0; i < irrigationTypes.length; i++) {
-      j = irrigationTypes[i];
-      const res = await connection.execute(
-        `SELECT DISTINCT IRRIGATION_NAME FROM GSMAGRI.IRRIGATION_DIR WHERE IRRIGATION_CD IN (:i)`,
-        [j]
-      );
-      irrigation_types.push(res.rows[0]);
+    if (irrigationTypes) {
+      for (let i = 0; i < irrigationTypes.length; i++) {
+        j = irrigationTypes[i];
+        const res = await connection.execute(
+          `SELECT DISTINCT IRRIGATION_NAME FROM GSMAGRI.IRRIGATION_DIR WHERE IRRIGATION_CD IN (:i)`,
+          [j]
+        );
+        irrigation_types.push(res.rows[0]);
+      }
     }
-
     if (irrigation_types) {
       console.log(irrigation_types);
     } else {
       console.log("Irrigation not found");
     }
-
+    //Response Object
     const response_obj = {
       farmer_name: personal_info[0]?.FARMER_NAME ?? null,
       farmer_address: personal_info[0]?.F_ADDRESS ?? null,

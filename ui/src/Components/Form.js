@@ -9,9 +9,9 @@ export function Form() {
   var [drainage, setdrainage] = useState([]);
   var [cultivationType, setCultivationType] = useState([]);
   var [cropToBeGrown, setCropToBeGrown] = useState([]);
-  var [cluster,setCluster] = useState([]);
-  var [village,setVillage] = useState([]);
-  var [plotNo,setplotNo] = useState([]);
+  var [cluster, setCluster] = useState([]);
+  var [village, setVillage] = useState([]);
+  var [plotNo, setplotNo] = useState([]);
   var [values, setValues] = useState({
     farmerId: "",
     //labNo: "",
@@ -54,29 +54,29 @@ export function Form() {
         .then((data) => {
           console.log(data);
           setfarmInfo({
-            name: data.FARMER_NAME,
-            MBLNO: data.MBLNO,
-            PAddress: data.P_ADDRESS,
-            labNo: data.LAB_TRAN_NO,
+            name: data.farmer_name,
+            MBLNO: data.phone_no,
+            PAddress: data.farmer_address,
+            labNo: data.tran_nos,
           });
           setdrainage({
-            drainage: data.DRAINAGE,
+            drainage: data.drainage,
           });
-          setCultivationType({ cultivationType: data.TYPE_OF_CULTIVATION });
-          setCropToBeGrown({ cropToBeGrown: data.CROPS_TO_BE_GROWN });
+          setCultivationType({ cultivationType: data.type_of_cultivation });
+          setCropToBeGrown({ cropToBeGrown: data.crop_to_be_grown });
         });
-        fetch("http://localhost:5000/clusterInfo",{
-          method:"POST",
-          headers:{
-            "Content-Type":"application/json",
-          },
-          body:JSON.stringify({farmerId: values.farmerId })
-        })
+      fetch("http://localhost:5000/clusterInfo", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ farmerId: values.farmerId }),
+      })
         .then((res) => res.json())
-        .then((data)=>{
+        .then((data) => {
           console.log(data);
-          setCluster(data)
-        })
+          setCluster(data);
+        });
     }
   }, [values.farmerId]);
   useEffect(() => {
@@ -110,14 +110,15 @@ export function Form() {
         setValues({ ...values, templateNo: data });
       });
   }, [values.test]);
-useEffect(()=>{
-  fetch("http://localhost:5000/villageInfo", {
+  useEffect(() => {
+    fetch("http://localhost:5000/villageInfo", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ cluster:values.cluster,
-        farmerId: values.farmerId
+      body: JSON.stringify({
+        cluster: values.cluster,
+        farmerId: values.farmerId,
       }),
     })
       .then((res) => res.json())
@@ -125,16 +126,16 @@ useEffect(()=>{
         console.log(data);
         setVillage(data);
       });
-},[values.cluster])
-useEffect(()=>{
-  fetch("http://localhost:5000/plotNo", {
+  }, [values.cluster]);
+  useEffect(() => {
+    fetch("http://localhost:5000/plotNo", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ 
+      body: JSON.stringify({
         farmerId: values.farmerId,
-        village:values.village
+        village: values.village,
       }),
     })
       .then((res) => res.json())
@@ -142,7 +143,7 @@ useEffect(()=>{
         console.log(data);
         setplotNo(data);
       });
-},[values.village])
+  }, [values.village]);
   var navigate = useNavigate();
   const o = {
     marginTop: "2vh",
@@ -333,8 +334,12 @@ useEffect(()=>{
               }}
               value={values.cluster}
             >
-              {cluster.map((element)=>{
-                return <option value={element.CLUSTER_CD}>{element.CLUSTER_NAME}</option>
+              {cluster.map((element) => {
+                return (
+                  <option value={element.CLUSTER_CD}>
+                    {element.CLUSTER_NAME}
+                  </option>
+                );
               })}
             </Select>
             {newErrors.cluster && (
@@ -343,7 +348,7 @@ useEffect(()=>{
           </div>
           <div className="item morspace">
             <label className="mLabel" htmlFor="cluster">
-              Cluster
+              Village
             </label>
             <Select
               size="sm"
@@ -355,8 +360,12 @@ useEffect(()=>{
               }}
               value={values.village}
             >
-              {village.map((element)=>{
-                return <option value={element.VILLAGE_CD}>{element.VILLAGE_NAME}</option>
+              {village.map((element) => {
+                return (
+                  <option value={element.VILLAGE_CD}>
+                    {element.VILLAGE_NAME}
+                  </option>
+                );
               })}
             </Select>
             {newErrors.village && (
@@ -377,8 +386,8 @@ useEffect(()=>{
               }}
               value={values.plotNo}
             >
-            {plotNo.map((element)=>{
-                return <option value={element}>{element}</option>
+              {plotNo.map((element) => {
+                return <option value={element}>{element}</option>;
               })}
             </Select>
             {newErrors.plotNo && (
