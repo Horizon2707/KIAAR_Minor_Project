@@ -16,6 +16,7 @@ export function Form() {
   var [cluster, setCluster] = useState([]);
   var [village, setVillage] = useState([]);
   var [plotNo, setplotNo] = useState([]);
+  var [plotArea, setPlotArea] = useState([]);
   var [values, setValues] = useState({
     farmerId: "",
     //labNo: "",
@@ -418,14 +419,9 @@ export function Form() {
               placeholder="Select one..."
               variant="filled"
               onChange={(e) => {
-                const selectedPlotNo = e.target.value;
-                const selectedPlot = plotNo.find(
-                  (plot) => parseInt(plot.PLOT_NO) === selectedPlotNo
-                );
                 setValues({
                   ...values,
                   plotNo: parseInt(e.target.value),
-                  area: selectedPlot ? selectedPlot.PLOT_AREA : "",
                 });
               }}
               value={values.plotNo}
@@ -477,10 +473,13 @@ export function Form() {
               }}
               value={values.drainage}
             >
-              {drainage.drainage &&
+              {/* {drainage.drainage &&
                 drainage.drainage.map((item) => {
                   return <option value={item}>{item}</option>;
-                })}
+                })} */}
+              <option value="Good">Good</option>
+              <option value="Bad">Bad</option>
+              <option value="None">None</option>
             </Select>
             {newErrors.drainage && (
               <div className="error">{newErrors.drainage}</div>
@@ -569,10 +568,9 @@ export function Form() {
               }}
               value={values.cultivationType}
             >
-              {cultivationType.cultivationType &&
-                cultivationType.cultivationType.map((item) => {
-                  return <option value={item}>{item}</option>;
-                })}
+              <option value="Irrigated">Irrigated</option>
+              <option value="Rained">Rained</option>
+              <option value="None">None</option>
             </Select>
             {newErrors.cultivationType && (
               <div className="error">{newErrors.cultivationType}</div>

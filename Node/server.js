@@ -1,4 +1,5 @@
 const express = require("express");
+
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
@@ -87,18 +88,21 @@ app.post("/farmerId", async (req, res) => {
     //Soil Type CD to Name
 
     const soilTypes = dropdowns.SOIL_TYPE_CD;
-    const soil_types = [];
 
-    if (soilTypes) {
-      for (let i = 0; i < soilTypes.length; i++) {
-        j = soilTypes[i];
-        const res = await connection.execute(
-          `SELECT DISTINCT SOIL_TYPE_NAME FROM GSMAGRI.SOIL_TYPE_DIR WHERE SOIL_TYPE_CD =:j`,
-          [j]
-        );
-        soil_types.push(res.rows[0]);
-      }
-    }
+    // if (soilTypes) {
+    //   for (let i = 0; i < soilTypes.length; i++) {
+    //     j = soilTypes[i];
+    //     const res = await connection.execute(
+    //       `SELECT DISTINCT SOIL_TYPE_NAME FROM GSMAGRI.SOIL_TYPE_DIR WHERE SOIL_TYPE_CD =:j`,
+    //       [j]
+    //     );
+    //     soil_types.push(res.rows[0]);
+    //   }
+    // }
+    const soil_all = await connection.execute(
+      `SELECT DISTINCT SOIL_TYPE_NAME FROM GSMAGRI.SOIL_TYPE_DIR`
+    );
+    const soil_types = soil_all.rows;
     if (soil_types) {
       console.log(soil_types);
     } else {
@@ -106,18 +110,21 @@ app.post("/farmerId", async (req, res) => {
     }
     //Irrigation Type CD to Name
     const irrigationTypes = dropdowns.IRRIGATION_CD;
-    const irrigation_types = [];
 
-    if (irrigationTypes) {
-      for (let i = 0; i < irrigationTypes.length; i++) {
-        j = irrigationTypes[i];
-        const res = await connection.execute(
-          `SELECT DISTINCT IRRIGATION_NAME FROM GSMAGRI.IRRIGATION_DIR WHERE IRRIGATION_CD IN (:i)`,
-          [j]
-        );
-        irrigation_types.push(res.rows[0]);
-      }
-    }
+    // if (irrigationTypes) {
+    //   for (let i = 0; i < irrigationTypes.length; i++) {
+    //     j = irrigationTypes[i];
+    //     const res = await connection.execute(
+    //       `SELECT DISTINCT IRRIGATION_NAME FROM GSMAGRI.IRRIGATION_DIR WHERE IRRIGATION_CD IN (:i)`,
+    //       [j]
+    //     );
+    //     irrigation_types.push(res.rows[0]);
+    //   }
+    // }
+    const irrigation_all = await connection.execute(
+      `SELECT DISTINCT IRRIGATION_NAME FROM GSMAGRI.IRRIGATION_DIR `
+    );
+    const irrigation_types = irrigation_all.rows;
     if (irrigation_types) {
       console.log(irrigation_types);
     } else {
@@ -229,13 +236,26 @@ app.post("/plotNo", async (req, res) => {
     console.log(villageCd, farmerId);
     const connection = await dbConnection;
     const plot_nos = await connection.execute(
-      `SELECT DISTINCT PLOT_NO,PLOT_AREA FROM FARMER_PLOTS WHERE FARMER_ID=:farmerId AND VILLAGE_CD=:villageCd`,
+      `SELECT DISTINCT PLOT_NO FROM FARMER_PLOTS WHERE FARMER_ID=:farmerId AND VILLAGE_CD=:villageCd`,
       [farmerId, villageCd]
     );
     console.log(plot_nos.rows);
     res.json(plot_nos.rows);
   } catch (error) {
     console.error("Plots  not found");
+  }
+});
+app.post("/plotArea", async (req, res) => {
+  try {
+    const { farmerId, villageCd, plotNo } = req.body;
+    const connection = await dbConnection;
+    const plot_area = await connection.execute(
+      `SELECT DISTINCT PLOT_AREA FROM FARMER_PLOTS WHERE FARMER_ID=:farmerId AND VILLAGE_CD=:villageCd AND PLOT_NO = :plotNo`,
+      [farmerId, villageCd, plotNo]
+    );
+    console.log(plot_area.rows);
+  } catch (error) {
+    console.error("Plot area not found");
   }
 });
 app.post("/api", (req, res) => {
