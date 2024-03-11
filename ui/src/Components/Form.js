@@ -156,6 +156,28 @@ export function Form() {
         setplotNo(data);
       });
   }, [values.village]);
+  useEffect(() => {
+    try {
+      fetch("http://localhost:5000/plotArea", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          farmerId: values.farmerId,
+          plotNo: values.plotNo,
+          villageCd: values.village,
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          setPlotArea(data);
+        });
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }, [values.plotNo]);
 
   var navigate = useNavigate();
   const o = {
@@ -442,17 +464,8 @@ export function Form() {
             <label className="mLabel" htmlFor="area">
               Area
             </label>
-            <Select
-              id="area"
-              defaultValue="area1"
-              disabled={isDisabled}
-              variant="filled"
-              size="sm"
-              value={values.area}
-            >
-              <option value="area1">area1</option>
-              <option value="area2">area2</option>
-            </Select>
+            <Input size="sm" htmlSize={3} variant='filled' id="area" value={plotArea} defaultValue={plotArea.PLOT_AREA} disabled={isDisabled}></Input>
+            
             <button onClick={handleEnableElement}>
               <EditIcon />
             </button>
