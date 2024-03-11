@@ -299,7 +299,7 @@ export function Form() {
           </div>
           <div className="item litspace">
             <label className="mLabel" htmlFor="labNo">
-              Lab No:{farmInfo.labNo}
+              Lab No:X
             </label>
             {newErrors.labNo && <div className="error">{newErrors.labNo}</div>}
           </div>
@@ -348,12 +348,12 @@ export function Form() {
           </div>
 
           <div className="item morspace">
-            <label className="mLabel" htmlFor="cluster">
+            <label className="mLabel" htmlFor="surveyNo">
               SY No.
             </label>
             <Select
               size="sm"
-              id="cluster"
+              id="surveyNo"
               placeholder="Select one..."
               variant="filled"
               onChange={(e) => {

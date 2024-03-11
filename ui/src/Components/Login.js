@@ -8,7 +8,7 @@ import {
   FormErrorMessage,
   Box,
 } from "@chakra-ui/react";
-
+import "../Styles/Login.css"
 function Login() {
   const { handleSubmit, register, formState } = useForm(); // Destructure formState
   const { errors } = formState; // Destructure errors from formState
@@ -51,7 +51,6 @@ function Login() {
   return (
     <>
       <div className="login">
-        <h3>Log in</h3>
         <Box my={8} textAlign="left">
           <form onSubmit={handleSubmit(onSubmit)}>
             <FormControl isInvalid={errors.username}>
@@ -59,6 +58,7 @@ function Login() {
               <Input
                 id="username"
                 name="username"
+                size="sm"
                 {...register("username", {
                   validate: validateLogin,
                 })}
@@ -74,6 +74,7 @@ function Login() {
                 id="password"
                 name="password"
                 type="password"
+                size={"sm"}
                 {...register("password", {
                   required: "Password is required",
                 })}
@@ -88,6 +89,7 @@ function Login() {
               colorScheme="teal"
               isLoading={formState.isSubmitting}
               type="submit"
+              size="sm"
             >
               Login
             </Button>
