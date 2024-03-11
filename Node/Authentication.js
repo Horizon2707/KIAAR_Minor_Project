@@ -28,7 +28,7 @@ app.get("/session", isAuthenticated, (req, res) => {
 
 
 app.post("/login", async (req, res) => {
-  const { email, password } = req.body;
+  const { username, password } = req.body;
   try {
     // db connection
     
