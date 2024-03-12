@@ -253,7 +253,10 @@ app.post("/plotArea", async (req, res) => {
       `SELECT DISTINCT PLOT_AREA FROM FARMER_PLOTS WHERE FARMER_ID=:farmerId AND VILLAGE_CD=:villageCd AND PLOT_NO = :plotNo`,
       [farmerId, villageCd, plotNo]
     );
-    console.log(plot_area.rows);
+    const number = {
+      number: 80,
+    };
+    res.json(number);
   } catch (error) {
     console.error("Plot area not found");
   }

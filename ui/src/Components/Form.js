@@ -16,7 +16,7 @@ export function Form() {
   var [cluster, setCluster] = useState([]);
   var [village, setVillage] = useState([]);
   var [plotNo, setplotNo] = useState([]);
-  var [plotArea, setPlotArea] = useState([]);
+  var [plotArea, setPlotArea] = useState();
   var [values, setValues] = useState({
     farmerId: "",
     //labNo: "",
@@ -36,7 +36,7 @@ export function Form() {
     dtOfSamplingReceipt: new Date().toISOString().split("T")[0],
     templateNo: [],
     HEWFno: "",
-    area: "",
+    area: null,
   });
   var [farmInfo, setfarmInfo] = useState({
     name: "",
@@ -156,28 +156,24 @@ export function Form() {
         setplotNo(data);
       });
   }, [values.village]);
-  useEffect(() => {
-    try {
-      fetch("http://localhost:5000/plotArea", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          farmerId: values.farmerId,
-          plotNo: values.plotNo,
-          villageCd: values.village,
-        }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log(data);
-          setPlotArea(data);
-        });
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  }, [values.plotNo]);
+  // useEffect(() => {
+  //   fetch("http://localhost:5000/plotArea", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({
+  //       farmerId: values.farmerId,
+  //       plotNo: values.plotNo,
+  //       villageCd: values.village,
+  //     }),
+  //   })
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       console.log(data);
+  //       setPlotArea(data);
+  //     });
+  // }, [values.plotNo]);
 
   var navigate = useNavigate();
   const o = {
@@ -464,8 +460,15 @@ export function Form() {
             <label className="mLabel" htmlFor="area">
               Area
             </label>
-            <Input size="sm" htmlSize={3} variant='filled' id="area" value={plotArea} defaultValue={plotArea.PLOT_AREA} disabled={isDisabled}></Input>
-            
+            <Input
+              size="sm"
+              htmlSize={3}
+              variant="filled"
+              id="area"
+              value={plotArea}
+              disabled={isDisabled}
+            ></Input>
+
             <button onClick={handleEnableElement}>
               <EditIcon />
             </button>

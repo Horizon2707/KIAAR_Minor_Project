@@ -8,7 +8,7 @@ import {
   FormErrorMessage,
   Box,
 } from "@chakra-ui/react";
-import "../Styles/Login.css"
+import "../Styles/Login.css";
 function Login() {
   const { handleSubmit, register, formState } = useForm(); // Destructure formState
   const { errors } = formState; // Destructure errors from formState
@@ -27,12 +27,12 @@ function Login() {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch('http://localhost:5000/login', {
-        method: 'POST',
+      const response = await fetch("http://localhost:5000/login", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username, password }),
+        // body: JSON.stringify({ username, password }),
       });
 
       if (!response.ok) {
@@ -41,10 +41,9 @@ function Login() {
       }
 
       const result = await response.json();
-      console.log('Login successful:', result);
-      
+      console.log("Login successful:", result);
     } catch (error) {
-      console.error('Error during login:', error.message);
+      console.error("Error during login:", error.message);
     }
   };
 
