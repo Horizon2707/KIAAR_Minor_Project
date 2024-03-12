@@ -45,7 +45,7 @@ export function Form() {
     village: "",
     labNo: "",
   });
-
+  var [watVar,setwarVar] = useState(true)
   useEffect(() => {
     const maxLength = 6;
     if (values.farmerId.length === maxLength) {
@@ -120,6 +120,9 @@ export function Form() {
         console.log(data);
         setValues({ ...values, templateNo: data });
       });
+      if (values.test === 1) {
+        setwarVar(false)
+      }
   }, [values.test]);
   useEffect(() => {
     fetch("http://localhost:5000/villageInfo", {
@@ -342,31 +345,6 @@ export function Form() {
             <h5>Mbl. :</h5>
             <h5>{farmInfo.MBLNO}</h5>
           </div>
-
-          <div className="item morspace">
-            <label className="mLabel" htmlFor="surveyNo">
-              SY No.
-            </label>
-            <Select
-              size="sm"
-              id="surveyNo"
-              placeholder="Select one..."
-              variant="filled"
-              onChange={(e) => {
-                setValues({ ...values, surveyNo: e.target.value });
-              }}
-              value={values.surveyNo}
-            >
-              {surveyNo.map((surveyNo, index) => (
-                <option key={index} value={surveyNo}>
-                  {surveyNo}
-                </option>
-              ))}
-            </Select>
-            {newErrors.cluster && (
-              <div className="error">{newErrors.cluster}</div>
-            )}
-          </div>
         </div>
         <div className="common">
           <div className="item">
@@ -425,6 +403,30 @@ export function Form() {
             </Select>
             {newErrors.village && (
               <div className="error">{newErrors.village}</div>
+            )}
+          </div>
+          <div className="item morspace">
+            <label className="mLabel" htmlFor="surveyNo">
+              SY No.
+            </label>
+            <Select
+              size="sm"
+              id="surveyNo"
+              placeholder="Select one..."
+              variant="filled"
+              onChange={(e) => {
+                setValues({ ...values, surveyNo: e.target.value });
+              }}
+              value={values.surveyNo}
+            >
+              {surveyNo.map((surveyNo, index) => (
+                <option key={index} value={surveyNo}>
+                  {surveyNo}
+                </option>
+              ))}
+            </Select>
+            {newErrors.cluster && (
+              <div className="error">{newErrors.cluster}</div>
             )}
           </div>
           <div className="item morspace">
@@ -525,7 +527,7 @@ export function Form() {
               <div className="error">{newErrors.soilType}</div>
             )}
           </div>
-          <div className="item litspace">
+          {watVar && <div className="item litspace">
             <label className="mLabel" htmlFor="waterType">
               Water Type
             </label>
@@ -545,7 +547,7 @@ export function Form() {
             {newErrors.waterType && (
               <div className="error">{newErrors.waterType}</div>
             )}
-          </div>
+          </div>}
           <div className="item litspace">
             <label className="mLabel" htmlFor="irrigationSource">
               Irrigation Source
