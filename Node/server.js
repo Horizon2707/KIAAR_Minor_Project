@@ -130,6 +130,14 @@ app.post("/farmerId", async (req, res) => {
     } else {
       console.log("Irrigation not found");
     }
+    //Previous Crop
+    const crop_all = await connection.execute(
+      `SELECT CROP_NAME FROM GSMAGRI.SW_CROP_DIR`
+    );
+    const crop_list = crop_all.rows;
+    if (crop_list) {
+      console.log(crop_list);
+    }
     //Response Object
     const response_obj = {
       farmer_name: personal_info[0]?.FARMER_NAME ?? null,
@@ -139,8 +147,8 @@ app.post("/farmerId", async (req, res) => {
       survey_nos: survey_no ?? null,
       drainage: dropdowns.DRAINAGE ?? null,
       type_of_cultivation: dropdowns.TYPE_OF_CULTIVATION ?? null,
-      previous_crop: dropdowns.PREVIOUS_CROP ?? null,
-      crop_to_be_grown: dropdowns.CROPS_TO_BE_GROWN ?? null,
+      previous_crop: crop_list ?? null,
+      crop_to_be_grown: crop_list ?? null,
       soil_types: soil_types ?? null,
       irrigation_types: irrigation_types ?? null,
     };

@@ -70,7 +70,7 @@ export function Form() {
             drainage: data.drainage,
           });
           setCultivationType({ cultivationType: data.type_of_cultivation });
-          setCropToBeGrown({ cropToBeGrown: data.crop_to_be_grown });
+          setCropToBeGrown(data.crop_to_be_grown);
           setIrrigationSources(data.irrigation_types);
           setSoilTypes(data.soil_types);
           setPreviousCrop(data.previous_crop);
@@ -610,13 +610,11 @@ export function Form() {
               }}
               value={values.previousCrop}
             >
-              {previousCrop.map((crop, index) =>
-                crop ? (
-                  <option key={index} value={crop}>
-                    {crop}
-                  </option>
-                ) : null
-              )}
+              {previousCrop.map((element) => {
+                return (
+                  <option value={element.CROP_NAME}>{element.CROP_NAME}</option>
+                );
+              })}
             </Select>
             {newErrors.previousCrop && (
               <div className="error">{newErrors.previousCrop}</div>
@@ -636,10 +634,11 @@ export function Form() {
               }}
               value={values.cropToBeGrown}
             >
-              {cropToBeGrown.cropToBeGrown &&
-                cropToBeGrown.cropToBeGrown.map((item) => {
-                  return <option value={item}>{item}</option>;
-                })}
+              {cropToBeGrown.map((element) => {
+                return (
+                  <option value={element.CROP_NAME}>{element.CROP_NAME}</option>
+                );
+              })}
             </Select>
             {newErrors.cropToBeGrown && (
               <div className="error">{newErrors.cropToBeGrown}</div>
