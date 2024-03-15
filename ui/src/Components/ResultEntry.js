@@ -24,11 +24,26 @@ import {
 } from "@chakra-ui/react";
 import Recom from "./Recom";
 function ResultEntry() {
+
   var navigate = useNavigate();
   useEffect(() => {
     let result = sessionStorage.getItem("result");
     if (result) {
       ressetValues(JSON.parse(result));
+    }
+    let values = sessionStorage.getItem("values");
+    if(values){
+      fetch("http://localhost:5000/api/parameters", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setForParams(data);
+      })
     }
   });
   var sugArr = [
@@ -48,6 +63,7 @@ function ResultEntry() {
       selected: 0,
     },
   ];
+  var [forParams, setForParams] = useState([]);
   var [Remarks, setRemarks] = useState({
     suggestion: sugArr,
     final: "",

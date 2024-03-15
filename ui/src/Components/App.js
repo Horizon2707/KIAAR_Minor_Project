@@ -6,6 +6,7 @@ import NotDefined from "./NotDefined";
 import Crops from "./Crops";
 import Recom from "./Recom";
 import Login from "./Login";
+import Sign from "./Sign";
 function App() {
   return (
     <div className="App">
@@ -13,6 +14,7 @@ function App() {
         <Routes>
           <Route path="/form" element={<Form />} />
           <Route path="/" element={<Login />} />
+          <Route path="/signUp" element={<Sign />} />
           <Route path="/resultentry" element={<ResultEntry/>} />
           <Route path="/crops" element={<Crops />} />
           <Route path="/recommendations" element={<Recom/>}></Route>

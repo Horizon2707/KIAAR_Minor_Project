@@ -385,7 +385,7 @@ export function Form() {
             </label>
             <Select
               size="sm"
-              id="cluster"
+              id="village"
               placeholder="Select one..."
               variant="filled"
               onChange={(e) => {
@@ -425,8 +425,8 @@ export function Form() {
                 </option>
               ))}
             </Select>
-            {newErrors.cluster && (
-              <div className="error">{newErrors.cluster}</div>
+            {newErrors.surveyNo && (
+              <div className="error">{newErrors.surveyNo}</div>
             )}
           </div>
           <div className="item morspace">
@@ -470,7 +470,6 @@ export function Form() {
               value={plotArea}
               disabled={isDisabled}
             ></Input>
-
             <button onClick={handleEnableElement}>
               <EditIcon />
             </button>
