@@ -25,7 +25,6 @@ import {
 import Recom from "./Recom";
 
 function ResultEntry() {
-
   var navigate = useNavigate();
   var [forParams, setForParams] = useState([]);
   useEffect(() => {
@@ -39,7 +38,6 @@ function ResultEntry() {
     console.log(values);
     if (values) {
       fetch("http://localhost:5000/parameters", {
- 
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -48,20 +46,13 @@ function ResultEntry() {
         body: JSON.stringify({
           test: values.test,
         }),
-
       })
         .then((response) => response.json())
         .then((data) => {
           setForParams(data);
-
-      })
-    }
-  });
-
-          console.log(data);
         });
     }
-  }, []);
+  });
   var sugArr = [
     {
       id: 1,
