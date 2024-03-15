@@ -25,6 +25,7 @@ import {
 import Recom from "./Recom";
 
 function ResultEntry() {
+
   var navigate = useNavigate();
   var [forParams, setForParams] = useState([]);
   useEffect(() => {
@@ -33,21 +34,30 @@ function ResultEntry() {
       ressetValues(JSON.parse(result));
     }
     let values = sessionStorage.getItem("values");
+
     values = JSON.parse(values);
     console.log(values);
     if (values) {
       fetch("http://localhost:5000/parameters", {
+ 
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+
         body: JSON.stringify({
           test: values.test,
         }),
+
       })
         .then((response) => response.json())
         .then((data) => {
           setForParams(data);
+
+      })
+    }
+  });
+
           console.log(data);
         });
     }
@@ -69,6 +79,7 @@ function ResultEntry() {
       selected: 0,
     },
   ];
+  var [forParams, setForParams] = useState([]);
   var [Remarks, setRemarks] = useState({
     suggestion: sugArr,
     final: "",

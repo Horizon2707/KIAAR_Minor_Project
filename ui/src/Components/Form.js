@@ -254,6 +254,20 @@ export function Form() {
     console.log(values);
   };
 
+      let farmerData = () => {
+    fetch("http://localhost:5000/api/blank", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(farmerId),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setCalc(data);
+      });
+  };
+
   return (
     <>
       <h1 style={{ marginTop: "0.5vh", color: "black" }}>
@@ -391,7 +405,7 @@ export function Form() {
             </label>
             <Select
               size="sm"
-              id="cluster"
+              id="village"
               placeholder="Select one..."
               variant="filled"
               onChange={(e) => {
@@ -431,8 +445,8 @@ export function Form() {
                 </option>
               ))}
             </Select>
-            {newErrors.cluster && (
-              <div className="error">{newErrors.cluster}</div>
+            {newErrors.surveyNo && (
+              <div className="error">{newErrors.surveyNo}</div>
             )}
           </div>
           <div className="item morspace">
@@ -476,7 +490,6 @@ export function Form() {
               value={plotArea}
               disabled={isDisabled}
             ></Input>
-
             <button onClick={handleEnableElement}>
               <EditIcon />
             </button>
