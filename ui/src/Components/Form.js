@@ -45,7 +45,8 @@ export function Form() {
     village: "",
     labNo: "",
   });
-  var [watVar,setwarVar] = useState(true)
+  var [watVar, setwatVar] = useState(true);
+  var [soilVar, setSoilVar] = useState(true);
   useEffect(() => {
     const maxLength = 6;
     if (values.farmerId.length === maxLength) {
@@ -70,7 +71,7 @@ export function Form() {
             drainage: data.drainage,
           });
           setCultivationType({ cultivationType: data.type_of_cultivation });
-          setCropToBeGrown({ cropToBeGrown: data.crop_to_be_grown });
+          setCropToBeGrown(data.crop_to_be_grown);
           setIrrigationSources(data.irrigation_types);
           setSoilTypes(data.soil_types);
           setPreviousCrop(data.previous_crop);
@@ -120,9 +121,14 @@ export function Form() {
         console.log(data);
         setValues({ ...values, templateNo: data });
       });
-      if (values.test === 1) {
-        setwarVar(false)
-      }
+    if (values.test === "1") {
+      setwatVar(false);
+      setSoilVar(true);
+    }
+    if (values.test === "2") {
+      setwatVar(true);
+      setSoilVar(false);
+    }
   }, [values.test]);
   useEffect(() => {
     fetch("http://localhost:5000/villageInfo", {
@@ -224,7 +230,7 @@ export function Form() {
       newErrors.cultivationType = "Cultivation Type is required";
     }
 
-    if (values.previousCrop === "") {
+    if (values.previousCrop.length === 0) {
       newErrors.previousCrop = "Previous Crop is required";
     }
     if (values.cropToBeGrown.length === 0) {
@@ -516,51 +522,55 @@ export function Form() {
               <div className="error">{newErrors.drainage}</div>
             )}
           </div>
-          <div className="item litspace">
-            <label className="mLabel" htmlFor="soilType">
-              Soil Type
-            </label>
-            <Select
-              size="sm"
-              id="soilType"
-              variant="filled"
-              placeholder="Select one..."
-              onChange={(e) => {
-                setValues({ ...values, soilType: e.target.value });
-              }}
-              value={values.soilType}
-            >
-              {soilTypes.map((soilType, index) => (
-                <option key={index} value={soilType.SOIL_TYPE_NAME}>
-                  {soilType.SOIL_TYPE_NAME}
-                </option>
-              ))}
-            </Select>
-            {newErrors.soilType && (
-              <div className="error">{newErrors.soilType}</div>
-            )}
-          </div>
-          {watVar && <div className="item litspace">
-            <label className="mLabel" htmlFor="waterType">
-              Water Type
-            </label>
-            <Select
-              size="sm"
-              id="waterType"
-              variant="filled"
-              placeholder="Select one..."
-              onChange={(e) => {
-                setValues({ ...values, waterType: e.target.value });
-              }}
-              value={values.waterType}
-            >
-              <option value="x">x</option>
-              <option value="y">y</option>
-            </Select>
-            {newErrors.waterType && (
-              <div className="error">{newErrors.waterType}</div>
-            )}
-          </div>}
+          {soilVar && (
+            <div className="item litspace">
+              <label className="mLabel" htmlFor="soilType">
+                Soil Type
+              </label>
+              <Select
+                size="sm"
+                id="soilType"
+                variant="filled"
+                placeholder="Select one..."
+                onChange={(e) => {
+                  setValues({ ...values, soilType: e.target.value });
+                }}
+                value={values.soilType}
+              >
+                {soilTypes.map((soilType, index) => (
+                  <option key={index} value={soilType.SOIL_TYPE_NAME}>
+                    {soilType.SOIL_TYPE_NAME}
+                  </option>
+                ))}
+              </Select>
+              {newErrors.soilType && (
+                <div className="error">{newErrors.soilType}</div>
+              )}
+            </div>
+          )}
+          {watVar && (
+            <div className="item litspace">
+              <label className="mLabel" htmlFor="waterType">
+                Water Type
+              </label>
+              <Select
+                size="sm"
+                id="waterType"
+                variant="filled"
+                placeholder="Select one..."
+                onChange={(e) => {
+                  setValues({ ...values, waterType: e.target.value });
+                }}
+                value={values.waterType}
+              >
+                <option value="x">x</option>
+                <option value="y">y</option>
+              </Select>
+              {newErrors.waterType && (
+                <div className="error">{newErrors.waterType}</div>
+              )}
+            </div>
+          )}
           <div className="item litspace">
             <label className="mLabel" htmlFor="irrigationSource">
               Irrigation Source
@@ -623,13 +633,11 @@ export function Form() {
               }}
               value={values.previousCrop}
             >
-              {previousCrop.map((crop, index) =>
-                crop ? (
-                  <option key={index} value={crop}>
-                    {crop}
-                  </option>
-                ) : null
-              )}
+              {previousCrop.map((element) => {
+                return (
+                  <option value={element.CROP_NAME}>{element.CROP_NAME}</option>
+                );
+              })}
             </Select>
             {newErrors.previousCrop && (
               <div className="error">{newErrors.previousCrop}</div>
@@ -649,10 +657,11 @@ export function Form() {
               }}
               value={values.cropToBeGrown}
             >
-              {cropToBeGrown.cropToBeGrown &&
-                cropToBeGrown.cropToBeGrown.map((item) => {
-                  return <option value={item}>{item}</option>;
-                })}
+              {cropToBeGrown.map((element) => {
+                return (
+                  <option value={element.CROP_NAME}>{element.CROP_NAME}</option>
+                );
+              })}
             </Select>
             {newErrors.cropToBeGrown && (
               <div className="error">{newErrors.cropToBeGrown}</div>
@@ -698,10 +707,10 @@ export function Form() {
       <div style={o} className="centering">
         <Button
           onClick={() => {
-            if (validate()) {
-              navigate("/resultentry");
-              sessionPush();
-            }
+            // if (validate()) {
+            navigate("/resultentry");
+            sessionPush();
+            // }
           }}
           background="#CCE5FF"
           color="#000000"

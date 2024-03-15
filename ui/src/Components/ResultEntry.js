@@ -23,29 +23,45 @@ import {
   TableContainer,
 } from "@chakra-ui/react";
 import Recom from "./Recom";
+
 function ResultEntry() {
 
   var navigate = useNavigate();
+  var [forParams, setForParams] = useState([]);
   useEffect(() => {
     let result = sessionStorage.getItem("result");
     if (result) {
       ressetValues(JSON.parse(result));
     }
     let values = sessionStorage.getItem("values");
-    if(values){
-      fetch("http://localhost:5000/api/parameters", {
+
+    values = JSON.parse(values);
+    console.log(values);
+    if (values) {
+      fetch("http://localhost:5000/parameters", {
+ 
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(values),
+
+        body: JSON.stringify({
+          test: values.test,
+        }),
+
       })
         .then((response) => response.json())
         .then((data) => {
           setForParams(data);
+
       })
     }
   });
+
+          console.log(data);
+        });
+    }
+  }, []);
   var sugArr = [
     {
       id: 1,
@@ -70,6 +86,7 @@ function ResultEntry() {
   });
   var [Errors, setErrors] = useState({});
   var [toggle, setToggle] = useState(false);
+
   var [resValues, ressetValues] = useState({
     soilph: "",
     electricalConductivity: "",
@@ -86,6 +103,7 @@ function ResultEntry() {
     copper: "",
   });
   let [calc, setCalc] = useState({});
+
   let validate = () => {
     const Errors = {};
     if (resValues.soilph === "") {

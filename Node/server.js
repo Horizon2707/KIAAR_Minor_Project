@@ -130,6 +130,14 @@ app.post("/farmerId", async (req, res) => {
     } else {
       console.log("Irrigation not found");
     }
+    //Previous Crop
+    const crop_all = await connection.execute(
+      `SELECT CROP_NAME FROM GSMAGRI.SW_CROP_DIR`
+    );
+    const crop_list = crop_all.rows;
+    if (crop_list) {
+      console.log(crop_list);
+    }
     //Response Object
     const response_obj = {
       farmer_name: personal_info[0]?.FARMER_NAME ?? null,
@@ -139,8 +147,8 @@ app.post("/farmerId", async (req, res) => {
       survey_nos: survey_no ?? null,
       drainage: dropdowns.DRAINAGE ?? null,
       type_of_cultivation: dropdowns.TYPE_OF_CULTIVATION ?? null,
-      previous_crop: dropdowns.PREVIOUS_CROP ?? null,
-      crop_to_be_grown: dropdowns.CROPS_TO_BE_GROWN ?? null,
+      previous_crop: crop_list ?? null,
+      crop_to_be_grown: crop_list ?? null,
       soil_types: soil_types ?? null,
       irrigation_types: irrigation_types ?? null,
     };
@@ -259,6 +267,65 @@ app.post("/plotArea", async (req, res) => {
     res.json(number);
   } catch (error) {
     console.error("Plot area not found");
+  }
+});
+app.post("/parameters", async (req, res) => {
+  try {
+    const { test } = req.body;
+
+    let testCd = parseInt(test);
+    const connection = await dbConnection;
+    const parameter_head_all = await connection.execute(
+      `SELECT PARAMETER_ID,PARAMETER_NAME,PARAMETER_TYPE FROM GSMAGRI.SW_PARAMETER_DIR_HEAD WHERE TEST_CD = :testCd`,
+      [testCd]
+    );
+    let parameter_head = parameter_head_all.rows;
+    parameter_head.sort((a, b) => a.PARAMETER_ID - b.PARAMETER_ID);
+
+    const parameterIds = parameter_head
+      .filter((item) => item.PARAMETER_TYPE === "PARAMETER")
+      .map((item) => item.PARAMETER_ID);
+
+    parameters_range_min = [];
+    parameters_range_max = [];
+    parameters_range_mid = [];
+    //Min
+    for (const i of parameterIds) {
+      const range_min = await connection.execute(
+        `SELECT DISTINCT VALUE_NAME FROM GSMAGRI.SW_PARAMETER_DIR_TAIL WHERE PARAMETER_ID =:i AND REF_RANGE_ID = 1`,
+        [i]
+      );
+
+      parameters_range_min.push(range_min.rows[0]);
+    }
+    //Max
+    for (const i of parameterIds) {
+      const range_max = await connection.execute(
+        `SELECT DISTINCT VALUE_NAME FROM GSMAGRI.SW_PARAMETER_DIR_TAIL WHERE PARAMETER_ID =:i AND REF_RANGE_ID = 2`,
+        [i]
+      );
+
+      parameters_range_max.push(range_max.rows[0]);
+    }
+    //Mid
+    for (const i of parameterIds) {
+      const range_mid = await connection.execute(
+        `SELECT DISTINCT VALUE_NAME FROM GSMAGRI.SW_PARAMETER_DIR_TAIL WHERE PARAMETER_ID =:i AND REF_RANGE_ID = 3`,
+        [i]
+      );
+
+      parameters_range_mid.push(range_mid.rows[0]);
+    }
+
+    const response_obj = {
+      parameter_head: parameter_head,
+      parameter_min: parameters_range_min,
+      parameter_max: parameters_range_max,
+      parameter_mid: parameters_range_mid,
+    };
+    console.log(response_obj);
+  } catch (error) {
+    console.error("Parameters not found");
   }
 });
 app.post("/api", (req, res) => {
