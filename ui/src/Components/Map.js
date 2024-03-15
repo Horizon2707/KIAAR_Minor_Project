@@ -1,4 +1,4 @@
-forParams.map((element) => {
+{forParams.map((element) => {
   if (element.PARAMETER_TYPE === "HEADING") {
     return (
       <>
@@ -33,4 +33,4 @@ forParams.map((element) => {
       </>
     );
   }
-});
+});}

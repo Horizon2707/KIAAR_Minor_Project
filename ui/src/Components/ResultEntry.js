@@ -194,7 +194,6 @@ function ResultEntry() {
                           <Th>Parameters</Th>
                         </Tr>
                         <Tr>
-                          <Th>Chemical Parameters</Th>
                           <Th>Test Result</Th>
                           <Th isNumeric>Low</Th>
                           <Th isNumeric>Medium</Th>
@@ -203,360 +202,44 @@ function ResultEntry() {
                       </Thead>
                       <Tbody>
                         <Tr>
-                          <Td>Soil pH(2:5)</Td>
-                          <Td>
-                            <Input
-                              type="number"
-                              size="sm"
-                              id="soilph"
-                              htmlSize={4}
-                              width="auto"
-                              variant="filled"
-                              placeholder="Enter pH"
-                              value={resValues.soilph}
-                              onChange={(e) => {
-                                ressetValues({
-                                  ...resValues,
-                                  soilph: e.target.value,
-                                });
-                              }}
-                            ></Input>
-                            {Errors.soilph && (
-                              <p style={{ color: "red" }}>{Errors.soilph}</p>
-                            )}
-                          </Td>
-                          <Td>&lt;6.5</Td>
-                          <Td>6.5-7.5</Td>
-                          <Td>&gt;7.5</Td>
-                        </Tr>
-                        <Tr>
-                          <Td>Electrical Conductivity</Td>
-                          <Td>
-                            <Input
-                              type="number"
-                              size="sm"
-                              id="electricalConductivity"
-                              htmlSize={4}
-                              width="auto"
-                              variant="filled"
-                              placeholder="in dS/m"
-                              value={resValues.electricalConductivity}
-                              onChange={(e) => {
-                                ressetValues({
-                                  ...resValues,
-                                  electricalConductivity: e.target.value,
-                                });
-                              }}
-                            ></Input>
-                            {Errors.electricalConductivity && (
-                              <p style={{ color: "red" }}>
-                                {Errors.electricalConductivity}
-                              </p>
-                            )}
-                          </Td>
-                          <Td>&lt;1</Td>
-                          <Td>1-2</Td>
-                          <Td>&gt;2</Td>
-                        </Tr>
-                        <Tr>
-                          <Td>Organic Carbon(OC)</Td>
-                          <Td>
-                            <Input
-                              type="number"
-                              size="sm"
-                              id="organicCarbon"
-                              htmlSize={4}
-                              width="auto"
-                              variant="filled"
-                              placeholder="in %"
-                              value={resValues.organicCarbon}
-                              onChange={(e) => {
-                                ressetValues({
-                                  ...resValues,
-                                  organicCarbon: e.target.value,
-                                });
-                              }}
-                            ></Input>
-                            {Errors.organicCarbon && (
-                              <p style={{ color: "red" }}>
-                                {Errors.organicCarbon}
-                              </p>
-                            )}
-                          </Td>
-                          <Td>&lt;0.5</Td>
-                          <Td>0.5-7.5</Td>
-                          <Td>&gt;7.5</Td>
-                        </Tr>
-                        <Tr>
-                          <Th>Primary Nutrients</Th>
-                        </Tr>
-                        <Tr>
-                          <Td>Nitrogen</Td>
-                          <Td>
-                            <Input
-                              type="number"
-                              size="sm"
-                              id="nitrogen"
-                              width="auto"
-                              variant="filled"
-                              placeholder="in kg/acre"
-                              value={resValues.nitrogen}
-                              onChange={(e) => {
-                                ressetValues({
-                                  ...resValues,
-                                  nitrogen: e.target.value,
-                                });
-                              }}
-                            ></Input>
-                            {Errors.nitrogen && (
-                              <p style={{ color: "red" }}>{Errors.nitrogen}</p>
-                            )}
-                          </Td>
-                          <Td>&lt;112</Td>
-                          <Td>112-224</Td>
-                          <Td>&gt;224</Td>
-                        </Tr>
-                        <Tr>
-                          <Td>Phosphorus</Td>
-                          <Td>
-                            <Input
-                              type="number"
-                              size="sm"
-                              id="phosphorus"
-                              width="auto"
-                              variant="filled"
-                              placeholder="in kg/acre"
-                              value={resValues.phosphorus}
-                              onChange={(e) => {
-                                ressetValues({
-                                  ...resValues,
-                                  phosphorus: e.target.value,
-                                });
-                              }}
-                            ></Input>
-                            {Errors.phosphorus && (
-                              <p style={{ color: "red" }}>
-                                {Errors.phosphorus}
-                              </p>
-                            )}
-                          </Td>
-                          <Td>&lt;8.0</Td>
-                          <Td>8.0-20.0</Td>
-                          <Td>&gt;20.0</Td>
-                        </Tr>
-                        <Tr>
-                          <Td>Potassium</Td>
-                          <Td>
-                            <Input
-                              type="number"
-                              size="sm"
-                              id="potassium"
-                              width="auto"
-                              variant="filled"
-                              placeholder="in kg/acre"
-                              value={resValues.potassium}
-                              onChange={(e) => {
-                                ressetValues({
-                                  ...resValues,
-                                  potassium: e.target.value,
-                                });
-                              }}
-                            ></Input>
-                            {Errors.potassium && (
-                              <p style={{ color: "red" }}>{Errors.potassium}</p>
-                            )}
-                          </Td>
-                          <Td>&lt;45.0</Td>
-                          <Td>45.0-136</Td>
-                          <Td>&gt;136.0</Td>
-                        </Tr>
-                        <Tr>
-                          <Th>Secondary Nutrients</Th>
-                        </Tr>
-                        <Tr>
-                          <Td>Calcium</Td>
-                          <Td>
-                            <Input
-                              type="number"
-                              size="sm"
-                              id="calcium"
-                              width="auto"
-                              variant="filled"
-                              placeholder="in m.e/100g"
-                              value={resValues.calcium}
-                              onChange={(e) => {
-                                ressetValues({
-                                  ...resValues,
-                                  calcium: e.target.value,
-                                });
-                              }}
-                            ></Input>
-                            {Errors.calcium && (
-                              <p style={{ color: "red" }}>{Errors.calcium}</p>
-                            )}
-                          </Td>
-                          <Td>-</Td>
-                          <Td>-</Td>
-                          <Td>-</Td>
-                        </Tr>
-                        <Tr>
-                          <Td>Magnesium</Td>
-                          <Td>
-                            <Input
-                              type="number"
-                              size="sm"
-                              id="magnesium"
-                              width="auto"
-                              variant="filled"
-                              placeholder="in m.e/100g"
-                              value={resValues.magnesium}
-                              onChange={(e) => {
-                                ressetValues({
-                                  ...resValues,
-                                  magnesium: e.target.value,
-                                });
-                              }}
-                            ></Input>
-                            {Errors.magnesium && (
-                              <p style={{ color: "red" }}>{Errors.magnesium}</p>
-                            )}
-                          </Td>
-                          <Td>-</Td>
-                          <Td>-</Td>
-                          <Td>-</Td>
-                        </Tr>
-                        <Tr>
-                          <Td>Sulphur</Td>
-                          <Td>
-                            <Input
-                              type="number"
-                              size="sm"
-                              id="sulphur"
-                              width="auto"
-                              variant="filled"
-                              placeholder="in ppm"
-                              value={resValues.sulphur}
-                              onChange={(e) => {
-                                ressetValues({
-                                  ...resValues,
-                                  sulphur: e.target.value,
-                                });
-                              }}
-                            ></Input>
-                            {Errors.sulphur && (
-                              <p style={{ color: "red" }}>{Errors.sulphur}</p>
-                            )}
-                          </Td>
-                          <Td>&lt;10</Td>
-                          <Td>10-20</Td>
-                          <Td>&gt;20</Td>
-                        </Tr>
-                        <Tr>
-                          <Th>Micro Nutrients</Th>
-                        </Tr>
-                        <Tr>
-                          <Td>Zinc</Td>
-                          <Td>
-                            <Input
-                              type="number"
-                              size="sm"
-                              id="zinc"
-                              width="auto"
-                              variant="filled"
-                              placeholder="in ppm"
-                              value={resValues.zinc}
-                              onChange={(e) => {
-                                ressetValues({
-                                  ...resValues,
-                                  zinc: e.target.value,
-                                });
-                              }}
-                            ></Input>
-                            {Errors.zinc && (
-                              <p style={{ color: "red" }}>{Errors.zinc}</p>
-                            )}
-                          </Td>
-                          <Td>&lt;0.6</Td>
-                          <Td>0.6-1.5</Td>
-                          <Td>&gt;1.5</Td>
-                        </Tr>
-                        <Tr>
-                          <Td>Iron</Td>
-                          <Td>
-                            <Input
-                              type="number"
-                              size="sm"
-                              id="iron"
-                              width="auto"
-                              variant="filled"
-                              placeholder="in ppm"
-                              value={resValues.iron}
-                              onChange={(e) => {
-                                ressetValues({
-                                  ...resValues,
-                                  iron: e.target.value,
-                                });
-                              }}
-                            ></Input>
-                            {Errors.iron && (
-                              <p style={{ color: "red" }}>{Errors.iron}</p>
-                            )}
-                          </Td>
-                          <Td>&lt;2.5</Td>
-                          <Td>2.5-4.5</Td>
-                          <Td>&gt;4.5</Td>
-                        </Tr>
-                        <Tr>
-                          <Td>Manganese</Td>
-                          <Td>
-                            <Input
-                              type="number"
-                              size="sm"
-                              id="manganese"
-                              width="auto"
-                              variant="filled"
-                              placeholder="in ppm"
-                              value={resValues.manganese}
-                              onChange={(e) => {
-                                ressetValues({
-                                  ...resValues,
-                                  manganese: e.target.value,
-                                });
-                              }}
-                            ></Input>
-                            {Errors.manganese && (
-                              <p style={{ color: "red" }}>{Errors.manganese}</p>
-                            )}
-                          </Td>
-                          <Td>&lt;2</Td>
-                          <Td>2-4</Td>
-                          <Td>&gt;4</Td>
-                        </Tr>
-                        <Tr>
-                          <Td>Copper</Td>
-                          <Td>
-                            <Input
-                              type="number"
-                              size="sm"
-                              id="copper"
-                              width="auto"
-                              variant="filled"
-                              placeholder="in ppm"
-                              value={resValues.copper}
-                              onChange={(e) => {
-                                ressetValues({
-                                  ...resValues,
-                                  copper: e.target.value,
-                                });
-                              }}
-                            ></Input>
-                            {Errors.copper && (
-                              <p style={{ color: "red" }}>{Errors.copper}</p>
-                            )}
-                          </Td>
-                          <Td>&lt;0.2</Td>
-                          <Td>0.2-0.5</Td>
-                          <Td>&gt;0.5</Td>
+                          {forParams.map((element) => {
+                            if (element.PARAMETER_TYPE === "HEADING") {
+                              return (
+                                <>
+                                  <Th>{element.PARAMETER_NAME}</Th>
+                                </>
+                              );
+                            }
+                            if (element.PARAMETER_TYPE === "PARAMETER") {
+                              return (
+                                <>
+                                  <Td>{element.PARAMETER_NAME}</Td>
+                                  <Td>
+                                    <Input
+                                      type="number"
+                                      size="sm"
+                                      id={element.PARAMETER_ID}
+                                      htmlSize={4}
+                                      width="auto"
+                                      variant="filled"
+                                      value={resValues[element.PARAMETER_ID]}
+                                      onChange={(e) => {
+                                        ressetValues({
+                                          ...resValues,
+                                          [element.PARAMETER_ID]:
+                                            e.target.value,
+                                        });
+                                      }}
+                                    ></Input>
+                                    {Errors[element.PARAMETER_ID] && (<p style={{ color: "red" }}>{Errors[element.PARAMETER_NAME]}</p>)}
+                                  </Td>
+                                  <Td>{element.PARAMETER_RANGE.LOW}</Td>
+                                  <Td>{element.PARAMETER_RANGE.MEDIUM}</Td>
+                                  <Td>{element.PARAMETER_RANGE.HIGH}</Td>
+                                </>
+                              );
+                            }
+                          })}
                         </Tr>
                       </Tbody>
                     </Table>
