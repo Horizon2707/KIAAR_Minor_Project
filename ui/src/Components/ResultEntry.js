@@ -29,28 +29,12 @@ function ResultEntry() {
   var [forParams, setForParams] = useState([]);
 
   var [Remarks, setRemarks] = useState({
-    suggestion: sugArr,
-    final: "",
+    suggestion: null,
+    final: null,
   });
   var [Errors, setErrors] = useState({});
   var [toggle, setToggle] = useState(false);
-  var sugArr = [
-    {
-      id: 1,
-      name: "Suggestion 1",
-      selected: 0,
-    },
-    {
-      id: 2,
-      name: "Suggestion 2",
-      selected: 0,
-    },
-    {
-      id: 3,
-      name: "Suggestion 1",
-      selected: 0,
-    },
-  ];
+
   var [resValues, ressetValues] = useState({
     soilph: "",
     electricalConductivity: "",
@@ -94,6 +78,23 @@ function ResultEntry() {
     } catch (error) {
       console.error("Parameters not found");
     }
+
+    fetch("http://localhost:5000/suggestions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        test: values.test,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setRemarks({
+          suggestion: data,
+          final: null,
+        });
+      });
   }, []);
 
   let validate = () => {
