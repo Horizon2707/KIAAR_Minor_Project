@@ -106,7 +106,7 @@ export function Form() {
     } catch (error) {
       console.error("Error:", error);
     }
-  });
+  }, []);
   useEffect(() => {
     console.log(values.test);
     fetch("http://localhost:5000/temp_no", {
@@ -252,20 +252,6 @@ export function Form() {
   let sessionPush = () => {
     sessionStorage.setItem("values", JSON.stringify(values));
     console.log(values);
-  };
-
-      let farmerData = () => {
-    fetch("http://localhost:5000/api/blank", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(farmerId),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setCalc(data);
-      });
   };
 
   return (

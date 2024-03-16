@@ -3,19 +3,35 @@ const wb = new excel.Workbook();
 const ws = wb.addWorksheet("Report");
 // Add data to cell A1
 const headingText = "K.J. Somaiya Institute of Applied Agricultural Research";
+const document_width = 121.8;
 
-const bold_centered = {
+const heading = {
   font: { bold: true, size: 22 },
   alignment: {
     horizontal: "center",
     vertical: "center",
   },
 };
+const h2 = {
+  font: { bold: true, size: 14 },
+  alignment: {
+    horizontal: "center",
+    vertical: "center",
+  },
+};
+//Page Width
+ws.column(1).setWidth(6.6);
+ws.column(2).setWidth(12.8);
+ws.column(3).setWidth(12.8);
+//Heading
 ws.row(1).setHeight(36);
-ws.column(1).setWidth(6.5);
-ws.column(2).setWidth(6.5);
-ws.column(3).setWidth(8);
-ws.cell(1, 1, 1, 10, true).string(headingText).style(bold_centered);
+ws.cell(1, 1, 1, 10, true).string(headingText).style(heading);
+//Taluka District
+ws.row(2).setHeight(24);
+ws.cell(2, 1, 2, 3, true).string("Taluk: Rabakavi-Banahatti").style(h2);
+ws.cell(2, 4, 2, 7, true).string("Sameerwadi-587 316").style(h2);
+ws.cell(2, 8, 2, 10, true).string("Dt: Bagalkot").style(h2);
+
 wb.write("output.xlsx", (err, stats) => {
   if (err) {
     console.error(err);

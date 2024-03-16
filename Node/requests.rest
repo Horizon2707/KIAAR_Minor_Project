@@ -49,5 +49,5 @@ POST http://localhost:5000/parameters
 Content-Type: application/json
 
 {
-    "testCd" : 1,
+    "test" : "1"
 }

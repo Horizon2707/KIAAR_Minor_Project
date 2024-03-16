@@ -272,7 +272,7 @@ app.post("/plotArea", async (req, res) => {
 app.post("/parameters", async (req, res) => {
   try {
     const { test } = req.body;
-
+    console.log("xxxx");
     let testCd = parseInt(test);
     const connection = await dbConnection;
     const parameter_head_all = await connection.execute(
@@ -292,29 +292,41 @@ app.post("/parameters", async (req, res) => {
     //Min
     for (const i of parameterIds) {
       const range_min = await connection.execute(
-        `SELECT DISTINCT VALUE_NAME FROM GSMAGRI.SW_PARAMETER_DIR_TAIL WHERE PARAMETER_ID =:i AND REF_RANGE_ID = 1`,
+        `SELECT DISTINCT VALUE_NAME,PARAMETER_ID FROM GSMAGRI.SW_PARAMETER_DIR_TAIL WHERE PARAMETER_ID =:i AND REF_RANGE_ID = 1`,
         [i]
       );
 
       parameters_range_min.push(range_min.rows[0]);
+      // parameter = parameter_head.find((j) => j.PARAMETER_ID === i);
+      // if (parameter) {
+      //   parameter_head.PARAMETER_MIN = range_min.rows[0].VALUE_NAME;
+      // }
     }
     //Max
     for (const i of parameterIds) {
       const range_max = await connection.execute(
-        `SELECT DISTINCT VALUE_NAME FROM GSMAGRI.SW_PARAMETER_DIR_TAIL WHERE PARAMETER_ID =:i AND REF_RANGE_ID = 2`,
+        `SELECT DISTINCT VALUE_NAME,PARAMETER_ID FROM GSMAGRI.SW_PARAMETER_DIR_TAIL WHERE PARAMETER_ID =:i AND REF_RANGE_ID = 2`,
         [i]
       );
 
       parameters_range_max.push(range_max.rows[0]);
+      // parameter = parameter_head.find((j) => j.PARAMETER_ID === i);
+      // if (parameter) {
+      //   parameter_head.PARAMETER_MAX = range_max.rows[0].VALUE_NAME;
+      // }
     }
     //Mid
     for (const i of parameterIds) {
       const range_mid = await connection.execute(
-        `SELECT DISTINCT VALUE_NAME FROM GSMAGRI.SW_PARAMETER_DIR_TAIL WHERE PARAMETER_ID =:i AND REF_RANGE_ID = 3`,
+        `SELECT DISTINCT VALUE_NAME,PARAMETER_ID FROM GSMAGRI.SW_PARAMETER_DIR_TAIL WHERE PARAMETER_ID =:i AND REF_RANGE_ID = 3`,
         [i]
       );
 
       parameters_range_mid.push(range_mid.rows[0]);
+      // parameter = parameter_head.find((j) => j.PARAMETER_ID === i);
+      // if (parameter) {
+      //   parameter_head.PARAMETER_MID = range_mid.rows[0].VALUE_NAME;
+      // }
     }
 
     const response_obj = {
@@ -323,9 +335,37 @@ app.post("/parameters", async (req, res) => {
       parameter_max: parameters_range_max,
       parameter_mid: parameters_range_mid,
     };
-    console.log(response_obj);
+
+    const response_array = response_obj.parameter_head.map((paramHead) => {
+      const paramMin = response_obj.parameter_min.find(
+        (paramMin) => paramMin.PARAMETER_ID === paramHead.PARAMETER_ID
+      );
+      const paramMax = response_obj.parameter_max.find(
+        (paramMax) => paramMax.PARAMETER_ID === paramHead.PARAMETER_ID
+      );
+      const paramMid = response_obj.parameter_mid.find(
+        (paramMid) => paramMid.PARAMETER_ID === paramHead.PARAMETER_ID
+      );
+
+      return {
+        PARAMETER_ID: paramHead.PARAMETER_ID,
+        PARAMETER_NAME: paramHead.PARAMETER_NAME,
+        PARAMETER_TYPE: paramHead.PARAMETER_TYPE,
+        PARAMETER_MIN: paramMin ? paramMin.VALUE_NAME : null,
+        PARAMETER_MAX: paramMax ? paramMax.VALUE_NAME : null,
+        PARAMETER_MID: paramMid ? paramMid.VALUE_NAME : null,
+      };
+    });
+    res.json(response_array);
   } catch (error) {
     console.error("Parameters not found");
+  }
+});
+
+app.post("/suggestions", (req, res) => {
+  try {
+  } catch (error) {
+    console.error("Suggestions not found");
   }
 });
 app.post("/api", (req, res) => {

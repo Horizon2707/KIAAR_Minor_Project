@@ -27,32 +27,13 @@ import Recom from "./Recom";
 function ResultEntry() {
   var navigate = useNavigate();
   var [forParams, setForParams] = useState([]);
-  useEffect(() => {
-    let result = sessionStorage.getItem("result");
-    if (result) {
-      ressetValues(JSON.parse(result));
-    }
-    let values = sessionStorage.getItem("values");
 
-    values = JSON.parse(values);
-    console.log(values);
-    if (values) {
-      fetch("http://localhost:5000/parameters", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-
-        body: JSON.stringify({
-          test: values.test,
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          setForParams(data);
-        });
-    }
+  var [Remarks, setRemarks] = useState({
+    suggestion: sugArr,
+    final: "",
   });
+  var [Errors, setErrors] = useState({});
+  var [toggle, setToggle] = useState(false);
   var sugArr = [
     {
       id: 1,
@@ -70,14 +51,6 @@ function ResultEntry() {
       selected: 0,
     },
   ];
-  var [forParams, setForParams] = useState([]);
-  var [Remarks, setRemarks] = useState({
-    suggestion: sugArr,
-    final: "",
-  });
-  var [Errors, setErrors] = useState({});
-  var [toggle, setToggle] = useState(false);
-
   var [resValues, ressetValues] = useState({
     soilph: "",
     electricalConductivity: "",
@@ -94,6 +67,34 @@ function ResultEntry() {
     copper: "",
   });
   let [calc, setCalc] = useState({});
+
+  useEffect(() => {
+    // let result = sessionStorage.getItem("result");
+    // if (result) {
+    //   ressetValues(JSON.parse(result));
+    // }
+    let values = sessionStorage.getItem("values");
+    values = JSON.parse(values);
+    try {
+      fetch("http://localhost:5000/parameters", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify({
+          test: values.test,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setForParams(data);
+          console.log(data);
+        });
+    } catch (error) {
+      console.error("Parameters not found");
+    }
+  }, []);
 
   let validate = () => {
     const Errors = {};
@@ -139,19 +140,19 @@ function ResultEntry() {
     setErrors(Errors);
     return Object.keys(Errors).length === 0;
   };
-  let postData = () => {
-    fetch("http://localhost:5000/api/result_entry", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(resValues),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setCalc(data);
-      });
-  };
+  // let postData = () => {
+  //   fetch("http://localhost:5000/api/result_entry", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(resValues),
+  //   })
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       setCalc(data);
+  //     });
+  // };
 
   return (
     <>
@@ -190,57 +191,59 @@ function ResultEntry() {
                   <TableContainer>
                     <Table size="sm" variant="simple">
                       <Thead>
-                        <Tr>
+                        {/* <Tr>
                           <Th>Parameters</Th>
-                        </Tr>
+                        </Tr> */}
                         <Tr>
                           <Th>Test Result</Th>
+                          <Th></Th>
                           <Th isNumeric>Low</Th>
                           <Th isNumeric>Medium</Th>
                           <Th isNumeric>High</Th>
                         </Tr>
                       </Thead>
                       <Tbody>
-                        <Tr>
-                          {forParams.map((element) => {
-                            if (element.PARAMETER_TYPE === "HEADING") {
-                              return (
-                                <>
-                                  <Th>{element.PARAMETER_NAME}</Th>
-                                </>
-                              );
-                            }
-                            if (element.PARAMETER_TYPE === "PARAMETER") {
-                              return (
-                                <>
-                                  <Td>{element.PARAMETER_NAME}</Td>
-                                  <Td>
-                                    <Input
-                                      type="number"
-                                      size="sm"
-                                      id={element.PARAMETER_ID}
-                                      htmlSize={4}
-                                      width="auto"
-                                      variant="filled"
-                                      value={resValues[element.PARAMETER_ID]}
-                                      onChange={(e) => {
-                                        ressetValues({
-                                          ...resValues,
-                                          [element.PARAMETER_ID]:
-                                            e.target.value,
-                                        });
-                                      }}
-                                    ></Input>
-                                    {Errors[element.PARAMETER_ID] && (<p style={{ color: "red" }}>{Errors[element.PARAMETER_NAME]}</p>)}
-                                  </Td>
-                                  <Td>{element.PARAMETER_RANGE.LOW}</Td>
-                                  <Td>{element.PARAMETER_RANGE.MEDIUM}</Td>
-                                  <Td>{element.PARAMETER_RANGE.HIGH}</Td>
-                                </>
-                              );
-                            }
-                          })}
-                        </Tr>
+                        {forParams.map((element) => {
+                          if (element.PARAMETER_TYPE === "HEADING") {
+                            return (
+                              <Tr key={element.PARAMETER_ID}>
+                                <Th>{element.PARAMETER_NAME}</Th>
+                              </Tr>
+                            );
+                          }
+                          if (element.PARAMETER_TYPE === "PARAMETER") {
+                            return (
+                              <Tr key={element.PARAMETER_ID}>
+                                <Td>{element.PARAMETER_NAME}</Td>
+                                <Td>
+                                  <Input
+                                    type="number"
+                                    size="sm"
+                                    id={element.PARAMETER_ID}
+                                    htmlSize={4}
+                                    width="auto"
+                                    variant="filled"
+                                    value={resValues[element.PARAMETER_ID]}
+                                    onChange={(e) => {
+                                      ressetValues({
+                                        ...resValues,
+                                        [element.PARAMETER_ID]: e.target.value,
+                                      });
+                                    }}
+                                  ></Input>
+                                  {Errors[element.PARAMETER_ID] && (
+                                    <p style={{ color: "red" }}>
+                                      {Errors[element.PARAMETER_NAME]}
+                                    </p>
+                                  )}
+                                </Td>
+                                <Td>{element.PARAMETER_MIN}</Td>
+                                <Td>{element.PARAMETER_MID}</Td>
+                                <Td>{element.PARAMETER_MAX}</Td>
+                              </Tr>
+                            );
+                          }
+                        })}
                       </Tbody>
                     </Table>
                   </TableContainer>
