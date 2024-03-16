@@ -25,9 +25,10 @@ import {
 import Recom from "./Recom";
 
 function ResultEntry() {
+  var [addSug,setaddSug] = useState("")
   var navigate = useNavigate();
   var [forParams, setForParams] = useState([]);
-
+ var [Tab,setTab]=useState(null)
   // var [Remarks, setRemarks] = useState({
   //   suggestion: [],
   //   final: null,
@@ -93,8 +94,11 @@ function ResultEntry() {
       .then((data) => {
         setSuggestion(data);
       });
-  }, []);
-
+  }, [Tab]);
+ let setT = (e)=>{
+  let inputValue = e.target.value
+  setaddSug(inputValue)
+}
   let validate = () => {
     const Errors = {};
     if (resValues.soilph === "") {
@@ -298,8 +302,9 @@ function ResultEntry() {
                       <Textarea
                         placeholder="Multiline"
                         resize="none"
-                        rows={1} // Set the number of rows to 7
+                        rows={1}
                         variant="filled"
+                        onChange={setT}
                       />
                     </div>
 
@@ -337,8 +342,20 @@ function ResultEntry() {
               background="#CCE5FF"
               color="#000000"
               size="md"
-              onClick={() => {
-                console.log("Save");
+              onClick={()=>{
+                fetch("http:localhost:5000/newSuggestion",{
+                  method:"POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    newSuggestion:addSug
+                  })
+                })
+                .then((response) => response.json())
+                .then((data)=>{
+                  setTab(data)
+                })
               }}
             >
               Save
