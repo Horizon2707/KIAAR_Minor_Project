@@ -25,14 +25,12 @@ import {
 import Recom from "./Recom";
 
 function ResultEntry() {
-  var [addSug,setaddSug] = useState("")
+  var [addSug, setaddSug] = useState("");
   var navigate = useNavigate();
   var [forParams, setForParams] = useState([]);
- var [Tab,setTab]=useState(null)
-  // var [Remarks, setRemarks] = useState({
-  //   suggestion: [],
-  //   final: null,
-  // });
+  // var [Tab, setTab] = useState("");
+  var [bool, setBool] = useState();
+
   var [suggestion, setSuggestion] = useState([]);
   var [Errors, setErrors] = useState({});
   var [toggle, setToggle] = useState(false);
@@ -53,14 +51,14 @@ function ResultEntry() {
     copper: "",
   });
   let [calc, setCalc] = useState({});
-
+  let values = sessionStorage.getItem("values");
+  values = JSON.parse(values);
   useEffect(() => {
     // let result = sessionStorage.getItem("result");
     // if (result) {
     //   ressetValues(JSON.parse(result));
     // }
-    let values = sessionStorage.getItem("values");
-    values = JSON.parse(values);
+
     try {
       fetch("http://localhost:5000/parameters", {
         method: "POST",
@@ -94,11 +92,11 @@ function ResultEntry() {
       .then((data) => {
         setSuggestion(data);
       });
-  }, [Tab]);
- let setT = (e)=>{
-  let inputValue = e.target.value
-  setaddSug(inputValue)
-}
+  }, [bool]);
+  let setT = (e) => {
+    let inputValue = e.target.value;
+    setaddSug(inputValue);
+  };
   let validate = () => {
     const Errors = {};
     if (resValues.soilph === "") {
@@ -342,20 +340,25 @@ function ResultEntry() {
               background="#CCE5FF"
               color="#000000"
               size="md"
-              onClick={()=>{
-                fetch("http:localhost:5000/newSuggestion",{
-                  method:"POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({
-                    newSuggestion:addSug
+              onClick={() => {
+                try {
+                  fetch("http://localhost:5000/newSuggestion", {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                      newSuggestion: addSug,
+                      test: values.test,
+                    }),
                   })
-                })
-                .then((response) => response.json())
-                .then((data)=>{
-                  setTab(data)
-                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                      setBool(data.bool);
+                    });
+                } catch (error) {
+                  console.log(error);
+                }
               }}
             >
               Save

@@ -272,7 +272,7 @@ app.post("/plotArea", async (req, res) => {
 app.post("/parameters", async (req, res) => {
   try {
     const { test } = req.body;
-    console.log("xxxx");
+
     let testCd = parseInt(test);
     const connection = await dbConnection;
     const parameter_head_all = await connection.execute(
@@ -376,6 +376,40 @@ app.post("/suggestions", async (req, res) => {
     res.json(suggestions);
   } catch (error) {
     console.error("Suggestions not found");
+  }
+});
+app.post("/newSuggestion", async (req, res) => {
+  try {
+    const { newSuggestion, test } = req.body;
+    const testCd = parseInt(test);
+    const connection = await dbConnection;
+    console.log(testCd);
+    const new_suggestion = await connection.execute(
+      `INSERT INTO GSMAGRI.SW_SUGGESTION_DIR(
+        SUGGESTION_ID,
+        SUGGESTION_NAME,
+        TYPE_OF_SUGGESTION,
+        KF_SUGGESTION_NAME,
+        TEST_CD
+      )
+    VALUES
+      (
+        (SELECT MAX(SUGGESTION_ID) + 1 FROM GSMAGRI.SW_SUGGESTION_DIR),
+        :newSuggestion,
+        'NORMAL',
+        'NULL',
+        :testCd
+      )`,
+      [newSuggestion, testCd]
+    );
+    await connection.execute("COMMIT");
+    if (new_suggestion) {
+      res.json({ bool: true });
+    }
+
+    console.log("fuck me");
+  } catch (error) {
+    console.error("New Suggestion not added", error);
   }
 });
 app.post("/api", (req, res) => {

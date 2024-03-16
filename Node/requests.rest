@@ -52,9 +52,17 @@ Content-Type: application/json
     "test" : "1"
 }
 ### Suggestion 
-POST http://localhost:5000/suggestion
+POST http://localhost:5000/suggestions
 Content-Type: application/json
 
 {
+    "test" : "1"
+}
+### New suggestion
+POST http://localhost:5000/newSuggestion
+Content-Type: application/json
+
+{   
+    "newSuggestion" : "TEMP",
     "test" : "1"
 }
