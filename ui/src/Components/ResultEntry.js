@@ -28,10 +28,11 @@ function ResultEntry() {
   var navigate = useNavigate();
   var [forParams, setForParams] = useState([]);
 
-  var [Remarks, setRemarks] = useState({
-    suggestion: null,
-    final: null,
-  });
+  // var [Remarks, setRemarks] = useState({
+  //   suggestion: [],
+  //   final: null,
+  // });
+  var [suggestion, setSuggestion] = useState([]);
   var [Errors, setErrors] = useState({});
   var [toggle, setToggle] = useState(false);
 
@@ -90,10 +91,7 @@ function ResultEntry() {
     })
       .then((response) => response.json())
       .then((data) => {
-        setRemarks({
-          suggestion: data,
-          final: null,
-        });
+        setSuggestion(data);
       });
   }, []);
 
@@ -263,31 +261,29 @@ function ResultEntry() {
                             </Tr>
                           </Thead>
                           <Tbody>
-                            {sugArr.map((suggestion) => {
+                            {suggestion.map((element) => {
                               return (
                                 <>
                                   <Tr border="1px solid #ddd">
                                     <Checkbox
                                       size="lg"
-                                      id={suggestion.id}
-                                      value={suggestion.selected}
+                                      id={element.SUGGESTION_ID}
+                                      value={element.SUGGESTION_ID}
                                       onChange={(e) => {
-                                        setRemarks({
-                                          ...Remarks,
-                                          suggestion: Remarks.suggestion.map(
-                                            (s) =>
-                                              s.id === suggestion.id
-                                                ? {
-                                                    ...s,
-                                                    selected: e.target.checked,
-                                                  }
-                                                : s
-                                          ),
-                                        });
-                                        console.log(Remarks);
+                                        const updatedSuggestions =
+                                          suggestion.map((s) =>
+                                            s.SUGGESTION_ID ===
+                                            element.SUGGESTION_ID
+                                              ? {
+                                                  ...s,
+                                                  selected: e.target.checked,
+                                                }
+                                              : s
+                                          );
+                                        setSuggestion(updatedSuggestions);
                                       }}
                                     >
-                                      {suggestion.name}
+                                      {element.SUGGESTION_NAME}
                                     </Checkbox>
                                   </Tr>
                                 </>
@@ -297,6 +293,16 @@ function ResultEntry() {
                         </Table>
                       </TableContainer>
                     </div>
+                    <div className="final">
+                      <h3>Add Suggestions</h3>
+                      <Textarea
+                        placeholder="Multiline"
+                        resize="none"
+                        rows={1} // Set the number of rows to 7
+                        variant="filled"
+                      />
+                    </div>
+
                     <div className="final">
                       <h3>Final Remarks</h3>
                       <Textarea

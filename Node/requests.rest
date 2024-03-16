@@ -51,3 +51,10 @@ Content-Type: application/json
 {
     "test" : "1"
 }
+### Suggestion 
+POST http://localhost:5000/suggestion
+Content-Type: application/json
+
+{
+    "test" : "1"
+}

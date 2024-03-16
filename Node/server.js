@@ -362,8 +362,18 @@ app.post("/parameters", async (req, res) => {
   }
 });
 
-app.post("/suggestions", (req, res) => {
+app.post("/suggestions", async (req, res) => {
   try {
+    const { test } = req.body;
+
+    const connection = await dbConnection;
+    const suggestion_all = await connection.execute(
+      `SELECT SUGGESTION_ID,SUGGESTION_NAME FROM GSMAGRI.SW_SUGGESTION_DIR WHERE TEST_CD=:test`,
+      [test]
+    );
+    const suggestions = suggestion_all.rows;
+    suggestions.sort((a, b) => a.SUGGESTION_ID - b.SUGGESTION_ID);
+    res.json(suggestions);
   } catch (error) {
     console.error("Suggestions not found");
   }
