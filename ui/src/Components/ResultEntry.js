@@ -36,9 +36,30 @@ function ResultEntry() {
   var [toggle, setToggle] = useState(false);
 
   var [resValues, ressetValues] = useState([]);
-  let [calc, setCalc] = useState({});
+
   let values = sessionStorage.getItem("values");
   values = JSON.parse(values);
+  let postData = () => {
+    let com = {
+      parameter: resValues,
+      values: values,
+    }
+    const dataString = JSON.stringify(com);
+  sessionStorage.setItem('combined', dataString);
+
+    fetch("http://localhost:5000/api/result_entry", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(dataString),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        sessionStorage.setItem("calculations", JSON.stringify(data));
+      });
+  
+  }
   useEffect(() => {
     // let result = sessionStorage.getItem("result");
     // if (result) {
@@ -283,7 +304,7 @@ function ResultEntry() {
               size="md"
               onClick={() => {
                 if (validate()) {
-                  //postData();
+                  postData();
                   navigate("/recommendations");
                   sessionStorage.setItem("result", JSON.stringify(resValues));
                   setToggle(!toggle);
