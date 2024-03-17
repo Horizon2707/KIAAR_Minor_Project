@@ -35,21 +35,7 @@ function ResultEntry() {
   var [Errors, setErrors] = useState({});
   var [toggle, setToggle] = useState(false);
 
-  var [resValues, ressetValues] = useState({
-    soilph: "",
-    electricalConductivity: "",
-    organicCarbon: "",
-    nitrogen: "",
-    phosphorus: "",
-    potassium: "",
-    calcium: "",
-    magnesium: "",
-    sulphur: "",
-    zinc: "",
-    iron: "",
-    manganese: "",
-    copper: "",
-  });
+  var [resValues, ressetValues] = useState([]);
   let [calc, setCalc] = useState({});
   let values = sessionStorage.getItem("values");
   values = JSON.parse(values);
@@ -99,46 +85,14 @@ function ResultEntry() {
   };
   let validate = () => {
     const Errors = {};
-    if (resValues.soilph === "") {
-      Errors.soilph = "Soil pH is required";
-    }
-    if (resValues.electricalConductivity === "") {
-      Errors.electricalConductivity = "Electrical Conductivity is required";
-    }
-    if (resValues.organicCarbon === "") {
-      Errors.organicCarbon = "Organic Carbon is required";
-    }
-    if (resValues.nitrogen === "") {
-      Errors.nitrogen = "Nitrogen is required";
-    }
-    if (resValues.phosphorus === "") {
-      Errors.phosphorus = "Phosphorus is required";
-    }
-    if (resValues.potassium === "") {
-      Errors.potassium = "Potassium is required";
-    }
-    if (resValues.calcium === "") {
-      Errors.calcium = "Calcium is required";
-    }
-    if (resValues.magnesium === "") {
-      Errors.magnesium = "Magnesium is required";
-    }
-    if (resValues.sulphur === "") {
-      Errors.sulphur = "Sulphur is required";
-    }
-    if (resValues.zinc === "") {
-      Errors.zinc = "Zinc is required";
-    }
-    if (resValues.iron === "") {
-      Errors.iron = "Iron is required";
-    }
-    if (resValues.manganese === "") {
-      Errors.manganese = "Manganese is required";
-    }
-    if (resValues.copper === "") {
-      Errors.copper = "Copper is required";
+    for (const element of forParams) {
+      if (!resValues[element.PARAMETER_ID]) {
+        Errors[element.PARAMETER_ID] =
+          "Please enter a value for " + element.PARAMETER_NAME;
+      }
     }
     setErrors(Errors);
+    console.log(Errors);
     return Object.keys(Errors).length === 0;
   };
   // let postData = () => {
@@ -228,6 +182,8 @@ function ResultEntry() {
                                     onChange={(e) => {
                                       ressetValues({
                                         ...resValues,
+                                        [element.PARAMETER_NAME]:
+                                          e.target.value,
                                         [element.PARAMETER_ID]: e.target.value,
                                       });
                                     }}

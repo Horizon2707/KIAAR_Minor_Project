@@ -406,10 +406,15 @@ app.post("/newSuggestion", async (req, res) => {
     if (new_suggestion) {
       res.json({ bool: true });
     }
-
-    console.log("fuck me");
   } catch (error) {
     console.error("New Suggestion not added", error);
+  }
+});
+app.post("/values", (req, res) => {
+  try {
+    const { values, paramsValues } = req.body;
+  } catch (error) {
+    console.log(error);
   }
 });
 app.post("/api", (req, res) => {
