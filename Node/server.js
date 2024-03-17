@@ -44,6 +44,9 @@ function extractUniqueValues(data, field) {
   return Array.from(uniqueValues);
 }
 
+let farmerValues;
+let parameterValues;
+
 app.post("/farmerId", async (req, res) => {
   const { farmerId } = req.body;
 
@@ -55,6 +58,11 @@ app.post("/farmerId", async (req, res) => {
       [farmerId]
     );
     //Farmer Information Retreival
+    //handle not found
+    if (farmer_rows <= 0) {
+      return res.status(404).json({ message: "Farmer not found" });
+    }
+
     const personal = await connection.execute(
       `SELECT FARMER_NAME,F_ADDRESS,PHONE_NO FROM FARMER_LIST WHERE FARMER_ID =:farmerId`,
       [farmerId]
@@ -82,7 +90,7 @@ app.post("/farmerId", async (req, res) => {
       console.log("FARMER ID");
       console.log(dropdowns);
     } else {
-      res.status(404).json({ message: "Farmer not found" });
+      return res.status(404).json({ message: "Farmer not found" });
     }
 
     //Soil Type CD to Name
@@ -261,10 +269,8 @@ app.post("/plotArea", async (req, res) => {
       `SELECT DISTINCT PLOT_AREA FROM FARMER_PLOTS WHERE FARMER_ID=:farmerId AND VILLAGE_CD=:villageCd AND PLOT_NO = :plotNo`,
       [farmerId, villageCd, plotNo]
     );
-    const number = {
-      number: 80,
-    };
-    res.json(number);
+
+    res.json(plot_area.rows[0].PLOT_AREA);
   } catch (error) {
     console.error("Plot area not found");
   }
@@ -412,7 +418,11 @@ app.post("/newSuggestion", async (req, res) => {
 });
 app.post("/values", (req, res) => {
   try {
-    const { values, paramsValues } = req.body;
+    const { values, paramValues } = req.body;
+    farmerValues = values;
+    parameterValues = paramValues;
+    console.log(farmerValues);
+    console.log(parameterValues);
   } catch (error) {
     console.log(error);
   }

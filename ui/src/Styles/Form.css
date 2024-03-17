@@ -29,6 +29,9 @@
   display: flex;
   justify-content: space-start;
   gap: 10vh;
+  background-color: #53ffff5b;
+  border-radius: 10px;
+  box-shadow: 0 0 10px 0 #44ddf8;
 }
 
 .litspace {

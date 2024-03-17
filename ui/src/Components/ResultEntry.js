@@ -43,23 +43,25 @@ function ResultEntry() {
     let com = {
       parameter: resValues,
       values: values,
-    }
+    };
     const dataString = JSON.stringify(com);
-  sessionStorage.setItem('combined', dataString);
-
-    fetch("http://localhost:5000/api/result_entry", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(dataString),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        sessionStorage.setItem("calculations", JSON.stringify(data));
-      });
-  
-  }
+    sessionStorage.setItem("combined", dataString);
+    try {
+      fetch("http://localhost:5000/values", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ paramValues: resValues, values: values }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          sessionStorage.setItem("calculations", JSON.stringify(data));
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
     // let result = sessionStorage.getItem("result");
     // if (result) {
@@ -107,7 +109,10 @@ function ResultEntry() {
   let validate = () => {
     const Errors = {};
     for (const element of forParams) {
-      if (!resValues[element.PARAMETER_ID]) {
+      if (
+        !resValues[element.PARAMETER_ID] &&
+        element.PARAMETER_TYPE !== "HEADING"
+      ) {
         Errors[element.PARAMETER_ID] =
           "Please enter a value for " + element.PARAMETER_NAME;
       }
@@ -211,7 +216,7 @@ function ResultEntry() {
                                   ></Input>
                                   {Errors[element.PARAMETER_ID] && (
                                     <p style={{ color: "red" }}>
-                                      {Errors[element.PARAMETER_NAME]}
+                                      {Errors[element.PARAMETER_ID]}
                                     </p>
                                   )}
                                 </Td>

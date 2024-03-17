@@ -44,6 +44,15 @@ Content-Type: application/json
     "farmerId" : 153227,
     "villageCd" : 27
 }
+### Plot Area
+POST http://localhost:5000/plotArea
+Content-Type: application/json
+
+{
+    "farmerId" : 153227,
+    "villageCd" : 27,
+    "plotNo": 2
+}
 ### Parameter info 
 POST http://localhost:5000/parameters
 Content-Type: application/json
