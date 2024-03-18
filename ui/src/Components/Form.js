@@ -4,20 +4,21 @@ import { useNavigate } from "react-router-dom";
 import { EditIcon } from "@chakra-ui/icons";
 import { useState, useEffect } from "react";
 export function Form() {
-  var [newErrors, setErrors] = useState({});
-  var [wild, setWild] = useState([]);
-  var [surveyNo, setSurveyNo] = useState([]);
-  var [drainage, setdrainage] = useState([]);
-  var [cultivationType, setCultivationType] = useState([]);
-  var [cropToBeGrown, setCropToBeGrown] = useState([]);
-  var [irrigationSources, setIrrigationSources] = useState([]);
-  var [soilTypes, setSoilTypes] = useState([]);
-  var [previousCrop, setPreviousCrop] = useState([]);
-  var [cluster, setCluster] = useState([]);
-  var [village, setVillage] = useState([]);
-  var [plotNo, setplotNo] = useState([]);
-  var [plotArea, setPlotArea] = useState();
-  var [values, setValues] = useState({
+  const [newErrors, setErrors] = useState({});
+  const [wild, setWild] = useState([]);
+  const [surveyNo, setSurveyNo] = useState([]);
+  const [drainage, setdrainage] = useState([]);
+  const [cultivationType, setCultivationType] = useState([]);
+  const [cropToBeGrown, setCropToBeGrown] = useState([]);
+  const [irrigationSources, setIrrigationSources] = useState([]);
+  const [soilTypes, setSoilTypes] = useState([]);
+  const [previousCrop, setPreviousCrop] = useState([]);
+  const [cluster, setCluster] = useState([]);
+  const [village, setVillage] = useState([]);
+  const [plotNo, setplotNo] = useState([]);
+  const [plotArea, setPlotArea] = useState();
+  const [labTran, setLabTran] = useState([]);
+  const [values, setValues] = useState({
     farmerId: "",
     //labNo: "",
     test: "",
@@ -38,16 +39,16 @@ export function Form() {
     HEWFno: "",
     area: null,
   });
-  var [farmInfo, setfarmInfo] = useState({
+  const [farmInfo, setfarmInfo] = useState({
     name: "",
     MBLNO: "",
     PAddress: "",
     village: "",
     labNo: "",
   });
-  var [watVar, setwatVar] = useState(true);
-  var [soilVar, setSoilVar] = useState(true);
-  var fetchPlotarea = (plotNo) => {
+  const [watVar, setwatVar] = useState(true);
+  const [soilVar, setSoilVar] = useState(true);
+  const fetchPlotarea = (plotNo) => {
     fetch("http://localhost:5000/plotArea", {
       method: "POST",
       headers: {
@@ -62,6 +63,23 @@ export function Form() {
       .then((res) => res.json())
       .then((data) => {
         setPlotArea(data);
+      });
+  };
+  const fetchSurveyNo = (villageCd) => {
+    fetch("http://localhost:5000/surveyno", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        farmerId: values.farmerId,
+        villageCd: villageCd,
+        clusterCd: values.cluster,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setSurveyNo(data);
       });
   };
   useEffect(() => {
@@ -82,7 +100,6 @@ export function Form() {
             name: data.farmer_name,
             MBLNO: data.phone_no,
             PAddress: data.farmer_address,
-            labNo: data.tran_nos,
           });
           setdrainage({
             drainage: data.drainage,
@@ -92,7 +109,8 @@ export function Form() {
           setIrrigationSources(data.irrigation_types);
           setSoilTypes(data.soil_types);
           setPreviousCrop(data.previous_crop);
-          setSurveyNo(data.survey_nos);
+          setLabTran(data.tran_nos);
+          console.log(data);
         });
       fetch("http://localhost:5000/clusterInfo", {
         method: "POST",
@@ -160,71 +178,74 @@ export function Form() {
       });
   }, [values.village]);
 
-  var navigate = useNavigate();
+  const navigate = useNavigate();
   const o = {
     marginTop: "2vh",
   };
-  var [isDisabled, setIsDisabled] = useState(true);
+  const [isDisabled, setIsDisabled] = useState(true);
 
   let handleEnableElement = () => {
     setIsDisabled(!isDisabled);
   };
 
   let validate = () => {
-    const newErrors = {};
+    const errors = {};
     if (values.farmerId.length !== 6) {
       if (values.farmerId === "") {
-        newErrors.farmerId = "Farmer Id is required";
+        errors.farmerId = "Farmer Id is required";
       } else {
-        newErrors.farmerId = "Farmer Id should be 6 digits";
+        errors.farmerId = "Farmer Id should be 6 digits";
       }
     } else if (isNaN(values.farmerId)) {
-      newErrors.farmerId = "Farmer Id should be a number";
+      errors.farmerId = "Farmer Id should be a number";
     }
     if (values.test === "") {
-      newErrors.test = "Test type is required";
+      errors.test = "Test type is required";
     }
     if (values.cluster === "") {
-      newErrors.cluster = "Cluster is required";
+      errors.cluster = "Cluster is required";
+    }
+    if (values.village === "") {
+      errors.village = "Village is required";
+    }
+    if (values.surveyNo === "") {
+      errors.surveyNo = "Survey number is required";
     }
     if (values.plotNo === "") {
-      newErrors.plotNo = "Plot No is required";
+      errors.plotNo = "Plot number is required";
     }
     if (values.drainage === "") {
-      newErrors.drainage = "Drainage is required";
+      errors.drainage = "Drainage is required";
     }
     if (values.soilType === "") {
-      newErrors.soilType = "Soil Type is required";
+      errors.soilType = "Soil Type is required";
     }
     if (values.waterType === "") {
-      newErrors.waterType = "Water Type is required";
+      errors.waterType = "Water Type is required";
     }
     if (values.irrigationSource === "") {
-      newErrors.irrigationSource = "Irrigation Source is required";
+      errors.irrigationSource = "Irrigation Source is required";
     }
     if (values.cultivationType.length === 0) {
-      newErrors.cultivationType = "Cultivation Type is required";
+      errors.cultivationType = "Cultivation Type is required";
     }
-
     if (values.previousCrop.length === 0) {
-      newErrors.previousCrop = "Previous Crop is required";
+      errors.previousCrop = "Previous Crop is required";
     }
     if (values.cropToBeGrown.length === 0) {
-      newErrors.cropToBeGrown = "Crop to be grown is required";
+      errors.cropToBeGrown = "Crop to be grown is required";
     }
     if (values.dtOfSampling === "") {
-      newErrors.dtOfSampling = "Date of Sampling is required";
-    } // else if (values.dtOfSampling > values.dtOfSamplingReceipt) {
-    //   newErrors.dtOfSampling =
-    //     "Date of Sampling should be less than Date of Sampling Receipt";
-    // }
+      errors.dtOfSampling = "Date of Sampling is required";
+    }
     if (values.dtOfSamplingReceipt === "") {
-      newErrors.dtOfSamplingReceipt = "Date of Sampling Receipt is required";
+      errors.dtOfSamplingReceipt = "Date of Sampling Receipt is required";
     }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    setErrors(errors);
+    return Object.keys(errors).length === 0;
   };
+
   let sessionPush = () => {
     sessionStorage.setItem("values", JSON.stringify(values));
     console.log(values);
@@ -282,7 +303,7 @@ export function Form() {
           </div>
           <div className="item litspace">
             <label className="mLabel" htmlFor="templateNo">
-              Templete No:-
+              Templete No:-{labTran.map((item) => item.LAB_TRAN)}
             </label>
             <Select
               size="sm"
@@ -303,7 +324,7 @@ export function Form() {
           </div>
           <div className="item litspace">
             <label className="mLabel" htmlFor="labNo">
-              Lab No:X
+              Lab No:{labTran && labTran.map((item) => item.LAB_TRAN)}
             </label>
             {newErrors.labNo && <div className="error">{newErrors.labNo}</div>}
           </div>
@@ -399,6 +420,7 @@ export function Form() {
               onChange={(e) => {
                 const village = e.target.value;
                 setValues({ ...values, village: village });
+                fetchSurveyNo(village);
               }}
               value={values.village}
             >
@@ -430,8 +452,8 @@ export function Form() {
               value={values.surveyNo}
             >
               {surveyNo.map((surveyNo, index) => (
-                <option key={index} value={surveyNo}>
-                  {surveyNo}
+                <option key={index} value={surveyNo.SY_NO}>
+                  {surveyNo.SY_NO}
                 </option>
               ))}
             </Select>
@@ -704,6 +726,8 @@ export function Form() {
       <div style={o} className="centering">
         <Button
           onClick={() => {
+            const obj = newErrors;
+            console.log(obj);
             // if (validate()) {
             navigate("/resultentry");
             sessionPush();

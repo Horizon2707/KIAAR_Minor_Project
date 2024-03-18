@@ -277,15 +277,44 @@ function ResultEntry() {
                         </Table>
                       </TableContainer>
                     </div>
-                    <div className="final">
+                    <div className="olo">
                       <h3>Add Suggestions</h3>
-                      <Textarea
-                        placeholder="Multiline"
-                        resize="none"
-                        rows={1}
-                        variant="filled"
-                        onChange={setT}
-                      />
+                      <div className="ok">
+                        <Textarea
+                          placeholder="Multiline"
+                          resize="none"
+                          rows={1}
+                          variant="filled"
+                          onChange={setT}
+                        />
+                        <Button
+                          background="#CCE5FF"
+                          color="#000000"
+                          size="md"
+                          onClick={() => {
+                            try {
+                              fetch("http://localhost:5000/newSuggestion", {
+                                method: "POST",
+                                headers: {
+                                  "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify({
+                                  newSuggestion: addSug,
+                                  test: values.test,
+                                }),
+                              })
+                                .then((response) => response.json())
+                                .then((data) => {
+                                  setBool(data.bool);
+                                });
+                            } catch (error) {
+                              console.log(error);
+                            }
+                          }}
+                        >
+                          Save
+                        </Button>
+                      </div>
                     </div>
 
                     <div className="final">
@@ -317,33 +346,6 @@ function ResultEntry() {
               }}
             >
               Go to Recommendations
-            </Button>
-            <Button
-              background="#CCE5FF"
-              color="#000000"
-              size="md"
-              onClick={() => {
-                try {
-                  fetch("http://localhost:5000/newSuggestion", {
-                    method: "POST",
-                    headers: {
-                      "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                      newSuggestion: addSug,
-                      test: values.test,
-                    }),
-                  })
-                    .then((response) => response.json())
-                    .then((data) => {
-                      setBool(data.bool);
-                    });
-                } catch (error) {
-                  console.log(error);
-                }
-              }}
-            >
-              Save
             </Button>
           </div>
           <br />

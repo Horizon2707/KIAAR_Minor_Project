@@ -36,6 +36,17 @@ Content-Type: application/json
     "clusterCd" : 3
 }
 
+### Survey No
+
+POST http://localhost:5000/surveyInfo
+Content-Type: application/json
+
+{
+    "farmerId" : 153227,
+    "clusterCd" : 3,
+    "villageCd" : 27
+    
+}
 ### PLOT Info
 POST http://localhost:5000/plotNo
 Content-Type: application/json

@@ -76,8 +76,11 @@ app.post("/farmerId", async (req, res) => {
 
     const farmers = farmer_rows.rows;
     //Lab Tran Numbers
-    const labTranNos = farmers.map((item) => item.LAB_TRAN_NO);
-    console.log(labTranNos);
+    const labtranno = await connection.execute(
+      `SELECT MAX(LAB_TRAN_NO) + 1 AS LAB_TRAN FROM SW_TRAN_HEAD`
+    );
+    const labtran = labtranno.rows;
+    console.log(labtran);
     //Survey Numbers
     const survey_no_t = new Set(farmers.map((item) => item.SY_NO));
     const survey_no = Array.from(survey_no_t);
@@ -151,7 +154,7 @@ app.post("/farmerId", async (req, res) => {
       farmer_name: personal_info[0]?.FARMER_NAME ?? null,
       farmer_address: personal_info[0]?.F_ADDRESS ?? null,
       phone_no: personal_info[0]?.PHONE_NO ?? null,
-      tran_nos: labTranNos ?? null,
+      tran_nos: labtran ?? null,
       survey_nos: survey_no ?? null,
       drainage: dropdowns.DRAINAGE ?? null,
       type_of_cultivation: dropdowns.TYPE_OF_CULTIVATION ?? null,
@@ -244,6 +247,21 @@ app.post("/villageInfo", async (req, res) => {
     res.json(village_names.rows);
   } catch (error) {
     console.error("Village not found");
+  }
+});
+
+app.post("/surveyno", async (req, res) => {
+  try {
+    const { farmerId, clusterCd, villageCd } = req.body;
+
+    const connection = await dbConnection;
+    const surveyno_all = await connection.execute(
+      `SELECT DISTINCT SY_NO FROM FARMER_PLOTS WHERE FARMER_ID=:farmerId AND CLUSTER_CD=:clusterCd AND VILLAGE_CD=:villageCd`,
+      [farmerId, clusterCd, villageCd]
+    );
+    res.json(surveyno_all.rows);
+  } catch (error) {
+    console.log(error);
   }
 });
 app.post("/plotNo", async (req, res) => {

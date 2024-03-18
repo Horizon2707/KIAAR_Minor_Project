@@ -22,6 +22,11 @@
   gap: 2vh;
   margin-top: 2vh;
 }
+.olo{
+  display: flex;
+  flex-direction: column;
+  gap: 2vh;
+}
 
 .head {
   gap: 10vh;
@@ -53,4 +58,8 @@
   display: flex;
   flex-direction:column;
   gap: 10vh;
+}
+.ok{
+  display: flex;
+  flex-direction: row;
 }
