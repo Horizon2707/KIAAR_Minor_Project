@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../Styles/ResultEntry.css";
 import { Button } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
 import { Checkbox } from "@chakra-ui/react";
 import { Textarea } from "@chakra-ui/react";
 import {
@@ -14,6 +13,8 @@ import {
 } from "@chakra-ui/react";
 import {
   Table,
+  Alert,
+  AlertIcon,
   Thead,
   Tbody,
   Tr,
@@ -26,7 +27,6 @@ import Recom from "./Recom";
 
 function ResultEntry() {
   var [addSug, setaddSug] = useState("");
-  var navigate = useNavigate();
   var [forParams, setForParams] = useState([]);
   // var [Tab, setTab] = useState("");
   var [bool, setBool] = useState();
@@ -34,15 +34,16 @@ function ResultEntry() {
   var [suggestion, setSuggestion] = useState([]);
   var [Errors, setErrors] = useState({});
   var [toggle, setToggle] = useState(false);
-
+  const [alertTog, setalertTog] = useState(false);
   var [resValues, ressetValues] = useState([]);
-
+  const [finalRemarks, setFinalRemarks] = useState("");
   let values = sessionStorage.getItem("values");
   values = JSON.parse(values);
   let postData = () => {
     let com = {
       parameter: resValues,
       values: values,
+      suggestions: suggestion,
     };
     const dataString = JSON.stringify(com);
     sessionStorage.setItem("combined", dataString);
@@ -137,6 +138,12 @@ function ResultEntry() {
 
   return (
     <>
+      {alertTog && (
+        <Alert status="success">
+          <AlertIcon />
+          Data uploaded to the server.
+        </Alert>
+      )}
       {toggle && (
         <>
           <Recom data={"from ResultEn"} />
@@ -301,6 +308,7 @@ function ResultEntry() {
                                 body: JSON.stringify({
                                   newSuggestion: addSug,
                                   test: values.test,
+                                  finalRemarks: finalRemarks,
                                 }),
                               })
                                 .then((response) => response.json())
@@ -324,6 +332,9 @@ function ResultEntry() {
                         resize="none"
                         rows={7} // Set the number of rows to 7
                         variant="filled"
+                        onChange={(e) => {
+                          setFinalRemarks(e.target.value);
+                        }}
                       />
                     </div>
                   </div>
@@ -339,13 +350,13 @@ function ResultEntry() {
               onClick={() => {
                 if (validate()) {
                   postData();
-                  navigate("/recommendations");
                   sessionStorage.setItem("result", JSON.stringify(resValues));
                   setToggle(!toggle);
+                  setalertTog(true);
                 }
               }}
             >
-              Go to Recommendations
+              Go
             </Button>
           </div>
           <br />
