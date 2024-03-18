@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   Flex,
   Heading,
@@ -23,10 +23,24 @@ const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
+  const [emailError, setEmailError] = useState("");
 
   const handleLogin = async (event) => {
     event.preventDefault(); // Prevent form submission
     try {
+      // Check if email is empty
+      if (!username.trim()) {
+        setEmailError("Email cannot be empty");
+        return; // Prevent further execution
+      }
+  
+      // Check if password is empty
+      if (!password.trim()) {
+        setPasswordError("Password cannot be empty");
+        return; // Prevent further execution
+      }
+  
       const response = await fetch("http://localhost:5000/login", {
         method: "POST",
         headers: {
@@ -34,18 +48,19 @@ const Login = () => {
         },
         body: JSON.stringify({ username, password }),
       });
-
+  
       if (!response.ok) {
         const error = await response.json();
         throw new Error(error.message);
       }
-
       const result = await response.json();
       console.log("Login successful:", result);
+      sessionStorage.setItem("user", JSON.stringify(result));  
     } catch (error) {
       console.error("Error during login:", error.message);
     }
   };
+  
 
   const handleShowClick = () => setShowPassword(!showPassword);
 
@@ -84,9 +99,17 @@ const Login = () => {
                     type="email"
                     placeholder="email address"
                     value={username}
-                    onChange={(e) => setUsername(e.target.value)}
+                    onChange={(e) => {
+                      setUsername(e.target.value);
+                      setEmailError(""); // Clear error message when typing
+                    }}
                   />
                 </InputGroup>
+                {emailError && (
+                  <FormHelperText color="red.500">
+                    {emailError}
+                  </FormHelperText>
+                )}
               </FormControl>
               <FormControl>
                 <InputGroup>
@@ -99,7 +122,10 @@ const Login = () => {
                     type={showPassword ? "text" : "password"}
                     placeholder="Password"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      setPasswordError(""); // Clear error message when typing
+                    }}
                   />
                   <InputRightElement width="4.5rem">
                     <Button h="1.75rem" size="sm" onClick={handleShowClick}>
@@ -107,6 +133,11 @@ const Login = () => {
                     </Button>
                   </InputRightElement>
                 </InputGroup>
+                {passwordError && (
+                  <FormHelperText color="red.500">
+                    {passwordError}
+                  </FormHelperText>
+                )}
                 <FormHelperText textAlign="right">
                   <Link color="teal.500">forgot password?</Link>
                 </FormHelperText>
@@ -126,7 +157,7 @@ const Login = () => {
       </Stack>
       <Box>
         New?{" "}
-        <Link color="teal.500" to="/signUp">
+        <Link color="teal.500" href="/signUp">
           Sign Up
         </Link>
       </Box>

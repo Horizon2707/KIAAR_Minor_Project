@@ -107,10 +107,6 @@ export function Form() {
       console.error("Error:", error);
     }
   }, []);
-  // useEffect(() => {
-  //   console.log(values.test);
-
-  // }, [values.test]);
   useEffect(() => {
     fetch("http://localhost:5000/villageInfo", {
       method: "POST",
@@ -146,24 +142,6 @@ export function Form() {
         setplotNo(data);
       });
   }, [values.village]);
-  // useEffect(() => {
-  //   fetch("http://localhost:5000/plotArea", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({
-  //       farmerId: values.farmerId,
-  //       plotNo: values.plotNo,
-  //       villageCd: values.village,
-  //     }),
-  //   })
-  //     .then((res) => res.json())
-  //     .then((data) => {
-  //       console.log(data);
-  //       setPlotArea(data);
-  //     });
-  // }, [values.plotNo]);
 
   var navigate = useNavigate();
   const o = {
@@ -452,6 +430,22 @@ export function Form() {
                   ...values,
                   plotNo: parseInt(e.target.value),
                 });
+                fetch("http://localhost:5000/plotArea", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    farmerId: values.farmerId,
+                    plotNo: e.target.value,
+                    villageCd: values.village,
+                  }),
+                })
+                  .then((res) => res.json())
+                  .then((data) => {
+                    console.log(data);
+                    setPlotArea(data);
+                  });
               }}
               value={values.plotNo}
             >
@@ -484,7 +478,7 @@ export function Form() {
             </button>
           </div>
         </div>
-        <div className="row5">
+        <div className="row5 common">
           <div className="item litspace">
             <label className="mLabel" htmlFor="drainage">
               Drainage
