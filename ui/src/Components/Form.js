@@ -47,6 +47,23 @@ export function Form() {
   });
   var [watVar, setwatVar] = useState(true);
   var [soilVar, setSoilVar] = useState(true);
+  var fetchPlotarea = (plotNo) => {
+    fetch("http://localhost:5000/plotArea", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        plotNo: plotNo,
+        farmerId: values.farmerId,
+        villageCd: values.village,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setPlotArea(data);
+      });
+  };
   useEffect(() => {
     const maxLength = 6;
     if (values.farmerId.length === maxLength) {
@@ -214,27 +231,27 @@ export function Form() {
   };
 
   const handleTestType = (e) => {
-    setValues({ ...values, test: e.target.value });
+    const test = e.target.value;
     fetch("http://localhost:5000/temp_no", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ test_cd: values.test }),
+      body: JSON.stringify({ test_cd: test }),
     })
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
-        setValues({ ...values, templateNo: data });
+        setValues({ ...values, test: test, templateNo: data });
+        if (test === "1") {
+          setwatVar(false);
+          setSoilVar(true);
+        }
+        if (test === "2") {
+          setwatVar(true);
+          setSoilVar(false);
+        }
       });
-    if (values.test === "1") {
-      setwatVar(false);
-      setSoilVar(true);
-    }
-    if (values.test === "2") {
-      setwatVar(true);
-      setSoilVar(false);
-    }
   };
 
   return (
@@ -271,7 +288,8 @@ export function Form() {
               size="sm"
               value={values.templateNo}
               onChange={(e) => {
-                setValues({ ...values, templateNo: e.target.value });
+                const templateNo = e.target.value;
+                setValues({ ...values, templateNo: templateNo });
               }}
               variant="filled"
               id="templateNo"
@@ -295,7 +313,8 @@ export function Form() {
             </label>
             <Input
               onChange={(e) => {
-                setValues({ ...values, HEWFno: e.target.value });
+                const HEWFno = e.target.value;
+                setValues({ ...values, HEWFno: HEWFno });
               }}
               value={values.HEWFno}
               type="number"
@@ -312,7 +331,8 @@ export function Form() {
             </label>
             <Input
               onChange={(e) => {
-                setValues({ ...values, farmerId: e.target.value });
+                const farmerId = e.target.value;
+                setValues({ ...values, farmerId: farmerId });
               }}
               value={values.farmerId}
               id="farmerId"
@@ -350,7 +370,8 @@ export function Form() {
               placeholder="Select one..."
               variant="filled"
               onChange={(e) => {
-                setValues({ ...values, cluster: e.target.value });
+                const cluster = e.target.value;
+                setValues({ ...values, cluster: cluster });
               }}
               value={values.cluster}
             >
@@ -376,7 +397,8 @@ export function Form() {
               placeholder="Select one..."
               variant="filled"
               onChange={(e) => {
-                setValues({ ...values, village: e.target.value });
+                const village = e.target.value;
+                setValues({ ...values, village: village });
               }}
               value={values.village}
             >
@@ -402,7 +424,8 @@ export function Form() {
               placeholder="Select one..."
               variant="filled"
               onChange={(e) => {
-                setValues({ ...values, surveyNo: e.target.value });
+                const surveyNo = e.target.value;
+                setValues({ ...values, surveyNo: surveyNo });
               }}
               value={values.surveyNo}
             >
@@ -426,26 +449,12 @@ export function Form() {
               placeholder="Select one..."
               variant="filled"
               onChange={(e) => {
+                const areaNo = parseInt(e.target.value);
                 setValues({
                   ...values,
-                  plotNo: parseInt(e.target.value),
+                  plotNo: areaNo,
                 });
-                fetch("http://localhost:5000/plotArea", {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({
-                    farmerId: values.farmerId,
-                    plotNo: e.target.value,
-                    villageCd: values.village,
-                  }),
-                })
-                  .then((res) => res.json())
-                  .then((data) => {
-                    console.log(data);
-                    setPlotArea(data);
-                  });
+                fetchPlotarea(areaNo);
               }}
               value={values.plotNo}
             >
@@ -471,7 +480,6 @@ export function Form() {
               variant="filled"
               id="area"
               value={plotArea}
-              disabled={isDisabled}
             ></Input>
             <button onClick={handleEnableElement}>
               <EditIcon />
@@ -489,7 +497,8 @@ export function Form() {
               variant="filled"
               placeholder="Select one..."
               onChange={(e) => {
-                setValues({ ...values, drainage: e.target.value });
+                const drainage = e.target.value;
+                setValues({ ...values, drainage: drainage });
               }}
               value={values.drainage}
             >
@@ -516,7 +525,8 @@ export function Form() {
                 variant="filled"
                 placeholder="Select one..."
                 onChange={(e) => {
-                  setValues({ ...values, soilType: e.target.value });
+                  const soil_type = e.target.value;
+                  setValues({ ...values, soilType: soil_type });
                 }}
                 value={values.soilType}
               >
@@ -542,7 +552,8 @@ export function Form() {
                 variant="filled"
                 placeholder="Select one..."
                 onChange={(e) => {
-                  setValues({ ...values, waterType: e.target.value });
+                  const waterType = e.target.value;
+                  setValues({ ...values, waterType: waterType });
                 }}
                 value={values.waterType}
               >
@@ -564,7 +575,8 @@ export function Form() {
               variant="filled"
               placeholder="Select one..."
               onChange={(e) => {
-                setValues({ ...values, irrigationSource: e.target.value });
+                const irrigationSource = e.target.value;
+                setValues({ ...values, irrigationSource: irrigationSource });
               }}
               value={values.irrigationSource}
             >
@@ -588,7 +600,8 @@ export function Form() {
               variant="filled"
               placeholder="Select one..."
               onChange={(e) => {
-                setValues({ ...values, cultivationType: e.target.value });
+                const cultivation_type = e.target.value;
+                setValues({ ...values, cultivationType: cultivation_type });
               }}
               value={values.cultivationType}
             >
@@ -612,7 +625,8 @@ export function Form() {
               variant="filled"
               placeholder="Select one..."
               onChange={(e) => {
-                setValues({ ...values, previousCrop: e.target.value });
+                const previous_crop = e.target.value;
+                setValues({ ...values, previousCrop: previous_crop });
               }}
               value={values.previousCrop}
             >

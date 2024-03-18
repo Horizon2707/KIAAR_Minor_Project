@@ -70,16 +70,15 @@ export function NewForm() {
             PAddress: data.farmer_address,
             labNo: data.tran_nos,
           });
-          setValues((prevValues) => ({
-            ...prevValues,
-            drainage: data.drainage,
-            cultivationType: data.type_of_cultivation,
-            cropToBeGrown: data.crop_to_be_grown,
-            irrigationSource: data.irrigation_types,
-            soilType: data.soil_types,
-            previousCrop: data.previous_crop,
-            surveyNo: data.survey_nos,
-          }));
+          // setdrainage({
+          //   drainage: data.drainage,
+          // });
+          // setCultivationType({ cultivationType: data.type_of_cultivation });
+          setCropToBeGrown(data.crop_to_be_grown);
+          setIrrigationSources(data.irrigation_types);
+          setSoilTypes(data.soil_types);
+          setPreviousCrop(data.previous_crop);
+          setSurveyNo(data.survey_nos);
         });
       fetch("http://localhost:5000/clusterInfo", {
         method: "POST",
@@ -191,7 +190,7 @@ export function NewForm() {
     }
   };
 
-  const validate = () => {
+  let validate = () => {
     const newErrors = {};
     if (values.farmerId.length !== 6) {
       if (values.farmerId === "") {
@@ -205,7 +204,44 @@ export function NewForm() {
     if (values.test === "") {
       newErrors.test = "Test type is required";
     }
-    // Add more validation rules as needed
+    if (values.cluster === "") {
+      newErrors.cluster = "Cluster is required";
+    }
+    if (values.plotNo === "") {
+      newErrors.plotNo = "Plot No is required";
+    }
+    if (values.drainage === "") {
+      newErrors.drainage = "Drainage is required";
+    }
+    if (values.soilType === "") {
+      newErrors.soilType = "Soil Type is required";
+    }
+    if (values.waterType === "") {
+      newErrors.waterType = "Water Type is required";
+    }
+    if (values.irrigationSource === "") {
+      newErrors.irrigationSource = "Irrigation Source is required";
+    }
+    if (values.cultivationType.length === 0) {
+      newErrors.cultivationType = "Cultivation Type is required";
+    }
+
+    if (values.previousCrop.length === 0) {
+      newErrors.previousCrop = "Previous Crop is required";
+    }
+    if (values.cropToBeGrown.length === 0) {
+      newErrors.cropToBeGrown = "Crop to be grown is required";
+    }
+    if (values.dtOfSampling === "") {
+      newErrors.dtOfSampling = "Date of Sampling is required";
+    } // else if (values.dtOfSampling > values.dtOfSamplingReceipt) {
+    //   newErrors.dtOfSampling =
+    //     "Date of Sampling should be less than Date of Sampling Receipt";
+    // }
+    if (values.dtOfSamplingReceipt === "") {
+      newErrors.dtOfSamplingReceipt = "Date of Sampling Receipt is required";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -335,8 +371,9 @@ export function NewForm() {
               placeholder="Select one..."
               variant="filled"
               onChange={(e) => {
-                setValues({ ...values, cluster: e.target.value });
-                fetchVillageData(cluster[0].CLUSTER_CD, values.farmerId);
+                const cluster_cd = e.target.value;
+                setValues({ ...values, cluster: cluster_cd });
+                fetchVillageData(cluster_cd, values.farmerId);
               }}
               value={values.cluster}
             >
@@ -353,7 +390,7 @@ export function NewForm() {
             )}
           </div>
           <div className="item morspace">
-            <label className="mLabel" htmlFor="cluster">
+            <label className="mLabel" htmlFor="Village">
               Village
             </label>
             <Select
@@ -362,8 +399,9 @@ export function NewForm() {
               placeholder="Select one..."
               variant="filled"
               onChange={(e) => {
-                setValues({ ...values, village: e.target.value });
-                fetchPlotNoData(values.farmerId, village[0].VILLAGE_CD);
+                const village_cd = e.target.value;
+                setValues({ ...values, village: village_cd });
+                fetchPlotNoData(values.farmerId, village_cd);
               }}
               value={values.village}
             >
@@ -390,6 +428,7 @@ export function NewForm() {
               placeholder="Select one..."
               variant="filled"
               onChange={(e) => {
+                const surveyNo = e.target.value;
                 setValues({ ...values, surveyNo: e.target.value });
               }}
               value={values.surveyNo}
@@ -415,10 +454,12 @@ export function NewForm() {
               placeholder="Select one..."
               variant="filled"
               onChange={(e) => {
+                const plotNo = parseInt(e.target.value);
                 setValues({
                   ...values,
-                  plotNo: parseInt(e.target.value),
+                  plotNo: plotNo,
                 });
+                fetchPlotAreaData(values.farmerId, values.village, plotNo);
               }}
               value={values.plotNo}
             >
@@ -444,19 +485,14 @@ export function NewForm() {
               variant="filled"
               id="area"
               value={plotArea}
-              disabled={isDisabled}
               //   onChange={fetchPlotAreaData(
               //     values.farmerId,
               //     values.village,
               //     values.plotNo
               //   )}
               onChange={(e) => {
-                setValues({ ...values, area: e.target.value });
-                fetchPlotAreaData(
-                  values.farmerId,
-                  values.village,
-                  values.plotNo
-                );
+                const area = parseInt(e.target.value);
+                setValues({ ...values, area: area });
               }}
             ></Input>
             <button onClick={handleEnableElement}>

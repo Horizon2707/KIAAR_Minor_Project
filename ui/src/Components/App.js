@@ -6,12 +6,14 @@ import NotDefined from "./NotDefined";
 import Crops from "./Crops";
 import Login from "./Login";
 import Sign from "./Sign";
+import NewForm from "./NewForm";
 function App() {
   return (
     <div className="App">
       <Router>
         <Routes>
           <Route path="/form" element={<Form />} />
+          <Route path="test" element={<NewForm />} />
           <Route path="/" element={<Login />} />
           <Route path="/signUp" element={<Sign />} />
           <Route path="/resultentry" element={<ResultEntry />} />
