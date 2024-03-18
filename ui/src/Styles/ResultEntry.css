@@ -62,4 +62,5 @@
 .ok{
   display: flex;
   flex-direction: row;
+  gap: 2vh;
 }

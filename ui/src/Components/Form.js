@@ -202,25 +202,25 @@ export function Form() {
     if (values.test === "") {
       errors.test = "Test type is required";
     }
-    if (values.cluster === "") {
+    if (values.cluster.length === 0) {
       errors.cluster = "Cluster is required";
     }
-    if (values.village === "") {
+    if (values.village.length === 0) {
       errors.village = "Village is required";
     }
-    if (values.surveyNo === "") {
+    if (values.surveyNo.length === 0) {
       errors.surveyNo = "Survey number is required";
     }
-    if (values.plotNo === "") {
+    if (values.plotNo.length === 0) {
       errors.plotNo = "Plot number is required";
     }
-    if (values.drainage === "") {
+    if (values.drainage.length === 0) {
       errors.drainage = "Drainage is required";
     }
-    if (values.soilType === "") {
+    if (values.soilType === "" && soilVar) {
       errors.soilType = "Soil Type is required";
     }
-    if (values.waterType === "") {
+    if (values.waterType === "" && watVar) {
       errors.waterType = "Water Type is required";
     }
     if (values.irrigationSource === "") {
@@ -241,8 +241,8 @@ export function Form() {
     if (values.dtOfSamplingReceipt === "") {
       errors.dtOfSamplingReceipt = "Date of Sampling Receipt is required";
     }
-
     setErrors(errors);
+
     return Object.keys(errors).length === 0;
   };
 
@@ -728,10 +728,10 @@ export function Form() {
           onClick={() => {
             const obj = newErrors;
             console.log(obj);
-            // if (validate()) {
-            navigate("/resultentry");
-            sessionPush();
-            // }
+            if (validate()) {
+              navigate("/resultentry");
+              sessionPush();
+            }
           }}
           background="#CCE5FF"
           color="#000000"

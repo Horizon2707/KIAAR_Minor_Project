@@ -38,7 +38,7 @@ Content-Type: application/json
 
 ### Survey No
 
-POST http://localhost:5000/surveyInfo
+POST http://localhost:5000/surveyno
 Content-Type: application/json
 
 {
