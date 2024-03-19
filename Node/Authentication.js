@@ -26,13 +26,10 @@ app.get("/session", isAuthenticated, (req, res) => {
   res.json({ user: req.session.user });
 });
 
-
 app.post("/login", async (req, res) => {
   const { username, password } = req.body;
   try {
     // db connection
-    
-
     if (user) {
       const isPasswordValid = bcrypt.compare(password, user.password);
       if (isPasswordValid) {

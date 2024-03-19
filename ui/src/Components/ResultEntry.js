@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import "../Styles/ResultEntry.css";
 import { Button } from "@chakra-ui/react";
 import { Checkbox } from "@chakra-ui/react";
@@ -23,9 +24,10 @@ import {
   Td,
   TableContainer,
 } from "@chakra-ui/react";
-import Recom from "./Recom";
 
 function ResultEntry() {
+  const { state } = useLocation();
+  // const valuesOf = state;
   var [addSug, setaddSug] = useState("");
   var [forParams, setForParams] = useState([]);
   // var [Tab, setTab] = useState("");
@@ -38,10 +40,11 @@ function ResultEntry() {
   var [resValues, ressetValues] = useState([]);
   const [finalRemarks, setFinalRemarks] = useState("");
   let values = sessionStorage.getItem("values");
+
   values = JSON.parse(values);
   let postData = () => {
     let com = {
-      parameter: resValues,
+      paramValues: resValues,
       values: values,
       suggestions: suggestion,
     };
@@ -53,7 +56,7 @@ function ResultEntry() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ paramValues: resValues, values: values }),
+        body: JSON.stringify(com),
       })
         .then((response) => response.json())
         .then((data) => {
@@ -88,7 +91,6 @@ function ResultEntry() {
     } catch (error) {
       console.error("Parameters not found");
     }
-
     fetch("http://localhost:5000/suggestions", {
       method: "POST",
       headers: {
@@ -102,7 +104,8 @@ function ResultEntry() {
       .then((data) => {
         setSuggestion(data);
       });
-  }, [bool]);
+  }, []);
+
   let setT = (e) => {
     let inputValue = e.target.value;
     setaddSug(inputValue);
@@ -144,11 +147,6 @@ function ResultEntry() {
           Data uploaded to the server.
         </Alert>
       )}
-      {toggle && (
-        <>
-          <Recom data={"from ResultEn"} />
-        </>
-      )}
       {!toggle && (
         <>
           <h1
@@ -184,7 +182,7 @@ function ResultEntry() {
                         </Tr> */}
                         <Tr>
                           <Th>Test Result</Th>
-                          <Th></Th>
+                          <Th>Input</Th>
                           <Th isNumeric>Low</Th>
                           <Th isNumeric>Medium</Th>
                           <Th isNumeric>High</Th>
@@ -314,6 +312,19 @@ function ResultEntry() {
                                 .then((response) => response.json())
                                 .then((data) => {
                                   setBool(data.bool);
+                                  fetch("http://localhost:5000/suggestions", {
+                                    method: "POST",
+                                    headers: {
+                                      "Content-Type": "application/json",
+                                    },
+                                    body: JSON.stringify({
+                                      test: values.test,
+                                    }),
+                                  })
+                                    .then((response) => response.json())
+                                    .then((data) => {
+                                      setSuggestion(data);
+                                    });
                                 });
                             } catch (error) {
                               console.log(error);
@@ -350,7 +361,9 @@ function ResultEntry() {
               onClick={() => {
                 if (validate()) {
                   postData();
-                  sessionStorage.setItem("result", JSON.stringify(resValues));
+                  // ressetValues({...resValues,values});
+                  const dataString = JSON.stringify(resValues);
+                  sessionStorage.setItem("result", dataString);
                   setToggle(!toggle);
                   setalertTog(true);
                 }

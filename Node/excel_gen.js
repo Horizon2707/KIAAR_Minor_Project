@@ -2,6 +2,7 @@ const excel = require("excel4node");
 const wb = new excel.Workbook();
 const ws = wb.addWorksheet("Report");
 // Add data to cell A1
+
 const headingText = "K.J. Somaiya Institute of Applied Agricultural Research";
 const document_width = 121.8;
 
@@ -12,6 +13,19 @@ const heading = {
     vertical: "center",
   },
 };
+
+const padding = {
+  alignment: {
+    wrapText: true,
+
+    vertical: "center",
+    top: 5,
+    bottom: 5,
+    left: 5,
+    right: 5,
+  },
+};
+
 const h2 = {
   font: { bold: true, size: 14 },
   alignment: {
@@ -19,6 +33,15 @@ const h2 = {
     vertical: "center",
   },
 };
+
+const h1 = {
+  font: { bold: true, size: 16 },
+  alignment: {
+    horizontal: "center",
+    vertical: "center",
+  },
+};
+
 const bottom_border = { border: { bottom: { style: "thick" } } };
 const border_all = { border: { bottom: { style: "thick" } } };
 //Page Width
@@ -44,9 +67,12 @@ ws.cell(2, 8, 2, 10, true)
   .style(h2)
   .style(bottom_border);
 //Row 3
-ws.row(3).setHeight(26);
+ws.row(3).setHeight(14);
 //Name Farmer ID
-ws.cell(4, 1, 4, 3, true).string("Farmer Name").style();
+ws.cell(4, 1, 4, 3, true)
+  .string("  Farmer Name")
+  .style({ font: { size: 14 } })
+  .style(padding);
 
 wb.write("output.xlsx", (err, stats) => {
   if (err) {

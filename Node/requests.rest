@@ -86,3 +86,76 @@ Content-Type: application/json
     "newSuggestion" : "TEMP",
     "test" : "1"
 }
+### Values
+
+POST http://localhost:5000/values
+Content-Type: application/json
+
+{
+    "values" : {
+  "farmerId": "153227",
+  "labNo": [{ "LAB_TRAN": 12369 }],
+  "test": "1",
+  "surveyNo": "B 193/1",
+  "cluster": "3",
+  "village": "27",
+  "plotNo": 2,
+  "drainage": "Good",
+  "soilType": "2",
+  "waterType": "",
+  "irrigationSource": "3",
+  "cultivationType": "Rained",
+  "previousCrop": "SUNFLOWER",
+  "cropToBeGrown": "SUNFLOWER",
+  "dtOfSampling": "2024-03-19",
+  "dtOfSamplingReceipt": "2024-03-19",
+  "templateNo": [{ "TEMPLATE_NO": 2 }],
+  "HEWFno": "",
+  "area": 5
+},
+    "paramValues" : {
+  "11": "2",
+  "12": "3",
+  "14": "3",
+  "15": "3",
+  "16": "3",
+  "17": "3",
+  "19": "3",
+  "20": "3",
+  "21": "3",
+  "23": "3",
+  "24": "3",
+  "25": "4",
+  "26": "33",
+  "27": "3",
+  "2> Electrical Conductivity(ds/m)": "3",
+  "1> Organic Corbon (%)": "3",
+  "2> Nitrogen(Kg/Acre)-N": "3",
+  "3> Phosphorus(kg/Acre)-P": "3",
+  "4> Potash(kg.Acre)-K": "3",
+  "1> Calcium(Ca) %": "3",
+  "2> Magnesium(Mg) %": "3",
+  "3> Sulphur(S) PPM": "3",
+  "1> Copper(cu) PPM": "3",
+  "2> Manganese(Mn) PPM": "3",
+  "4> Zinc (Zn) PPM": "33",
+  "5> Sodium(Na) PPM": "3",
+  "3> Iron(Fe) PPM": "4",
+  "1> pH(2:5)": "2"
+}
+
+}
+
+### Calc
+
+POST http://localhost:5000/calc
+Content-Type: application/json
+
+{   
+    "parameters" : {
+        "nitr" : 10,
+        "phos" : 8,
+        "pota" : 9
+    }
+    
+}
