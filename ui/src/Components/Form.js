@@ -21,6 +21,7 @@ export function Form() {
   const [plotNo, setplotNo] = useState([]);
   const [plotArea, setPlotArea] = useState();
   const [labTran, setLabTran] = useState([]);
+  const [local, setLocal] = useState();
   const [values, setValues] = useState({
     farmerId: "",
     labNo: "",
@@ -49,6 +50,64 @@ export function Form() {
     village: "",
     labNo: "",
   });
+  const localDataPush = () => {
+    const local = {
+      values,
+      farmInfo,
+      drainage,
+      cultivationType,
+      cropToBeGrown,
+      irrigationSources,
+      soilTypes,
+      previousCrop,
+      labTran,
+      cluster,
+      village,
+      plotNo,
+      plotArea,
+      wild,
+      surveyNo,
+    };
+    setLocal(local);
+    const localpush = JSON.stringify(local);
+    sessionStorage.setItem("local", localpush);
+  };
+
+  const showingData = () => {
+    if (location.pathname === "/form") {
+      const localData = sessionStorage.getItem("local");
+      if (localData) {
+        try {
+          const parsedData = JSON.parse(localData);
+          setValues(parsedData.values);
+          setfarmInfo(parsedData.farmInfo);
+          setdrainage(parsedData.drainage);
+          setCultivationType(parsedData.cultivationType);
+          setCropToBeGrown(parsedData.cropToBeGrown);
+          setIrrigationSources(parsedData.irrigationSources);
+          setSoilTypes(parsedData.soilTypes);
+          setPreviousCrop(parsedData.previousCrop);
+          setLabTran(parsedData.labTran);
+          setCluster(parsedData.cluster);
+          setVillage(parsedData.village);
+          setplotNo(parsedData.plotNo);
+          setPlotArea(parsedData.plotArea);
+          setWild(parsedData.wild);
+          setSurveyNo(parsedData.surveyNo);
+        } catch (error) {
+          console.error("Error parsing JSON:", error);
+        }
+      } else {
+        console.log("No data found in sessionStorage.");
+      }
+    }
+  };
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    if (sessionStorage.getItem("local") !== null) {
+      showingData();
+    }
+  }, [location.pathname]);
   const [watVar, setwatVar] = useState(true);
   const [soilVar, setSoilVar] = useState(true);
   const fetchPlotarea = (plotNo) => {
@@ -86,6 +145,7 @@ export function Form() {
         setSurveyNo(data);
       });
   };
+
   useEffect(() => {
     const maxLength = 6;
     if (values.farmerId.length === maxLength) {
@@ -258,26 +318,30 @@ export function Form() {
 
   const handleTestType = (e) => {
     const test = e.target.value;
-    fetch("http://localhost:5000/temp_no", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ test_cd: test }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        setValues({ ...values, test: test, templateNo: data });
-        if (test === "1") {
-          setwatVar(false);
-          setSoilVar(true);
-        }
-        if (test === "2") {
-          setwatVar(true);
-          setSoilVar(false);
-        }
-      });
+    if (local !== undefined) {
+      values.test = test;
+    } else {
+      fetch("http://localhost:5000/temp_no", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ test_cd: test }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          setValues({ ...values, test: test, templateNo: data });
+          if (test === "1") {
+            setwatVar(false);
+            setSoilVar(true);
+          }
+          if (test === "2") {
+            setwatVar(true);
+            setSoilVar(false);
+          }
+        });
+    }
   };
 
   return (
@@ -308,7 +372,7 @@ export function Form() {
             </div>
             <div className="item litspace">
               <label className="mLabel" htmlFor="templateNo">
-                Templete No:-{labTran.map((item) => item.LAB_TRAN)}
+                Templete No:-
               </label>
               <Select
                 size="sm"
@@ -540,9 +604,9 @@ export function Form() {
                 drainage.drainage.map((item) => {
                   return <option value={item}>{item}</option>;
                 })} */}
-                <option value="Good">Good</option>
-                <option value="Bad">Bad</option>
-                <option value="None">None</option>
+                <option value="GOOD">Good</option>
+                <option value="BAD">Bad</option>
+                <option value="NONE">None</option>
               </Select>
               {newErrors.drainage && (
                 <div className="error">{newErrors.drainage}</div>
@@ -639,9 +703,9 @@ export function Form() {
                 }}
                 value={values.cultivationType}
               >
-                <option value="Irrigated">Irrigated</option>
-                <option value="Rained">Rained</option>
-                <option value="None">None</option>
+                <option value="IRRIGATED">Irrigated</option>
+                <option value="RAINED">Rained</option>
+                <option value="NONE">None</option>
               </Select>
               {newErrors.cultivationType && (
                 <div className="error">{newErrors.cultivationType}</div>
@@ -746,6 +810,7 @@ export function Form() {
               if (validate()) {
                 navigate("/resultentry");
                 sessionPush();
+                localDataPush();
               }
             }}
             background="#CCE5FF"
@@ -753,16 +818,6 @@ export function Form() {
             size="md"
           >
             Go
-          </Button>
-          <Button
-            onClick={() => {
-              navigate("/crops", { state: values });
-            }}
-            background="#CCE5FF"
-            color="#000000"
-            size="md"
-          >
-            Show the crop to be grown
           </Button>
           <br />
           <br />

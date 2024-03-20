@@ -3,7 +3,6 @@ import { Form } from "./Form";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ResultEntry from "./ResultEntry";
 import NotDefined from "./NotDefined";
-import Crops from "./Crops";
 import Login from "./Login";
 import Sign from "./Sign";
 function App() {
@@ -15,7 +14,6 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/signUp" element={<Sign />} />
           <Route path="/resultentry" element={<ResultEntry />} />
-          <Route path="/crops" element={<Crops />} />
           <Route path="*" element={<NotDefined />} />
         </Routes>
       </Router>
