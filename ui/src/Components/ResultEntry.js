@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import "../Styles/ResultEntry.css";
 import { Button } from "@chakra-ui/react";
 import { Checkbox } from "@chakra-ui/react";
@@ -26,13 +26,11 @@ import {
 } from "@chakra-ui/react";
 
 function ResultEntry() {
-  const { state } = useLocation();
-  // const valuesOf = state;
   var [addSug, setaddSug] = useState("");
   var [forParams, setForParams] = useState([]);
-  // var [Tab, setTab] = useState("");
   var [bool, setBool] = useState();
-
+  const location = useLocation();
+  const navigate = useNavigate();
   var [suggestion, setSuggestion] = useState([]);
   var [Errors, setErrors] = useState({});
   var [toggle, setToggle] = useState(false);
@@ -40,7 +38,6 @@ function ResultEntry() {
   var [resValues, ressetValues] = useState([]);
   const [finalRemarks, setFinalRemarks] = useState("");
   let values = sessionStorage.getItem("values");
-
   values = JSON.parse(values);
   let postData = () => {
     let com = {
@@ -61,17 +58,28 @@ function ResultEntry() {
         .then((response) => response.json())
         .then((data) => {
           sessionStorage.setItem("calculations", JSON.stringify(data));
+          sessionStorage.setItem("paramValues", JSON.stringify(resValues));
         });
     } catch (error) {
       console.log(error);
     }
   };
+  const setin = sessionStorage.getItem("paramValues");
   useEffect(() => {
-    // let result = sessionStorage.getItem("result");
-    // if (result) {
-    //   ressetValues(JSON.parse(result));
-    // }
+    if (values) {
+      alert("Please select a farmer detail form first");
+      setTimeout(() => {
+        navigate("/form");
+      }, 2000);
+    } else {
+      let sessData = sessionStorage.getItem("forParams");
+      if (sessData) {
+        setForParams(JSON.parse(sessData));
+      }
+    }
+  }, [location.pathname]);
 
+  useEffect(() => {
     try {
       fetch("http://localhost:5000/parameters", {
         method: "POST",
@@ -86,7 +94,7 @@ function ResultEntry() {
         .then((response) => response.json())
         .then((data) => {
           setForParams(data);
-          console.log(data);
+          sessionStorage.setItem("forParams", JSON.stringify(data));
         });
     } catch (error) {
       console.error("Parameters not found");
@@ -125,20 +133,6 @@ function ResultEntry() {
     console.log(Errors);
     return Object.keys(Errors).length === 0;
   };
-  // let postData = () => {
-  //   fetch("http://localhost:5000/api/result_entry", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify(resValues),
-  //   })
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       setCalc(data);
-  //     });
-  // };
-
   return (
     <>
       {alertTog && (
@@ -189,49 +183,62 @@ function ResultEntry() {
                         </Tr>
                       </Thead>
                       <Tbody>
-                        {forParams.map((element) => {
-                          if (element.PARAMETER_TYPE === "HEADING") {
-                            return (
-                              <Tr key={element.PARAMETER_ID}>
-                                <Th>{element.PARAMETER_NAME}</Th>
-                              </Tr>
-                            );
-                          }
-                          if (element.PARAMETER_TYPE === "PARAMETER") {
-                            return (
-                              <Tr key={element.PARAMETER_ID}>
-                                <Td>{element.PARAMETER_NAME}</Td>
-                                <Td>
-                                  <Input
-                                    type="number"
-                                    size="sm"
-                                    id={element.PARAMETER_ID}
-                                    htmlSize={4}
-                                    width="auto"
-                                    variant="filled"
-                                    value={resValues[element.PARAMETER_ID]}
-                                    onChange={(e) => {
-                                      ressetValues({
-                                        ...resValues,
-                                        [element.PARAMETER_NAME]:
-                                          e.target.value,
-                                        [element.PARAMETER_ID]: e.target.value,
-                                      });
-                                    }}
-                                  ></Input>
-                                  {Errors[element.PARAMETER_ID] && (
-                                    <p style={{ color: "red" }}>
-                                      {Errors[element.PARAMETER_ID]}
-                                    </p>
-                                  )}
-                                </Td>
-                                <Td>{element.PARAMETER_MIN}</Td>
-                                <Td>{element.PARAMETER_MID}</Td>
-                                <Td>{element.PARAMETER_MAX}</Td>
-                              </Tr>
-                            );
-                          }
-                        })}
+                        {forParams &&
+                          forParams.map((element) => {
+                            if (element.PARAMETER_TYPE === "HEADING") {
+                              return (
+                                <Tr key={element.PARAMETER_ID}>
+                                  <Th>{element.PARAMETER_NAME}</Th>
+                                </Tr>
+                              );
+                            }
+                            if (element.PARAMETER_TYPE === "PARAMETER") {
+                              return (
+                                <Tr key={element.PARAMETER_ID}>
+                                  <Td>{element.PARAMETER_NAME}</Td>
+                                  <Td>
+                                    <Input
+                                      type="number"
+                                      size="sm"
+                                      id={element.PARAMETER_ID}
+                                      htmlSize={4}
+                                      width="auto"
+                                      variant="filled"
+                                      value={resValues[element.PARAMETER_ID]}
+                                      onChange={(e) => {
+                                        ressetValues({
+                                          ...resValues,
+                                          [element.PARAMETER_NAME]:
+                                            e.target.value,
+                                          [element.PARAMETER_ID]:
+                                            e.target.value,
+                                        } 
+                                        );
+                                        if (setin){
+                                          let data = JSON.parse(setin);
+                                          data[element.PARAMETER_ID] = e.target.value;
+                                          sessionStorage.setItem("paramValues", JSON.stringify(data));
+                                        }
+                                        else{
+                                          let data = {};
+                                          data[element.PARAMETER_ID] = e.target.value;
+                                          sessionStorage.setItem("paramValues", JSON.stringify(data));
+                                        }
+                                      }}
+                                    ></Input>
+                                    {Errors[element.PARAMETER_ID] && (
+                                      <p style={{ color: "red" }}>
+                                        {Errors[element.PARAMETER_ID]}
+                                      </p>
+                                    )}
+                                  </Td>
+                                  <Td>{element.PARAMETER_MIN}</Td>
+                                  <Td>{element.PARAMETER_MID}</Td>
+                                  <Td>{element.PARAMETER_MAX}</Td>
+                                </Tr>
+                              );
+                            }
+                          })}
                       </Tbody>
                     </Table>
                   </TableContainer>
@@ -286,7 +293,7 @@ function ResultEntry() {
                       <h3>Add Suggestions</h3>
                       <div className="ok">
                         <Textarea
-                          placeholder="Multiline"
+                          placeholder="Add new suggestions here"
                           resize="none"
                           rows={1}
                           variant="filled"
@@ -339,7 +346,7 @@ function ResultEntry() {
                     <div className="final">
                       <h3>Final Remarks</h3>
                       <Textarea
-                        placeholder="Multiline"
+                        placeholder="Add final remarks here"
                         resize="none"
                         rows={7} // Set the number of rows to 7
                         variant="filled"
@@ -361,7 +368,6 @@ function ResultEntry() {
               onClick={() => {
                 if (validate()) {
                   postData();
-                  // ressetValues({...resValues,values});
                   const dataString = JSON.stringify(resValues);
                   sessionStorage.setItem("result", dataString);
                   setToggle(!toggle);

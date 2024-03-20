@@ -52,21 +52,19 @@ export function Form() {
   });
   const localDataPush = () => {
     const local = {
-      values,
-      farmInfo,
-      drainage,
-      cultivationType,
-      cropToBeGrown,
-      irrigationSources,
-      soilTypes,
-      previousCrop,
-      labTran,
-      cluster,
-      village,
-      plotNo,
-      plotArea,
-      wild,
-      surveyNo,
+      values: values,
+      farmInfo: farmInfo,
+      cropToBeGrown: cropToBeGrown,
+      irrigationSources: irrigationSources,
+      soilTypes:soilTypes,
+      previousCrop: previousCrop,
+      labTran:labTran,
+      cluster:cluster,
+      village:village,
+      plotNo:plotNo,
+      plotArea:plotArea,
+      wild:wild,
+      surveyNo:surveyNo,
     };
     setLocal(local);
     const localpush = JSON.stringify(local);
