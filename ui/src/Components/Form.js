@@ -21,7 +21,6 @@ export function Form() {
   const [plotNo, setplotNo] = useState([]);
   const [plotArea, setPlotArea] = useState();
   const [labTran, setLabTran] = useState([]);
-  const [local, setLocal] = useState();
   const [values, setValues] = useState({
     farmerId: "",
     labNo: "",
@@ -51,23 +50,25 @@ export function Form() {
     labNo: "",
   });
   const localDataPush = () => {
-    const local = {
+    const locals = {
       values: values,
-      farmInfo: farmInfo,
-      cropToBeGrown: cropToBeGrown,
-      irrigationSources: irrigationSources,
-      soilTypes:soilTypes,
-      previousCrop: previousCrop,
-      labTran:labTran,
-      cluster:cluster,
-      village:village,
-      plotNo:plotNo,
-      plotArea:plotArea,
-      wild:wild,
-      surveyNo:surveyNo,
+      watVar: watVar,
+      soilVar: soilVar,
+      // farmInfo: farmInfo,
+      // cropToBeGrown: cropToBeGrown,
+      // irrigationSources: irrigationSources,
+      // soilTypes: soilTypes,
+      // previousCrop: previousCrop,
+      // labTran: labTran,
+      // cluster: cluster,
+      // village: village,
+      // plotNo: plotNo,
+      // plotArea: plotArea,
+      // wild: wild,
+      // surveyNo: surveyNo,
     };
-    setLocal(local);
-    const localpush = JSON.stringify(local);
+
+    const localpush = JSON.stringify(locals);
     sessionStorage.setItem("local", localpush);
   };
 
@@ -78,20 +79,37 @@ export function Form() {
         try {
           const parsedData = JSON.parse(localData);
           setValues(parsedData.values);
-          setfarmInfo(parsedData.farmInfo);
-          setdrainage(parsedData.drainage);
-          setCultivationType(parsedData.cultivationType);
-          setCropToBeGrown(parsedData.cropToBeGrown);
-          setIrrigationSources(parsedData.irrigationSources);
-          setSoilTypes(parsedData.soilTypes);
-          setPreviousCrop(parsedData.previousCrop);
-          setLabTran(parsedData.labTran);
-          setCluster(parsedData.cluster);
-          setVillage(parsedData.village);
-          setplotNo(parsedData.plotNo);
-          setPlotArea(parsedData.plotArea);
-          setWild(parsedData.wild);
-          setSurveyNo(parsedData.surveyNo);
+          // setfarmInfo(parsedData.farmInfo);
+          // setdrainage(parsedData.drainage);
+          // setCultivationType(parsedData.cultivationType);
+          // setCropToBeGrown(parsedData.cropToBeGrown);
+          // setIrrigationSources(parsedData.irrigationSources);
+          // setSoilTypes(parsedData.soilTypes);
+          // setPreviousCrop(parsedData.previousCrop);
+          // setLabTran(parsedData.labTran);
+          // setCluster(parsedData.cluster);
+          // setVillage(parsedData.village);
+          // setplotNo(parsedData.plotNo);
+          // setPlotArea(parsedData.plotArea);
+          // setWild(parsedData.wild);
+          // setSurveyNo(parsedData.surveyNo);
+          // setwatVar(parsedData.watVar);
+          // setSoilVar(parsedData.soilVar);
+          fetchInit();
+          fetchFarmerInfo(parsedData.values.farmerId);
+          fetchClusterInfo(parsedData.values.farmerId);
+          fetchVillageInfo(parsedData.farmerId, parsedData.values.cluster);
+          fetchPlotNo(parsedData.values.farmerId, parsedData.values.village);
+          fetchPlotarea(
+            parsedData.values.plotNo,
+            parsedData.values.farmerId,
+            parsedData.values.village
+          );
+          fetchSurveyNo(
+            parsedData.values.village,
+            parsedData.values.farmerId,
+            parsedData.values.cluster
+          );
         } catch (error) {
           console.error("Error parsing JSON:", error);
         }
@@ -100,15 +118,18 @@ export function Form() {
       }
     }
   };
-  const [count, setCount] = useState(0);
+
   useEffect(() => {
     if (sessionStorage.getItem("local") !== null) {
-      showingData();
+      if (location.pathname === "/form") {
+        showingData();
+      }
     }
   }, [location.pathname]);
   const [watVar, setwatVar] = useState(true);
   const [soilVar, setSoilVar] = useState(true);
-  const fetchPlotarea = (plotNo) => {
+
+  const fetchPlotarea = (plotNo, farmerId, villageCd) => {
     fetch("http://localhost:5000/plotArea", {
       method: "POST",
       headers: {
@@ -116,8 +137,8 @@ export function Form() {
       },
       body: JSON.stringify({
         plotNo: plotNo,
-        farmerId: values.farmerId,
-        villageCd: values.village,
+        farmerId: values.farmerId || farmerId,
+        villageCd: values.village || villageCd,
       }),
     })
       .then((res) => res.json())
@@ -126,16 +147,16 @@ export function Form() {
       });
   };
 
-  const fetchSurveyNo = (villageCd) => {
+  const fetchSurveyNo = (villageCd, farmerId, clusterCd) => {
     fetch("http://localhost:5000/surveyno", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        farmerId: values.farmerId,
+        farmerId: values.farmerId || farmerId,
         villageCd: villageCd,
-        clusterCd: values.cluster,
+        clusterCd: values.cluster || clusterCd,
       }),
     })
       .then((res) => res.json())
@@ -144,52 +165,7 @@ export function Form() {
       });
   };
 
-  useEffect(() => {
-    const maxLength = 6;
-    if (values.farmerId.length === maxLength) {
-      setValues({ ...values, farmerId: values.farmerId });
-      fetch("http://localhost:5000/farmerId", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ farmerId: values.farmerId }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log(data);
-          setfarmInfo({
-            name: data.farmer_name,
-            MBLNO: data.phone_no,
-            PAddress: data.farmer_address,
-          });
-          setdrainage({
-            drainage: data.drainage,
-          });
-          setCultivationType({ cultivationType: data.type_of_cultivation });
-          setCropToBeGrown(data.crop_to_be_grown);
-          setIrrigationSources(data.irrigation_types);
-          setSoilTypes(data.soil_types);
-          setPreviousCrop(data.previous_crop);
-          setLabTran(data.tran_nos);
-          setValues({ ...values, labNo: data.tran_nos });
-          console.log(data);
-        });
-      fetch("http://localhost:5000/clusterInfo", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ farmerId: values.farmerId }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log(data);
-          setCluster(data);
-        });
-    }
-  }, [values.farmerId]);
-  useEffect(() => {
+  const fetchInit = () => {
     try {
       fetch("http://localhost:5000/init", {
         method: "POST",
@@ -204,41 +180,123 @@ export function Form() {
     } catch (error) {
       console.error("Error:", error);
     }
+  };
+  const fetchFarmerInfo = (farmerId) => {
+    fetch("http://localhost:5000/farmerId", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ farmerId: values.farmerId || farmerId }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        setfarmInfo({
+          name: data.farmer_name,
+          MBLNO: data.phone_no,
+          PAddress: data.farmer_address,
+        });
+        setdrainage({
+          drainage: data.drainage,
+        });
+        setCultivationType({ cultivationType: data.type_of_cultivation });
+        setCropToBeGrown(data.crop_to_be_grown);
+        setIrrigationSources(data.irrigation_types);
+        setSoilTypes(data.soil_types);
+        setPreviousCrop(data.previous_crop);
+        setLabTran(data.tran_nos);
+        setValues({ ...values, labNo: data.tran_nos });
+        console.log(data);
+      });
+  };
+
+  const fetchClusterInfo = (farmerId) => {
+    try {
+      fetch("http://localhost:5000/clusterInfo", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ farmerId: values.farmerId || farmerId }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          setCluster(data);
+        });
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  useEffect(() => {
+    const maxLength = 6;
+    // const local = sessionStorage.getItem("local");
+    // if (local) {
+    //   const localData = JSON.parse(local);
+    //   fetchFarmerInfo(localData.values.farmerId);
+    // } else {
+    if (values.farmerId.length === maxLength) {
+      setValues({ ...values, farmerId: values.farmerId });
+      fetchFarmerInfo(values.farmerId);
+      fetchClusterInfo(values.farmerId);
+      // }
+    }
+  }, [values.farmerId]);
+
+  useEffect(() => {
+    fetchInit();
   }, []);
+
+  const fetchVillageInfo = (farmerId, clusterCd) => {
+    try {
+      fetch("http://localhost:5000/villageInfo", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          clusterCd: values.cluster || clusterCd,
+          farmerId: values.farmerId || farmerId,
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          setVillage(data);
+        });
+    } catch (e) {
+      console.error(e);
+    }
+  };
   useEffect(() => {
-    fetch("http://localhost:5000/villageInfo", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        clusterCd: values.cluster,
-        farmerId: values.farmerId,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        setVillage(data);
-      });
+    fetchVillageInfo(values.farmerId, values.cluster);
   }, [values.cluster]);
+
+  const fetchPlotNo = (farmerId, villageCd) => {
+    try {
+      fetch("http://localhost:5000/plotNo", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          farmerId: values.farmerId || farmerId,
+          villageCd: values.village || villageCd,
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          setplotNo(data);
+        });
+    } catch (e) {
+      console.error(e);
+    }
+  };
   useEffect(() => {
-    console.log(values.village);
-    fetch("http://localhost:5000/plotNo", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        farmerId: values.farmerId,
-        villageCd: values.village,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        setplotNo(data);
-      });
+    fetchPlotNo(values.farmerId, values.village);
   }, [values.village]);
 
   const navigate = useNavigate();
@@ -313,32 +371,38 @@ export function Form() {
     sessionStorage.setItem("values", JSON.stringify(values));
     console.log(values);
   };
-
+  const fetchTempNo = (test) => {
+    fetch("http://localhost:5000/temp_no", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ test_cd: test }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        setValues({ ...values, test: test, templateNo: data });
+        if (test === "1") {
+          setwatVar(false);
+          setSoilVar(true);
+        }
+        if (test === "2") {
+          setwatVar(true);
+          setSoilVar(false);
+        }
+      });
+  };
   const handleTestType = (e) => {
     const test = e.target.value;
+    const local = sessionStorage.getItem("local");
     if (local !== undefined) {
-      values.test = test;
+      setValues({
+        ...values,
+        test: test,
+      });
     } else {
-      fetch("http://localhost:5000/temp_no", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ test_cd: test }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log(data);
-          setValues({ ...values, test: test, templateNo: data });
-          if (test === "1") {
-            setwatVar(false);
-            setSoilVar(true);
-          }
-          if (test === "2") {
-            setwatVar(true);
-            setSoilVar(false);
-          }
-        });
+      fetchTempNo(test);
     }
   };
 
@@ -360,7 +424,10 @@ export function Form() {
                 placeholder="Select one..."
                 id="test"
                 value={values.test}
-                onChange={handleTestType}
+                onChange={(e) => {
+                  console.log("Onchange");
+                  handleTestType(e);
+                }}
               >
                 {wild.map((item) => {
                   return <option value={item.TEST_CD}>{item.TEST_NAME}</option>;

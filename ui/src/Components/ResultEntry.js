@@ -66,17 +66,17 @@ function ResultEntry() {
   };
   const setin = sessionStorage.getItem("paramValues");
   useEffect(() => {
-    if (values) {
-      alert("Please select a farmer detail form first");
-      setTimeout(() => {
-        navigate("/form");
-      }, 2000);
-    } else {
-      let sessData = sessionStorage.getItem("forParams");
-      if (sessData) {
-        setForParams(JSON.parse(sessData));
-      }
+    // if (values) {
+    //   alert("Please select a farmer detail form first");
+    //   setTimeout(() => {
+    //     navigate("/form");
+    //   }, 2000);
+    // } else {
+    let sessData = sessionStorage.getItem("forParams");
+    if (sessData) {
+      setForParams(JSON.parse(sessData));
     }
+    // }
   }, [location.pathname]);
 
   useEffect(() => {
@@ -212,17 +212,23 @@ function ResultEntry() {
                                             e.target.value,
                                           [element.PARAMETER_ID]:
                                             e.target.value,
-                                        } 
-                                        );
-                                        if (setin){
+                                        });
+                                        if (setin) {
                                           let data = JSON.parse(setin);
-                                          data[element.PARAMETER_ID] = e.target.value;
-                                          sessionStorage.setItem("paramValues", JSON.stringify(data));
-                                        }
-                                        else{
+                                          data[element.PARAMETER_ID] =
+                                            e.target.value;
+                                          sessionStorage.setItem(
+                                            "paramValues",
+                                            JSON.stringify(data)
+                                          );
+                                        } else {
                                           let data = {};
-                                          data[element.PARAMETER_ID] = e.target.value;
-                                          sessionStorage.setItem("paramValues", JSON.stringify(data));
+                                          data[element.PARAMETER_ID] =
+                                            e.target.value;
+                                          sessionStorage.setItem(
+                                            "paramValues",
+                                            JSON.stringify(data)
+                                          );
                                         }
                                       }}
                                     ></Input>
