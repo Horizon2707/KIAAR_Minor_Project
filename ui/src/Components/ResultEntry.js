@@ -388,7 +388,7 @@ function ResultEntry() {
                 }
               }}
             >
-              Go
+              Go To Report Page
             </Button>
           </div>
           <br />

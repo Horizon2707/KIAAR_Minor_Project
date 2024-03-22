@@ -117,7 +117,6 @@ export function Form() {
       }
     }
   };
-
   useEffect(() => {
     if (sessionStorage.getItem("local") !== null) {
       if (location.pathname === "/form") {
@@ -286,7 +285,7 @@ export function Form() {
   let handleEnableElement = () => {
     setIsDisabled(!isDisabled);
   };
-
+ const [reset,setReset] = useState(false);
   let validate = () => {
     const errors = {};
     if (values.farmerId.length !== 6) {
@@ -872,14 +871,28 @@ export function Form() {
                 navigate("/resultentry");
                 sessionPush();
                 localDataPush();
+                setReset(true);
               }
             }}
             background="#CCE5FF"
             color="#000000"
             size="md"
           >
-            Go
+            Go to ResultEntry
           </Button>
+         { <Button
+            onClick={() => {
+              if ({reset}) {
+                sessionStorage.clear()
+                window.location.reload()
+              }
+            }}
+            background="#CCE5FF"
+            color="#000000"
+            size="md"
+          >
+            Reset
+          </Button>}
           <br />
           <br />
         </div>
