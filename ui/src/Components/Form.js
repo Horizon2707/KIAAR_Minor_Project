@@ -123,7 +123,7 @@ export function Form() {
         showingData();
         const ok = sessionStorage.getItem("reset");
         const reset = JSON.parse(ok);
-        setReset(reset)
+        setReset(reset);
       }
     }
   }, [location.pathname]);
@@ -875,7 +875,7 @@ export function Form() {
                 sessionPush();
                 localDataPush();
                 setReset(true);
-                sessionStorage.setItem("reset",true);
+                sessionStorage.setItem("reset", true);
               }
             }}
             background="#CCE5FF"
@@ -888,14 +888,14 @@ export function Form() {
             <Button
               onClick={() => {
                 if (reset) {
-                  sessionStorage.remove('values');
-                  sessionStorage.remove('forParams');
-                  sessionStorage.remove('result');
-                  sessionStorage.remove('local');
-                  sessionStorage.remove('reset');
-                  sessionStorage.remove('sandr');
-                  sessionStorage.remove('combined');
-                  sessionStorage.remove('paramValues');  
+                  sessionStorage.removeItem("values");
+                  sessionStorage.removeItem("forParams");
+                  sessionStorage.removeItem("result");
+                  sessionStorage.removeItem("local");
+                  sessionStorage.removeItem("reset");
+                  sessionStorage.removeItem("sandr");
+                  sessionStorage.removeItem("combined");
+                  sessionStorage.removeItem("paramValues");
                   window.location.reload();
                 }
               }}
