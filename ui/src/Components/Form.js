@@ -48,28 +48,28 @@ export function Form() {
     village: "",
     labNo: "",
   });
-  // const localDataPush = () => {
-  //   const locals = {
-  //     values: values,
-  //     watVar: watVar,
-  //     soilVar: soilVar,
-  //     // farmInfo: farmInfo,
-  //     // cropToBeGrown: cropToBeGrown,
-  //     // irrigationSources: irrigationSources,
-  //     // soilTypes: soilTypes,
-  //     // previousCrop: previousCrop,
-  //     // labTran: labTran,
-  //     // cluster: cluster,
-  //     // village: village,
-  //     // plotNo: plotNo,
-  //     // plotArea: plotArea,
-  //     // wild: wild,
-  //     // surveyNo: surveyNo,
-  //   };
+  const localDataPush = () => {
+    const locals = {
+      values: values,
+      watVar: watVar,
+      soilVar: soilVar,
+      farmInfo: farmInfo,
+      cropToBeGrown: cropToBeGrown,
+      irrigationSources: irrigationSources,
+      soilTypes: soilTypes,
+      previousCrop: previousCrop,
+      labTran: labTran,
+      cluster: cluster,
+      village: village,
+      plotNo: plotNo,
+      plotArea: plotArea,
+      wild: wild,
+      surveyNo: surveyNo,
+    };
 
-  //   const localpush = JSON.stringify(locals);
-  //   sessionStorage.setItem("local", localpush);
-  // };
+    const localpush = JSON.stringify(locals);
+    sessionStorage.setItem("local", localpush);
+  };
 
   const showingData = () => {
     if (location.pathname === "/form") {
@@ -118,13 +118,13 @@ export function Form() {
     }
   };
 
-  // useEffect(() => {
-  //   if (sessionStorage.getItem("local") !== null) {
-  //     if (location.pathname === "/form") {
-  //       showingData();
-  //     }
-  //   }
-  // }, [location.pathname]);
+  useEffect(() => {
+    if (sessionStorage.getItem("local") !== null) {
+      if (location.pathname === "/form") {
+        showingData();
+      }
+    }
+  }, [location.pathname]);
   const [watVar, setwatVar] = useState(true);
   const [soilVar, setSoilVar] = useState(true);
 
@@ -871,7 +871,7 @@ export function Form() {
               if (validate()) {
                 navigate("/resultentry");
                 sessionPush();
-                // localDataPush();
+                localDataPush();
               }
             }}
             background="#CCE5FF"
