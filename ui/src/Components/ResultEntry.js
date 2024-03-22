@@ -76,6 +76,12 @@ function ResultEntry() {
     if (sessData) {
       setForParams(JSON.parse(sessData));
     }
+    let combined = sessionStorage.getItem("combined");
+    if(combined !== undefined)
+    {
+        const data = JSON.parse(combined);
+        setSuggestion(data.suggestions);
+    }
     // }
   }, [location.pathname]);
 
