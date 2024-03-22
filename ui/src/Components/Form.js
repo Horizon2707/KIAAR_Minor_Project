@@ -883,7 +883,7 @@ export function Form() {
           {reset && (
             <Button
               onClick={() => {
-                if ({ reset }) {
+                if (reset ) {
                   sessionStorage.clear();
                   window.location.reload();
                 }
