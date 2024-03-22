@@ -77,7 +77,7 @@ function ResultEntry() {
       setForParams(JSON.parse(sessData));
     }
     let combined = sessionStorage.getItem("combined");
-    if(combined !== undefined)
+    if(combined !== null)
     {
         const data = JSON.parse(combined);
         setSuggestion(data.suggestions);
