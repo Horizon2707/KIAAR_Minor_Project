@@ -6,7 +6,6 @@ import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 export function Form() {
   const location = useLocation();
-  const [manager, setManager] = useState({});
   const [newErrors, setErrors] = useState({});
   const [wild, setWild] = useState([]);
   const [surveyNo, setSurveyNo] = useState([]);
@@ -49,86 +48,90 @@ export function Form() {
     village: "",
     labNo: "",
   });
-  const localDataPush = () => {
-    const locals = {
-      values: values,
-      watVar: watVar,
-      soilVar: soilVar,
-      // farmInfo: farmInfo,
-      // cropToBeGrown: cropToBeGrown,
-      // irrigationSources: irrigationSources,
-      // soilTypes: soilTypes,
-      // previousCrop: previousCrop,
-      // labTran: labTran,
-      // cluster: cluster,
-      // village: village,
-      // plotNo: plotNo,
-      // plotArea: plotArea,
-      // wild: wild,
-      // surveyNo: surveyNo,
-    };
+  // const localDataPush = () => {
+  //   const locals = {
+  //     values: values,
+  //     watVar: watVar,
+  //     soilVar: soilVar,
+  //     // farmInfo: farmInfo,
+  //     // cropToBeGrown: cropToBeGrown,
+  //     // irrigationSources: irrigationSources,
+  //     // soilTypes: soilTypes,
+  //     // previousCrop: previousCrop,
+  //     // labTran: labTran,
+  //     // cluster: cluster,
+  //     // village: village,
+  //     // plotNo: plotNo,
+  //     // plotArea: plotArea,
+  //     // wild: wild,
+  //     // surveyNo: surveyNo,
+  //   };
 
-    const localpush = JSON.stringify(locals);
-    sessionStorage.setItem("local", localpush);
-  };
+  //   const localpush = JSON.stringify(locals);
+  //   sessionStorage.setItem("local", localpush);
+  // };
 
-  const showingData = () => {
-    if (location.pathname === "/form") {
-      const localData = sessionStorage.getItem("local");
-      if (localData) {
-        try {
-          const parsedData = JSON.parse(localData);
-          setValues(parsedData.values);
-          // setfarmInfo(parsedData.farmInfo);
-          // setdrainage(parsedData.drainage);
-          // setCultivationType(parsedData.cultivationType);
-          // setCropToBeGrown(parsedData.cropToBeGrown);
-          // setIrrigationSources(parsedData.irrigationSources);
-          // setSoilTypes(parsedData.soilTypes);
-          // setPreviousCrop(parsedData.previousCrop);
-          // setLabTran(parsedData.labTran);
-          // setCluster(parsedData.cluster);
-          // setVillage(parsedData.village);
-          // setplotNo(parsedData.plotNo);
-          // setPlotArea(parsedData.plotArea);
-          // setWild(parsedData.wild);
-          // setSurveyNo(parsedData.surveyNo);
-          // setwatVar(parsedData.watVar);
-          // setSoilVar(parsedData.soilVar);
-          fetchInit();
-          fetchFarmerInfo(parsedData.values.farmerId);
-          fetchClusterInfo(parsedData.values.farmerId);
-          fetchVillageInfo(parsedData.farmerId, parsedData.values.cluster);
-          fetchPlotNo(parsedData.values.farmerId, parsedData.values.village);
-          fetchPlotarea(
-            parsedData.values.plotNo,
-            parsedData.values.farmerId,
-            parsedData.values.village
-          );
-          fetchSurveyNo(
-            parsedData.values.village,
-            parsedData.values.farmerId,
-            parsedData.values.cluster
-          );
-        } catch (error) {
-          console.error("Error parsing JSON:", error);
-        }
-      } else {
-        console.log("No data found in sessionStorage.");
-      }
-    }
-  };
+  // const showingData = () => {
+  //   if (location.pathname === "/form") {
+  //     const localData = sessionStorage.getItem("local");
+  //     if (localData) {
+  //       try {
+  //         const parsedData = JSON.parse(localData);
+  //         setValues(parsedData.values);
+  //         // setfarmInfo(parsedData.farmInfo);
+  //         // setdrainage(parsedData.drainage);
+  //         // setCultivationType(parsedData.cultivationType);
+  //         // setCropToBeGrown(parsedData.cropToBeGrown);
+  //         // setIrrigationSources(parsedData.irrigationSources);
+  //         // setSoilTypes(parsedData.soilTypes);
+  //         // setPreviousCrop(parsedData.previousCrop);
+  //         // setLabTran(parsedData.labTran);
+  //         // setCluster(parsedData.cluster);
+  //         // setVillage(parsedData.village);
+  //         // setplotNo(parsedData.plotNo);
+  //         // setPlotArea(parsedData.plotArea);
+  //         // setWild(parsedData.wild);
+  //         // setSurveyNo(parsedData.surveyNo);
+  //         // setwatVar(parsedData.watVar);
+  //         // setSoilVar(parsedData.soilVar);
+  //         fetchInit();
+  //         fetchFarmerInfo(parsedData.values.farmerId);
+  //         fetchClusterInfo(parsedData.values.farmerId);
+  //         fetchVillageInfo(parsedData.farmerId, parsedData.values.cluster);
+  //         fetchPlotNo(parsedData.values.farmerId, parsedData.values.village);
+  //         fetchPlotarea(
+  //           parsedData.values.plotNo,
+  //           parsedData.values.farmerId,
+  //           parsedData.values.village
+  //         );
+  //         fetchSurveyNo(
+  //           parsedData.values.village,
+  //           parsedData.values.farmerId,
+  //           parsedData.values.cluster
+  //         );
+  //       } catch (error) {
+  //         console.error("Error parsing JSON:", error);
+  //       }
+  //     } else {
+  //       console.log("No data found in sessionStorage.");
+  //     }
+  //   }
+  // };
 
-  useEffect(() => {
-    if (sessionStorage.getItem("local") !== null) {
-      if (location.pathname === "/form") {
-        showingData();
-      }
-    }
-  }, [location.pathname]);
+  // useEffect(() => {
+  //   if (sessionStorage.getItem("local") !== null) {
+  //     if (location.pathname === "/form") {
+  //       showingData();
+  //     }
+  //   }
+  // }, [location.pathname]);
   const [watVar, setwatVar] = useState(true);
   const [soilVar, setSoilVar] = useState(true);
 
+  let sessionPush = () => {
+    sessionStorage.setItem("values", JSON.stringify(values));
+    console.log(values);
+  };
   const fetchPlotarea = (plotNo, farmerId, villageCd) => {
     fetch("http://localhost:5000/plotArea", {
       method: "POST",
@@ -230,25 +233,6 @@ export function Form() {
     }
   };
 
-  useEffect(() => {
-    const maxLength = 6;
-    // const local = sessionStorage.getItem("local");
-    // if (local) {
-    //   const localData = JSON.parse(local);
-    //   fetchFarmerInfo(localData.values.farmerId);
-    // } else {
-    if (values.farmerId.length === maxLength) {
-      setValues({ ...values, farmerId: values.farmerId });
-      fetchFarmerInfo(values.farmerId);
-      fetchClusterInfo(values.farmerId);
-      // }
-    }
-  }, [values.farmerId]);
-
-  useEffect(() => {
-    fetchInit();
-  }, []);
-
   const fetchVillageInfo = (farmerId, clusterCd) => {
     try {
       fetch("http://localhost:5000/villageInfo", {
@@ -270,9 +254,6 @@ export function Form() {
       console.error(e);
     }
   };
-  useEffect(() => {
-    fetchVillageInfo(values.farmerId, values.cluster);
-  }, [values.cluster]);
 
   const fetchPlotNo = (farmerId, villageCd) => {
     try {
@@ -295,9 +276,6 @@ export function Form() {
       console.error(e);
     }
   };
-  useEffect(() => {
-    fetchPlotNo(values.farmerId, values.village);
-  }, [values.village]);
 
   const navigate = useNavigate();
   const o = {
@@ -366,11 +344,6 @@ export function Form() {
 
     return Object.keys(errors).length === 0;
   };
-
-  let sessionPush = () => {
-    sessionStorage.setItem("values", JSON.stringify(values));
-    console.log(values);
-  };
   const fetchTempNo = (test) => {
     fetch("http://localhost:5000/temp_no", {
       method: "POST",
@@ -395,16 +368,39 @@ export function Form() {
   };
   const handleTestType = (e) => {
     const test = e.target.value;
-    const local = sessionStorage.getItem("local");
-    if (local !== undefined) {
-      setValues({
-        ...values,
-        test: test,
-      });
-    } else {
+    // const local = sessionStorage.getItem("local");
+    // if (local !== undefined) {
+    //   setValues({
+    //     ...values,
+    //     test: test,
+    //   });
+    // } else {
       fetchTempNo(test);
-    }
+    // }
   };
+  useEffect(() => {
+    fetchInit();
+  }, []);
+  useEffect(() => {
+    fetchPlotNo(values.farmerId, values.village);
+  }, [values.village]);
+  useEffect(() => {
+    const maxLength = 6;
+    // const local = sessionStorage.getItem("local");
+    // if (local) {
+    //   const localData = JSON.parse(local);
+    //   fetchFarmerInfo(localData.values.farmerId);
+    // } else {
+    if (values.farmerId.length === maxLength) {
+      setValues({ ...values, farmerId: values.farmerId });
+      fetchFarmerInfo(values.farmerId);
+      fetchClusterInfo(values.farmerId);
+      // }
+    }
+  }, [values.farmerId]);
+  useEffect(() => {
+    fetchVillageInfo(values.farmerId, values.cluster);
+  }, [values.cluster]);
 
   return (
     <>
@@ -875,7 +871,7 @@ export function Form() {
               if (validate()) {
                 navigate("/resultentry");
                 sessionPush();
-                localDataPush();
+                // localDataPush();
               }
             }}
             background="#CCE5FF"
