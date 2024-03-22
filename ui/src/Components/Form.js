@@ -636,7 +636,7 @@ export function Form() {
                 variant="filled"
                 id="area"
                 value={plotArea}
-                disabled={handleEnableElement}
+                disabled={isDisabled}
                 onChange={(e) => {
                   const area = e.target.value;
                   setValues({ ...values, area: area });
