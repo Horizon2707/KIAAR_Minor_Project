@@ -888,7 +888,14 @@ export function Form() {
             <Button
               onClick={() => {
                 if (reset) {
-                  sessionStorage.clear();
+                  sessionStorage.remove('values');
+                  sessionStorage.remove('forParams');
+                  sessionStorage.remove('result');
+                  sessionStorage.remove('local');
+                  sessionStorage.remove('reset');
+                  sessionStorage.remove('sandr');
+                  sessionStorage.remove('combined');
+                  sessionStorage.remove('paramValues');  
                   window.location.reload();
                 }
               }}
