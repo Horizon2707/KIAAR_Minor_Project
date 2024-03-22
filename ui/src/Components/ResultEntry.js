@@ -76,11 +76,11 @@ function ResultEntry() {
     if (sessData) {
       setForParams(JSON.parse(sessData));
     }
-    let combined = sessionStorage.getItem("combined");
-    if(combined !== null)
+    let suggestion = sessionStorage.getItem("sandr");
+    if(suggestion)
     {
-        const data = JSON.parse(combined);
-        setSuggestion(data.suggestions);
+        const data = JSON.parse(suggestion);
+        setSuggestion(suggestion);
     }
     // }
   }, [location.pathname]);
@@ -117,6 +117,7 @@ function ResultEntry() {
       .then((response) => response.json())
       .then((data) => {
         setSuggestion(data);
+        sessionStorage.setItem("sandr", JSON.stringify(data));
       });
   }, []);
 
