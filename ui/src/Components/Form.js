@@ -1,6 +1,6 @@
 import "../Styles/Form.css";
 import { Select, Input, Button } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
+import { json, useNavigate } from "react-router-dom";
 import { EditIcon } from "@chakra-ui/icons";
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
@@ -121,6 +121,9 @@ export function Form() {
     if (sessionStorage.getItem("local") !== null) {
       if (location.pathname === "/form") {
         showingData();
+        const ok = sessionStorage.getItem("reset");
+        const reset = JSON.parse(ok);
+        setReset(reset)
       }
     }
   }, [location.pathname]);
@@ -872,6 +875,7 @@ export function Form() {
                 sessionPush();
                 localDataPush();
                 setReset(true);
+                sessionStorage.setItem("reset",true);
               }
             }}
             background="#CCE5FF"
@@ -883,7 +887,7 @@ export function Form() {
           {reset && (
             <Button
               onClick={() => {
-                if (reset ) {
+                if (reset) {
                   sessionStorage.clear();
                   window.location.reload();
                 }
