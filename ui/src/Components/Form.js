@@ -286,7 +286,11 @@ export function Form() {
   const [isDisabled, setIsDisabled] = useState(true);
 
   let handleEnableElement = () => {
-    setIsDisabled(!isDisabled);
+    if (isDisabled === true){
+      setIsDisabled(false);
+    } else {
+      setIsDisabled(true);
+    }
   };
   const [reset, setReset] = useState(false);
   let validate = () => {
