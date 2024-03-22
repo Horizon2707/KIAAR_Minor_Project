@@ -71,52 +71,52 @@ export function Form() {
   //   sessionStorage.setItem("local", localpush);
   // };
 
-  // const showingData = () => {
-  //   if (location.pathname === "/form") {
-  //     const localData = sessionStorage.getItem("local");
-  //     if (localData) {
-  //       try {
-  //         const parsedData = JSON.parse(localData);
-  //         setValues(parsedData.values);
-  //         // setfarmInfo(parsedData.farmInfo);
-  //         // setdrainage(parsedData.drainage);
-  //         // setCultivationType(parsedData.cultivationType);
-  //         // setCropToBeGrown(parsedData.cropToBeGrown);
-  //         // setIrrigationSources(parsedData.irrigationSources);
-  //         // setSoilTypes(parsedData.soilTypes);
-  //         // setPreviousCrop(parsedData.previousCrop);
-  //         // setLabTran(parsedData.labTran);
-  //         // setCluster(parsedData.cluster);
-  //         // setVillage(parsedData.village);
-  //         // setplotNo(parsedData.plotNo);
-  //         // setPlotArea(parsedData.plotArea);
-  //         // setWild(parsedData.wild);
-  //         // setSurveyNo(parsedData.surveyNo);
-  //         // setwatVar(parsedData.watVar);
-  //         // setSoilVar(parsedData.soilVar);
-  //         fetchInit();
-  //         fetchFarmerInfo(parsedData.values.farmerId);
-  //         fetchClusterInfo(parsedData.values.farmerId);
-  //         fetchVillageInfo(parsedData.farmerId, parsedData.values.cluster);
-  //         fetchPlotNo(parsedData.values.farmerId, parsedData.values.village);
-  //         fetchPlotarea(
-  //           parsedData.values.plotNo,
-  //           parsedData.values.farmerId,
-  //           parsedData.values.village
-  //         );
-  //         fetchSurveyNo(
-  //           parsedData.values.village,
-  //           parsedData.values.farmerId,
-  //           parsedData.values.cluster
-  //         );
-  //       } catch (error) {
-  //         console.error("Error parsing JSON:", error);
-  //       }
-  //     } else {
-  //       console.log("No data found in sessionStorage.");
-  //     }
-  //   }
-  // };
+  const showingData = () => {
+    if (location.pathname === "/form") {
+      const localData = sessionStorage.getItem("local");
+      if (localData) {
+        try {
+          const parsedData = JSON.parse(localData);
+          setValues(parsedData.values);
+          setfarmInfo(parsedData.farmInfo);
+          setdrainage(parsedData.drainage);
+          setCultivationType(parsedData.cultivationType);
+          setCropToBeGrown(parsedData.cropToBeGrown);
+          setIrrigationSources(parsedData.irrigationSources);
+          setSoilTypes(parsedData.soilTypes);
+          setPreviousCrop(parsedData.previousCrop);
+          setLabTran(parsedData.labTran);
+          setCluster(parsedData.cluster);
+          setVillage(parsedData.village);
+          setplotNo(parsedData.plotNo);
+          setPlotArea(parsedData.plotArea);
+          setWild(parsedData.wild);
+          setSurveyNo(parsedData.surveyNo);
+          setwatVar(parsedData.watVar);
+          setSoilVar(parsedData.soilVar);
+          // fetchInit();
+          // fetchFarmerInfo(parsedData.values.farmerId);
+          // fetchClusterInfo(parsedData.values.farmerId);
+          // fetchVillageInfo(parsedData.farmerId, parsedData.values.cluster);
+          // fetchPlotNo(parsedData.values.farmerId, parsedData.values.village);
+          // fetchPlotarea(
+          //   parsedData.values.plotNo,
+          //   parsedData.values.farmerId,
+          //   parsedData.values.village
+          // );
+          // fetchSurveyNo(
+          //   parsedData.values.village,
+          //   parsedData.values.farmerId,
+          //   parsedData.values.cluster
+          // );
+        } catch (error) {
+          console.error("Error parsing JSON:", error);
+        }
+      } else {
+        console.log("No data found in sessionStorage.");
+      }
+    }
+  };
 
   // useEffect(() => {
   //   if (sessionStorage.getItem("local") !== null) {
