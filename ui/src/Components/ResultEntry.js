@@ -80,7 +80,7 @@ function ResultEntry() {
     if(suggestion)
     {
         const data = JSON.parse(suggestion);
-        setSuggestion(suggestion);
+        setSuggestion(data);
     }
     // }
   }, [location.pathname]);
