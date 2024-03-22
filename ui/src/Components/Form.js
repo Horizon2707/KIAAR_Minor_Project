@@ -286,11 +286,7 @@ export function Form() {
   const [isDisabled, setIsDisabled] = useState(true);
 
   let handleEnableElement = () => {
-    if (isDisabled === true){
-      setIsDisabled(false);
-    } else {
-      setIsDisabled(true);
-    }
+    
   };
   const [reset, setReset] = useState(false);
   let validate = () => {
@@ -413,7 +409,6 @@ export function Form() {
       <h1 style={{ marginTop: "0.5vh", color: "black" }}>
         Soil Water Test Entry Form
       </h1>
-      <form>
         <div className="container">
           <div className="common">
             <div className="litspace item">
@@ -913,7 +908,6 @@ export function Form() {
           <br />
           <br />
         </div>
-      </form>
     </>
   );
 }
