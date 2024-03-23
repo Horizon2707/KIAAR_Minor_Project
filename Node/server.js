@@ -1,10 +1,9 @@
 const express = require("express");
-
+const session = require("express-session");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
-
 const oracledb = require("oracledb");
 
 const calculations = require("./calculations.js");
@@ -22,7 +21,14 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
-
+app.use(
+  session({
+    key: "userId",
+    secret: "test",
+    resave: false,
+    saveUninitialized: true,
+  })
+);
 let fieldsToExtract = [
   "CLUSTER_CD",
   "VILLAGE_CD",
@@ -581,6 +587,90 @@ app.post("/values", async (req, res) => {
     console.log(error);
   }
 });
+
+// Authentication methods
+function isAuthenticated(req, res, next) {
+  if (req.session && req.session.user) {
+    // User is authenticated
+    return next();
+  }
+  // User is not authenticated, redirect or send an error response
+  res.status(401).send("Unauthorized");
+}
+app.get("/authenticate", isAuthenticated, (req, res) => {
+  res.status(200).send("Authorized");
+});
+app.get("/session", isAuthenticated, (req, res) => {
+  res.json({ user: req.session.user });
+});
+
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    // db connection
+    const connection = await dbConnection;
+
+    const user_all = await connection.execute(
+      `SELECT USER_ID,EMAIL,PASSWORD,NAME FROM GSMAGRI.SW_USER_DATA WHERE EMAIL = :email`,
+      [email]
+    );
+    const user = user_all.rows;
+
+    if (user) {
+      const isPasswordValid = await bcrypt.compare(password, user[0].PASSWORD);
+      console.log(isPasswordValid);
+      if (isPasswordValid) {
+        req.session.user = req.body;
+        console.log(req.session.user.email);
+        return res.status(200).json({
+          email: req.session.user.email,
+          name: user[0].NAME,
+        });
+      } else {
+        res.status(401).send("Incorrect password");
+      }
+    } else {
+      res.status(401).send("Login failed");
+    }
+  } catch (error) {
+    console.error("Error during login:", error);
+    res.status(500).send("An error occurred during login");
+  }
+});
+
+app.post("/signUp", async (req, res) => {
+  try {
+    const { fullName, email, password } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const connection = await dbConnection;
+    const new_user = await connection.execute(
+      `INSERT INTO gsmagri.sw_user_data (
+      user_id,
+      email,
+      password,
+      is_active,
+      name
+  ) VALUES (
+      (SELECT MAX(user_id) + 1 FROM gsmagri.sw_user_data),
+      :email,
+      :hashedPassword,
+      1,
+      :name
+  )`,
+      [email, hashedPassword, fullName]
+    );
+    await connection.execute("COMMIT");
+    if (new_user) {
+      res.sendStatus(201);
+    }
+    // Created
+  } catch (error) {
+    console.error("Error creating user:", error);
+    res.sendStatus(500); // Internal Server Error
+  }
+});
+
 app.post("/calc", (req, res) => {
   const { parameters } = req.body;
 

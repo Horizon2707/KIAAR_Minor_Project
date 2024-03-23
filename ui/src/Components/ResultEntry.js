@@ -38,9 +38,11 @@ function ResultEntry() {
   var [resValues, ressetValues] = useState([]);
   const [finalRemarks, setFinalRemarks] = useState("");
   let values = sessionStorage.getItem("values");
+  let local = sessionStorage.getItem("local");
   values = JSON.parse(values);
   let postData = () => {
     let com = {
+      local: local,
       paramValues: resValues,
       values: values,
       suggestions: suggestion,
@@ -77,10 +79,9 @@ function ResultEntry() {
       setForParams(JSON.parse(sessData));
     }
     let suggestion = sessionStorage.getItem("sandr");
-    if(suggestion)
-    {
-        const data = JSON.parse(suggestion);
-        setSuggestion(data);
+    if (suggestion) {
+      const data = JSON.parse(suggestion);
+      setSuggestion(data);
     }
     // }
   }, [location.pathname]);

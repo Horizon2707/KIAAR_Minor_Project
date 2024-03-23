@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Flex,
   Heading,
@@ -13,54 +14,85 @@ import {
   FormControl,
   FormHelperText,
   InputRightElement,
-  Link
+  Link,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  CloseButton,
 } from "@chakra-ui/react";
 import { FaUserAlt, FaLock } from "react-icons/fa";
 const CFaUserAlt = chakra(FaUserAlt);
 const CFaLock = chakra(FaLock);
 
 const Login = () => {
-  const [username, setUsername] = useState("");
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [passwordError, setPasswordError] = useState("");
   const [emailError, setEmailError] = useState("");
+  const [showErrorAlert, setShowErrorAlert] = useState(false);
+  const [greetingName, setGreetingName] = useState("");
+
+  const validateEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
 
   const handleLogin = async (event) => {
     event.preventDefault(); // Prevent form submission
+
+    // Check if email and password are not empty
+    if (!email.trim() || !password.trim()) {
+      setEmailError("Email and password cannot be empty");
+      setPasswordError("Email and password cannot be empty");
+      return; // Prevent further execution
+    }
+
     try {
-      // Check if email is empty
-      if (!username.trim()) {
-        setEmailError("Email cannot be empty");
-        return; // Prevent further execution
+      // Reset error messages
+      setEmailError("");
+      setPasswordError("");
+
+      // Other validation checks...
+      if (!validateEmail(email.trim())) {
+        setEmailError("Email is not valid");
+        return;
+      } else if (password.trim().length < 6) {
+        setPasswordError("Password must be at least 6 characters long");
+        return;
+      } else {
+        const response = await fetch("http://localhost:5000/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        });
+        if (!response.ok) {
+          if (response.status === 401) {
+            setShowErrorAlert(true);
+          } else {
+            const error = await response.json();
+            throw new Error(error.message);
+          }
+        } else {
+          const result = await response.json();
+          if (response.status === 200) {
+            const { name } = result;
+            setGreetingName(name);
+            setTimeout(() => {
+              navigate("/form");
+              sessionStorage.setItem("user", JSON.stringify(result));
+              console.log("Login successful:", result);
+            }, 500);
+          }
+        }
       }
-  
-      // Check if password is empty
-      if (!password.trim()) {
-        setPasswordError("Password cannot be empty");
-        return; // Prevent further execution
-      }
-  
-      const response = await fetch("http://localhost:5000/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password }),
-      });
-  
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message);
-      }
-      const result = await response.json();
-      console.log("Login successful:", result);
-      sessionStorage.setItem("user", JSON.stringify(result));  
     } catch (error) {
       console.error("Error during login:", error.message);
     }
   };
-  
 
   const handleShowClick = () => setShowPassword(!showPassword);
 
@@ -89,6 +121,24 @@ const Login = () => {
               backgroundColor="whiteAlpha.900"
               boxShadow="md"
             >
+              {showErrorAlert && (
+                <Alert status="error">
+                  <AlertIcon />
+                  <AlertTitle mr={2}>Incorrect email or password</AlertTitle>
+                  <CloseButton
+                    onClick={() => setShowErrorAlert(false)}
+                    position="absolute"
+                    right="8px"
+                    top="8px"
+                  />
+                </Alert>
+              )}
+              {greetingName && (
+                <Alert status="success">
+                  <AlertIcon />
+                  <AlertTitle mr={2}>Welcome, {greetingName}</AlertTitle>
+                </Alert>
+              )}
               <FormControl>
                 <InputGroup>
                   <InputLeftElement
@@ -98,17 +148,15 @@ const Login = () => {
                   <Input
                     type="email"
                     placeholder="email address"
-                    value={username}
+                    value={email}
                     onChange={(e) => {
-                      setUsername(e.target.value);
+                      setEmail(e.target.value);
                       setEmailError(""); // Clear error message when typing
                     }}
                   />
                 </InputGroup>
                 {emailError && (
-                  <FormHelperText color="red.500">
-                    {emailError}
-                  </FormHelperText>
+                  <FormHelperText color="red.500">{emailError}</FormHelperText>
                 )}
               </FormControl>
               <FormControl>
@@ -138,9 +186,6 @@ const Login = () => {
                     {passwordError}
                   </FormHelperText>
                 )}
-                <FormHelperText textAlign="right">
-                  <Link color="teal.500">forgot password?</Link>
-                </FormHelperText>
               </FormControl>
               <Button
                 borderRadius={0}

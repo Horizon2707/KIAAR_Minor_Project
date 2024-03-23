@@ -39,7 +39,7 @@ export function Form() {
     dtOfSamplingReceipt: new Date().toISOString().split("T")[0],
     templateNo: [],
     HEWFno: "",
-    area: "",
+    area: 0,
   });
   const [farmInfo, setfarmInfo] = useState({
     name: "",
@@ -131,6 +131,7 @@ export function Form() {
   const [soilVar, setSoilVar] = useState(true);
 
   let sessionPush = () => {
+    setValues({ ...values, area: plotArea });
     sessionStorage.setItem("values", JSON.stringify(values));
     console.log(values);
   };
@@ -285,9 +286,7 @@ export function Form() {
   };
   const [isDisabled, setIsDisabled] = useState(true);
 
-  let handleEnableElement = () => {
-    
-  };
+  let handleEnableElement = () => {};
   const [reset, setReset] = useState(false);
   let validate = () => {
     const errors = {};
@@ -409,505 +408,499 @@ export function Form() {
       <h1 style={{ marginTop: "0.5vh", color: "black" }}>
         Soil Water Test Entry Form
       </h1>
-        <div className="container">
-          <div className="common">
-            <div className="litspace item">
-              <label className="mLabel" htmlFor="test">
-                Test Type
-              </label>
-              <Select
-                size="sm"
-                variant="filled"
-                placeholder="Select one..."
-                id="test"
-                value={values.test}
-                onChange={(e) => {
-                  console.log("Onchange");
-                  handleTestType(e);
-                }}
-              >
-                {wild.map((item) => {
-                  return <option value={item.TEST_CD}>{item.TEST_NAME}</option>;
-                })}
-              </Select>
-              {newErrors.test && <div className="error">{newErrors.test}</div>}
-            </div>
-            <div className="item litspace">
-              <label className="mLabel" htmlFor="templateNo">
-                Templete No:-
-              </label>
-              <Select
-                size="sm"
-                value={values.templateNo}
-                onChange={(e) => {
-                  const templateNo = e.target.value;
-                  setValues({ ...values, templateNo: templateNo });
-                }}
-                variant="filled"
-                id="templateNo"
-              >
-                {values.templateNo.map((item) => {
-                  return (
-                    <option value={item.TEMPLATE_NO}>{item.TEMPLATE_NO}</option>
-                  );
-                })}
-              </Select>
-            </div>
-            <div className="item litspace">
-              <label className="mLabel" htmlFor="labNo">
-                Lab No:{labTran && labTran.map((item) => item.LAB_TRAN)}
-              </label>
-              {newErrors.labNo && (
-                <div className="error">{newErrors.labNo}</div>
-              )}
-            </div>
-            <div className="item litspace">
-              <label className="mLabel" htmlFor="HEWFno">
-                HEWF no.
-              </label>
-              <Input
-                onChange={(e) => {
-                  const HEWFno = e.target.value;
-                  setValues({ ...values, HEWFno: HEWFno });
-                }}
-                value={values.HEWFno}
-                type="number"
-                id="HEWFno"
-                size="sm"
-                style={{ width: "10vh" }}
-              ></Input>
-            </div>
+      <div className="container">
+        <div className="common">
+          <div className="litspace item">
+            <label className="mLabel" htmlFor="test">
+              Test Type
+            </label>
+            <Select
+              size="sm"
+              variant="filled"
+              placeholder="Select one..."
+              id="test"
+              value={values.test}
+              onChange={(e) => {
+                console.log("Onchange");
+                handleTestType(e);
+              }}
+            >
+              {wild.map((item) => {
+                return <option value={item.TEST_CD}>{item.TEST_NAME}</option>;
+              })}
+            </Select>
+            {newErrors.test && <div className="error">{newErrors.test}</div>}
           </div>
-          <div className="common">
-            <div className=" item centering">
-              <label className="mLabel" htmlFor="farmerId">
-                Farmer ID
-              </label>
-              <Input
-                onChange={(e) => {
-                  const farmerId = e.target.value;
-                  setValues({ ...values, farmerId: farmerId });
-                }}
-                value={values.farmerId}
-                id="farmerId"
-                size="md"
-                variant="filled"
-                maxLength={6}
-                placeholder="Enter 6 digits Farmer Id"
-              />
-              {newErrors.farmerId && (
-                <div className="error">{newErrors.farmerId}</div>
-              )}
-            </div>
-            <div className="item litspace">
-              <h5>{farmInfo.name}</h5>
-            </div>
-            <div className="item litspace">
-              <h5>Mbl. :</h5>
-              <h5>{farmInfo.MBLNO}</h5>
-            </div>
+          <div className="item litspace">
+            <label className="mLabel" htmlFor="templateNo">
+              Templete No:-
+            </label>
+            <Select
+              size="sm"
+              value={values.templateNo}
+              onChange={(e) => {
+                const templateNo = e.target.value;
+                setValues({ ...values, templateNo: templateNo });
+              }}
+              variant="filled"
+              id="templateNo"
+            >
+              {values.templateNo.map((item) => {
+                return (
+                  <option value={item.TEMPLATE_NO}>{item.TEMPLATE_NO}</option>
+                );
+              })}
+            </Select>
           </div>
-          <div className="common">
-            <div className="item">
-              P Address:
-              {farmInfo.PAddress}
-            </div>
+          <div className="item litspace">
+            <label className="mLabel" htmlFor="labNo">
+              Lab No:{labTran && labTran.map((item) => item.LAB_TRAN)}
+            </label>
+            {newErrors.labNo && <div className="error">{newErrors.labNo}</div>}
           </div>
-          <div className="common ">
-            <div className="item morspace">
-              <label className="mLabel" htmlFor="cluster">
-                Cluster
-              </label>
-              <Select
-                size="sm"
-                id="cluster"
-                placeholder="Select one..."
-                variant="filled"
-                onChange={(e) => {
-                  const cluster = e.target.value;
-                  setValues({ ...values, cluster: cluster });
-                }}
-                value={values.cluster}
-              >
-                {cluster.map((element) => {
-                  return (
-                    <option value={element.CLUSTER_CD}>
-                      {element.CLUSTER_NAME}
-                    </option>
-                  );
-                })}
-              </Select>
-              {newErrors.cluster && (
-                <div className="error">{newErrors.cluster}</div>
-              )}
-            </div>
-            <div className="item morspace">
-              <label className="mLabel" htmlFor="cluster">
-                Village
-              </label>
-              <Select
-                size="sm"
-                id="village"
-                placeholder="Select one..."
-                variant="filled"
-                onChange={(e) => {
-                  const village = e.target.value;
-                  setValues({ ...values, village: village });
-                  fetchSurveyNo(village);
-                }}
-                value={values.village}
-              >
-                {village.map((element) => {
-                  return (
-                    <option value={element.VILLAGE_CD}>
-                      {element.VILLAGE_NAME}
-                    </option>
-                  );
-                })}
-              </Select>
-              {newErrors.village && (
-                <div className="error">{newErrors.village}</div>
-              )}
-            </div>
-            <div className="item morspace">
-              <label className="mLabel" htmlFor="surveyNo">
-                SY No.
-              </label>
-              <Select
-                size="sm"
-                id="surveyNo"
-                placeholder="Select one..."
-                variant="filled"
-                onChange={(e) => {
-                  const surveyNo = e.target.value;
-                  setValues({ ...values, surveyNo: surveyNo });
-                }}
-                value={values.surveyNo}
-              >
-                {surveyNo.map((surveyNo, index) => (
-                  <option key={index} value={surveyNo.SY_NO}>
-                    {surveyNo.SY_NO}
+          <div className="item litspace">
+            <label className="mLabel" htmlFor="HEWFno">
+              HEWF no.
+            </label>
+            <Input
+              onChange={(e) => {
+                const HEWFno = e.target.value;
+                setValues({ ...values, HEWFno: HEWFno });
+              }}
+              value={values.HEWFno}
+              type="number"
+              id="HEWFno"
+              size="sm"
+              style={{ width: "10vh" }}
+            ></Input>
+          </div>
+        </div>
+        <div className="common">
+          <div className=" item centering">
+            <label className="mLabel" htmlFor="farmerId">
+              Farmer ID
+            </label>
+            <Input
+              onChange={(e) => {
+                const farmerId = e.target.value;
+                setValues({ ...values, farmerId: farmerId });
+              }}
+              value={values.farmerId}
+              id="farmerId"
+              size="md"
+              variant="filled"
+              maxLength={6}
+              placeholder="Enter 6 digits Farmer Id"
+            />
+            {newErrors.farmerId && (
+              <div className="error">{newErrors.farmerId}</div>
+            )}
+          </div>
+          <div className="item litspace">
+            <h5>{farmInfo.name}</h5>
+          </div>
+          <div className="item litspace">
+            <h5>Mbl. :</h5>
+            <h5>{farmInfo.MBLNO}</h5>
+          </div>
+        </div>
+        <div className="common">
+          <div className="item">
+            P Address:
+            {farmInfo.PAddress}
+          </div>
+        </div>
+        <div className="common ">
+          <div className="item morspace">
+            <label className="mLabel" htmlFor="cluster">
+              Cluster
+            </label>
+            <Select
+              size="sm"
+              id="cluster"
+              placeholder="Select one..."
+              variant="filled"
+              onChange={(e) => {
+                const cluster = e.target.value;
+                setValues({ ...values, cluster: cluster });
+              }}
+              value={values.cluster}
+            >
+              {cluster.map((element) => {
+                return (
+                  <option value={element.CLUSTER_CD}>
+                    {element.CLUSTER_NAME}
+                  </option>
+                );
+              })}
+            </Select>
+            {newErrors.cluster && (
+              <div className="error">{newErrors.cluster}</div>
+            )}
+          </div>
+          <div className="item morspace">
+            <label className="mLabel" htmlFor="cluster">
+              Village
+            </label>
+            <Select
+              size="sm"
+              id="village"
+              placeholder="Select one..."
+              variant="filled"
+              onChange={(e) => {
+                const village = e.target.value;
+                setValues({ ...values, village: village });
+                fetchSurveyNo(village);
+              }}
+              value={values.village}
+            >
+              {village.map((element) => {
+                return (
+                  <option value={element.VILLAGE_CD}>
+                    {element.VILLAGE_NAME}
+                  </option>
+                );
+              })}
+            </Select>
+            {newErrors.village && (
+              <div className="error">{newErrors.village}</div>
+            )}
+          </div>
+          <div className="item morspace">
+            <label className="mLabel" htmlFor="surveyNo">
+              SY No.
+            </label>
+            <Select
+              size="sm"
+              id="surveyNo"
+              placeholder="Select one..."
+              variant="filled"
+              onChange={(e) => {
+                const surveyNo = e.target.value;
+                setValues({ ...values, surveyNo: surveyNo });
+              }}
+              value={values.surveyNo}
+            >
+              {surveyNo.map((surveyNo, index) => (
+                <option key={index} value={surveyNo.SY_NO}>
+                  {surveyNo.SY_NO}
+                </option>
+              ))}
+            </Select>
+            {newErrors.surveyNo && (
+              <div className="error">{newErrors.surveyNo}</div>
+            )}
+          </div>
+          <div className="item morspace">
+            <label className="mLabel" htmlFor="plotNo">
+              Plot No.
+            </label>
+            <Select
+              id="plotNo"
+              size="sm"
+              placeholder="Select one..."
+              variant="filled"
+              onChange={(e) => {
+                const areaNo = parseInt(e.target.value);
+                setValues({
+                  ...values,
+                  plotNo: areaNo,
+                });
+                fetchPlotarea(areaNo);
+              }}
+              value={values.plotNo}
+            >
+              {plotNo
+                .sort((a, b) => parseInt(a.PLOT_NO) - parseInt(b.PLOT_NO))
+                .map((plot, index) => (
+                  <option key={index} value={parseInt(plot.PLOT_NO)}>
+                    {parseInt(plot.PLOT_NO)}
                   </option>
                 ))}
-              </Select>
-              {newErrors.surveyNo && (
-                <div className="error">{newErrors.surveyNo}</div>
-              )}
-            </div>
-            <div className="item morspace">
-              <label className="mLabel" htmlFor="plotNo">
-                Plot No.
-              </label>
-              <Select
-                id="plotNo"
-                size="sm"
-                placeholder="Select one..."
-                variant="filled"
-                onChange={(e) => {
-                  const areaNo = parseInt(e.target.value);
-                  setValues({
-                    ...values,
-                    plotNo: areaNo,
-                  });
-                  fetchPlotarea(areaNo);
-                }}
-                value={values.plotNo}
-              >
-                {plotNo
-                  .sort((a, b) => parseInt(a.PLOT_NO) - parseInt(b.PLOT_NO))
-                  .map((plot, index) => (
-                    <option key={index} value={parseInt(plot.PLOT_NO)}>
-                      {parseInt(plot.PLOT_NO)}
-                    </option>
-                  ))}
-              </Select>
-              {newErrors.plotNo && (
-                <div className="error">{newErrors.plotNo}</div>
-              )}
-            </div>
-            <div className="item morspace">
-              <label className="mLabel" htmlFor="area">
-                Area
-              </label>
-              <Input
-                size="sm"
-                htmlSize={3}
-                variant="filled"
-                id="area"
-                value={plotArea}
-                disabled={isDisabled}
-                onChange={(e) => {
-                  const area = e.target.value;
-                  setValues({ ...values, area: area });
-                }}
-              ></Input>
-              <button onClick={handleEnableElement}>
-                <EditIcon />
-              </button>
-            </div>
+            </Select>
+            {newErrors.plotNo && (
+              <div className="error">{newErrors.plotNo}</div>
+            )}
           </div>
-          <div className="row5 common">
-            <div className="item litspace">
-              <label className="mLabel" htmlFor="drainage">
-                Drainage
-              </label>
-              <Select
-                size="sm"
-                id="drainage"
-                variant="filled"
-                placeholder="Select one..."
-                onChange={(e) => {
-                  const drainage = e.target.value;
-                  setValues({ ...values, drainage: drainage });
-                }}
-                value={values.drainage}
-              >
-                {/* {drainage.drainage &&
+          <div className="item morspace">
+            <label className="mLabel" htmlFor="area">
+              Area
+            </label>
+            <Input
+              size="sm"
+              htmlSize={3}
+              variant="filled"
+              id="area"
+              value={plotArea}
+              disabled={isDisabled}
+              onChange={(e) => {
+                const area = e.target.value;
+                setValues({ ...values, area: area });
+              }}
+            ></Input>
+            <button onClick={handleEnableElement}>
+              <EditIcon />
+            </button>
+          </div>
+        </div>
+        <div className="row5 common">
+          <div className="item litspace">
+            <label className="mLabel" htmlFor="drainage">
+              Drainage
+            </label>
+            <Select
+              size="sm"
+              id="drainage"
+              variant="filled"
+              placeholder="Select one..."
+              onChange={(e) => {
+                const drainage = e.target.value;
+                setValues({ ...values, drainage: drainage });
+              }}
+              value={values.drainage}
+            >
+              {/* {drainage.drainage &&
                 drainage.drainage.map((item) => {
                   return <option value={item}>{item}</option>;
                 })} */}
-                <option value="GOOD">Good</option>
-                <option value="BAD">Bad</option>
-                <option value="NONE">None</option>
-              </Select>
-              {newErrors.drainage && (
-                <div className="error">{newErrors.drainage}</div>
-              )}
-            </div>
-            {soilVar && (
-              <div className="item litspace">
-                <label className="mLabel" htmlFor="soilType">
-                  Soil Type
-                </label>
-                <Select
-                  size="sm"
-                  id="soilType"
-                  variant="filled"
-                  placeholder="Select one..."
-                  onChange={(e) => {
-                    const soil_type = e.target.value;
-                    setValues({ ...values, soilType: soil_type });
-                  }}
-                  value={values.soilType}
-                >
-                  {soilTypes.map((soilType, index) => (
-                    <option key={index} value={soilType.SOIL_TYPE_CD}>
-                      {soilType.SOIL_TYPE_NAME}
-                    </option>
-                  ))}
-                </Select>
-                {newErrors.soilType && (
-                  <div className="error">{newErrors.soilType}</div>
-                )}
-              </div>
+              <option value="GOOD">Good</option>
+              <option value="BAD">Bad</option>
+              <option value="NONE">None</option>
+            </Select>
+            {newErrors.drainage && (
+              <div className="error">{newErrors.drainage}</div>
             )}
-            {watVar && (
-              <div className="item litspace">
-                <label className="mLabel" htmlFor="waterType">
-                  Water Type
-                </label>
-                <Select
-                  size="sm"
-                  id="waterType"
-                  variant="filled"
-                  placeholder="Select one..."
-                  onChange={(e) => {
-                    const waterType = e.target.value;
-                    setValues({ ...values, waterType: waterType });
-                  }}
-                  value={values.waterType}
-                >
-                  <option value="x">x</option>
-                  <option value="y">y</option>
-                </Select>
-                {newErrors.waterType && (
-                  <div className="error">{newErrors.waterType}</div>
-                )}
-              </div>
-            )}
+          </div>
+          {soilVar && (
             <div className="item litspace">
-              <label className="mLabel" htmlFor="irrigationSource">
-                Irrigation Source
+              <label className="mLabel" htmlFor="soilType">
+                Soil Type
               </label>
               <Select
                 size="sm"
-                id="irrigationSource"
+                id="soilType"
                 variant="filled"
                 placeholder="Select one..."
                 onChange={(e) => {
-                  const irrigationSource = e.target.value;
-                  setValues({ ...values, irrigationSource: irrigationSource });
+                  const soil_type = e.target.value;
+                  setValues({ ...values, soilType: soil_type });
                 }}
-                value={values.irrigationSource}
+                value={values.soilType}
               >
-                {irrigationSources.map((irrigationType, index) => (
-                  <option key={index} value={irrigationType.IRRIGATION_CD}>
-                    {irrigationType.IRRIGATION_NAME}
+                {soilTypes.map((soilType, index) => (
+                  <option key={index} value={soilType.SOIL_TYPE_CD}>
+                    {soilType.SOIL_TYPE_NAME}
                   </option>
                 ))}
               </Select>
-              {newErrors.irrigationSource && (
-                <div className="error">{newErrors.irrigationSource}</div>
+              {newErrors.soilType && (
+                <div className="error">{newErrors.soilType}</div>
               )}
             </div>
+          )}
+          {watVar && (
             <div className="item litspace">
-              <label className="mLabel" htmlFor="cultivationType">
-                Cultivation Type
+              <label className="mLabel" htmlFor="waterType">
+                Water Type
               </label>
               <Select
                 size="sm"
-                id="cultivationType"
+                id="waterType"
                 variant="filled"
                 placeholder="Select one..."
                 onChange={(e) => {
-                  const cultivation_type = e.target.value;
-                  setValues({ ...values, cultivationType: cultivation_type });
+                  const waterType = e.target.value;
+                  setValues({ ...values, waterType: waterType });
                 }}
-                value={values.cultivationType}
+                value={values.waterType}
               >
-                <option value="IRRIGATED">Irrigated</option>
-                <option value="RAINED">Rained</option>
-                <option value="NONE">None</option>
+                <option value="x">x</option>
+                <option value="y">y</option>
               </Select>
-              {newErrors.cultivationType && (
-                <div className="error">{newErrors.cultivationType}</div>
+              {newErrors.waterType && (
+                <div className="error">{newErrors.waterType}</div>
               )}
             </div>
+          )}
+          <div className="item litspace">
+            <label className="mLabel" htmlFor="irrigationSource">
+              Irrigation Source
+            </label>
+            <Select
+              size="sm"
+              id="irrigationSource"
+              variant="filled"
+              placeholder="Select one..."
+              onChange={(e) => {
+                const irrigationSource = e.target.value;
+                setValues({ ...values, irrigationSource: irrigationSource });
+              }}
+              value={values.irrigationSource}
+            >
+              {irrigationSources.map((irrigationType, index) => (
+                <option key={index} value={irrigationType.IRRIGATION_CD}>
+                  {irrigationType.IRRIGATION_NAME}
+                </option>
+              ))}
+            </Select>
+            {newErrors.irrigationSource && (
+              <div className="error">{newErrors.irrigationSource}</div>
+            )}
           </div>
-          <div className="common">
-            <div className="item litspace">
-              <label className="mLabel" htmlFor="previousCrop">
-                Previous Crop
-              </label>
-              <Select
-                size="sm"
-                id="previousCrop"
-                variant="filled"
-                placeholder="Select one..."
-                onChange={(e) => {
-                  const previous_crop = e.target.value;
-                  setValues({ ...values, previousCrop: previous_crop });
-                }}
-                value={values.previousCrop}
-              >
-                {previousCrop.map((element) => {
-                  return (
-                    <option value={element.CROP_NAME}>
-                      {element.CROP_NAME}
-                    </option>
-                  );
-                })}
-              </Select>
-              {newErrors.previousCrop && (
-                <div className="error">{newErrors.previousCrop}</div>
-              )}
-            </div>
-            <div className="item lispace">
-              <label className="mLabel" htmlFor="cropToBeGrown">
-                Crop to be grown
-              </label>
-              <Select
-                size="sm"
-                id="cropToBeGrown"
-                variant="filled"
-                placeholder="Select one..."
-                onChange={(e) => {
-                  setValues({ ...values, cropToBeGrown: e.target.value });
-                }}
-                value={values.cropToBeGrown}
-              >
-                {cropToBeGrown.map((element) => {
-                  return (
-                    <option value={element.CROP_NAME}>
-                      {element.CROP_NAME}
-                    </option>
-                  );
-                })}
-              </Select>
-              {newErrors.cropToBeGrown && (
-                <div className="error">{newErrors.cropToBeGrown}</div>
-              )}
-            </div>
-            <div className="item litspace">
-              <label className="mLabel" htmlFor="dtOfSampling">
-                Dt of Sampling
-              </label>
-              <Input
-                onChange={(e) => {
-                  setValues({ ...values, dtOfSampling: e.target.value });
-                }}
-                value={values.dtOfSampling}
-                type="date"
-                size="sm"
-                id="dtOfSampling"
-              ></Input>
-              {newErrors.dtOfSampling && (
-                <div className="error">{newErrors.dtOfSampling}</div>
-              )}
-            </div>
-            <div className="item litspace">
-              <label className="mLabel" htmlFor="dtOfSamplingReceipt">
-                Dt of Sampling Receipt
-              </label>
-              <Input
-                onChange={(e) => {
-                  setValues({ ...values, dtOfSamplingReceipt: e.target.value });
-                }}
-                value={values.dtOfSamplingReceipt}
-                type="date"
-                size="sm"
-                id="dtOfSamplingReceipt"
-              ></Input>
-              {newErrors.dtOfSamplingReceipt && (
-                <div className="error">{newErrors.dtOfSamplingReceipt}</div>
-              )}
-            </div>
+          <div className="item litspace">
+            <label className="mLabel" htmlFor="cultivationType">
+              Cultivation Type
+            </label>
+            <Select
+              size="sm"
+              id="cultivationType"
+              variant="filled"
+              placeholder="Select one..."
+              onChange={(e) => {
+                const cultivation_type = e.target.value;
+                setValues({ ...values, cultivationType: cultivation_type });
+              }}
+              value={values.cultivationType}
+            >
+              <option value="IRRIGATED">Irrigated</option>
+              <option value="RAINED">Rained</option>
+              <option value="NONE">None</option>
+            </Select>
+            {newErrors.cultivationType && (
+              <div className="error">{newErrors.cultivationType}</div>
+            )}
           </div>
         </div>
-        <div style={o} className="centering">
+        <div className="common">
+          <div className="item litspace">
+            <label className="mLabel" htmlFor="previousCrop">
+              Previous Crop
+            </label>
+            <Select
+              size="sm"
+              id="previousCrop"
+              variant="filled"
+              placeholder="Select one..."
+              onChange={(e) => {
+                const previous_crop = e.target.value;
+                setValues({ ...values, previousCrop: previous_crop });
+              }}
+              value={values.previousCrop}
+            >
+              {previousCrop.map((element) => {
+                return (
+                  <option value={element.CROP_NAME}>{element.CROP_NAME}</option>
+                );
+              })}
+            </Select>
+            {newErrors.previousCrop && (
+              <div className="error">{newErrors.previousCrop}</div>
+            )}
+          </div>
+          <div className="item lispace">
+            <label className="mLabel" htmlFor="cropToBeGrown">
+              Crop to be grown
+            </label>
+            <Select
+              size="sm"
+              id="cropToBeGrown"
+              variant="filled"
+              placeholder="Select one..."
+              onChange={(e) => {
+                setValues({ ...values, cropToBeGrown: e.target.value });
+              }}
+              value={values.cropToBeGrown}
+            >
+              {cropToBeGrown.map((element) => {
+                return (
+                  <option value={element.CROP_NAME}>{element.CROP_NAME}</option>
+                );
+              })}
+            </Select>
+            {newErrors.cropToBeGrown && (
+              <div className="error">{newErrors.cropToBeGrown}</div>
+            )}
+          </div>
+          <div className="item litspace">
+            <label className="mLabel" htmlFor="dtOfSampling">
+              Dt of Sampling
+            </label>
+            <Input
+              onChange={(e) => {
+                setValues({ ...values, dtOfSampling: e.target.value });
+              }}
+              value={values.dtOfSampling}
+              type="date"
+              size="sm"
+              id="dtOfSampling"
+            ></Input>
+            {newErrors.dtOfSampling && (
+              <div className="error">{newErrors.dtOfSampling}</div>
+            )}
+          </div>
+          <div className="item litspace">
+            <label className="mLabel" htmlFor="dtOfSamplingReceipt">
+              Dt of Sampling Receipt
+            </label>
+            <Input
+              onChange={(e) => {
+                setValues({ ...values, dtOfSamplingReceipt: e.target.value });
+              }}
+              value={values.dtOfSamplingReceipt}
+              type="date"
+              size="sm"
+              id="dtOfSamplingReceipt"
+            ></Input>
+            {newErrors.dtOfSamplingReceipt && (
+              <div className="error">{newErrors.dtOfSamplingReceipt}</div>
+            )}
+          </div>
+        </div>
+      </div>
+      <div style={o} className="centering">
+        <Button
+          onClick={() => {
+            const obj = newErrors;
+            console.log(obj);
+            if (validate()) {
+              navigate("/resultentry");
+              sessionPush();
+              localDataPush();
+              setReset(true);
+              sessionStorage.setItem("reset", true);
+            }
+          }}
+          background="#CCE5FF"
+          color="#000000"
+          size="md"
+        >
+          Go to ResultEntry
+        </Button>
+        {reset && (
           <Button
             onClick={() => {
-              const obj = newErrors;
-              console.log(obj);
-              if (validate()) {
-                navigate("/resultentry");
-                sessionPush();
-                localDataPush();
-                setReset(true);
-                sessionStorage.setItem("reset", true);
+              if (reset) {
+                sessionStorage.removeItem("values");
+                sessionStorage.removeItem("forParams");
+                sessionStorage.removeItem("result");
+                sessionStorage.removeItem("local");
+                sessionStorage.removeItem("reset");
+                sessionStorage.removeItem("sandr");
+                sessionStorage.removeItem("combined");
+                sessionStorage.removeItem("paramValues");
+                window.location.reload();
               }
             }}
             background="#CCE5FF"
             color="#000000"
             size="md"
           >
-            Go to ResultEntry
+            Reset
           </Button>
-          {reset && (
-            <Button
-              onClick={() => {
-                if (reset) {
-                  sessionStorage.removeItem("values");
-                  sessionStorage.removeItem("forParams");
-                  sessionStorage.removeItem("result");
-                  sessionStorage.removeItem("local");
-                  sessionStorage.removeItem("reset");
-                  sessionStorage.removeItem("sandr");
-                  sessionStorage.removeItem("combined");
-                  sessionStorage.removeItem("paramValues");
-                  window.location.reload();
-                }
-              }}
-              background="#CCE5FF"
-              color="#000000"
-              size="md"
-            >
-              Reset
-            </Button>
-          )}
-          <br />
-          <br />
-        </div>
+        )}
+        <br />
+        <br />
+      </div>
     </>
   );
 }
