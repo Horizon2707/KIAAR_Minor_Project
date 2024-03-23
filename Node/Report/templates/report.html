@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Report</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Gender</th> <!-- New column header -->
+            </tr>
+        </thead>
+        <tbody>
+            {{#each rows}} <!-- Iterate over each row in the JSON data -->
+            <tr>
+                <td>{{this.name}}</td> <!-- Access the name property of the current row -->
+                <td>{{this.age}}</td> <!-- Access the age property of the current row -->
+                <td>{{this.gender}}</td> <!-- Access the gender property of the current row -->
+            </tr>
+            {{#each}}
+        </tbody>
+    </table>
+</body>
+</html>

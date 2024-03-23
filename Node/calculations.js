@@ -1,4 +1,4 @@
-function calculations(phos, pota, nitr, SYT_S, SYT_P, SYT_A) {
+function calculations(phos, pota, nitr, SYT_A, SYT_P, SYT_S) {
   const nitr_A = 4.39 * SYT_A - 1.56 * nitr;
   const nitr_P = 4.76 * SYT_P - 1.34 * nitr;
   const nitr_S = 4.76 * SYT_S - 1.34 * nitr;
@@ -912,9 +912,7 @@ function calculations(phos, pota, nitr, SYT_S, SYT_P, SYT_A) {
       },
     },
   };
-  return recomm;
+  return JSON.stringify(recomm);
 }
 
-console.log(
-  JSON.stringify(calculations(8.33, 203.04, 117.9, 70, 50, 40), null, 2)
-);
+exports.calc = calculations();
