@@ -28,15 +28,15 @@
             <tr>
                 <th>Name</th>
                 <th>Age</th>
-                <th>Gender</th> <!-- New column header -->
+                <th>Gender</th> 
             </tr>
         </thead>
         <tbody>
-            {{#each rows}} <!-- Iterate over each row in the JSON data -->
+            {{#each rows}}
             <tr>
-                <td>{{this.name}}</td> <!-- Access the name property of the current row -->
-                <td>{{this.age}}</td> <!-- Access the age property of the current row -->
-                <td>{{this.gender}}</td> <!-- Access the gender property of the current row -->
+                <td>{{this.name}}</td> 
+                <td>{{this.age}}</td> 
+                <td>{{this.gender}}</td>
             </tr>
             {{#each}}
         </tbody>
