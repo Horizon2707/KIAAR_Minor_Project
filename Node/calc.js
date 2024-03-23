@@ -33,14 +33,11 @@ const combination_list_fetch = async () => {
     ) {
       transformedObject[COMBINATION_CD][CROP_SEASON_CD][PRODUCT_CD][
         RECOM_APPLY_TIME_CD
-      ] = [];
+      ] = 0;
     }
-    transformedObject[COMBINATION_CD][CROP_SEASON_CD][PRODUCT_CD][
-      RECOM_APPLY_TIME_CD
-    ].push(0);
   });
-  console.log(transformedObject);
-  consosle.log();
+  console.log(JSON.stringify(transformedObject, null, 2));
+
   // Sort the codes in ascending order
 };
 combination_list_fetch();
