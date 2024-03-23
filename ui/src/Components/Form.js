@@ -1,10 +1,10 @@
 import "../Styles/Form.css";
 import { Select, Input, Button } from "@chakra-ui/react";
-import { json, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { EditIcon } from "@chakra-ui/icons";
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-export function Form() {
+function Form() {
   const location = useLocation();
   const [newErrors, setErrors] = useState({});
   const [wild, setWild] = useState([]);
@@ -904,3 +904,4 @@ export function Form() {
     </>
   );
 }
+export default Form;

@@ -263,22 +263,12 @@ function calculations(phos, pota, nitr, SYT_S, SYT_P, SYT_A) {
 
   recomm_dict = {
     c1: {
-      DAP: {
-        A: {
+      A: {
+        DAP: {
           TA1: c1_DAP_TA1_A,
           TA2: (phos_A * 100) / 46,
         },
-        P: {
-          TA1: c1_DAP_TA1_P,
-          TA2: c1_DAP_TA2_P,
-        },
-        S: {
-          TA1: c1_DAP_TA1_S,
-          TA2: c1_DAP_TA2_S,
-        },
-      },
-      MOP: {
-        A: {
+        MOP: {
           TA1: c1_MOP_TA1_A,
           TA2: c1_MOP_TA2_A,
           TA3: c1_MOP_TA3_A,
@@ -286,25 +276,7 @@ function calculations(phos, pota, nitr, SYT_S, SYT_P, SYT_A) {
           TA5: c1_MOP_TA5_A,
           TA6: c1_MOP_TA6_A,
         },
-        P: {
-          TA1: c1_MOP_TA1_P,
-          TA2: c1_MOP_TA2_P,
-          TA3: c1_MOP_TA3_P,
-          TA4: c1_MOP_TA4_P,
-          TA5: c1_MOP_TA5_P,
-          TA6: c1_MOP_TA6_P,
-        },
-        S: {
-          TA1: c1_MOP_TA1_S,
-          TA2: c1_MOP_TA2_S,
-          TA3: c1_MOP_TA3_S,
-          TA4: c1_MOP_TA4_S,
-          TA5: c1_MOP_TA5_S,
-          TA6: c1_MOP_TA6_S,
-        },
-      },
-      UREA: {
-        A: {
+        UREA: {
           TA1: c1_UREA_TA1_A,
           TA2: c1_UREA_TA2_A,
           TA3: c1_UREA_TA3_A,
@@ -312,7 +284,21 @@ function calculations(phos, pota, nitr, SYT_S, SYT_P, SYT_A) {
           TA5: c1_UREA_TA5_A,
           TA6: c1_UREA_TA6_A,
         },
-        P: {
+      },
+      P: {
+        DAP: {
+          TA1: c1_DAP_TA1_P,
+          TA2: c1_DAP_TA2_P,
+        },
+        MOP: {
+          TA1: c1_MOP_TA1_P,
+          TA2: c1_MOP_TA2_P,
+          TA3: c1_MOP_TA3_P,
+          TA4: c1_MOP_TA4_P,
+          TA5: c1_MOP_TA5_P,
+          TA6: c1_MOP_TA6_P,
+        },
+        UREA: {
           TA1: c1_UREA_TA1_P,
           TA2: c1_UREA_TA2_P,
           TA3: c1_UREA_TA3_P,
@@ -320,7 +306,21 @@ function calculations(phos, pota, nitr, SYT_S, SYT_P, SYT_A) {
           TA5: c1_UREA_TA5_P,
           TA6: c1_UREA_TA6_P,
         },
-        S: {
+      },
+      S: {
+        DAP: {
+          TA1: c1_DAP_TA1_S,
+          TA2: c1_DAP_TA2_S,
+        },
+        MOP: {
+          TA1: c1_MOP_TA1_S,
+          TA2: c1_MOP_TA2_S,
+          TA3: c1_MOP_TA3_S,
+          TA4: c1_MOP_TA4_S,
+          TA5: c1_MOP_TA5_S,
+          TA6: c1_MOP_TA6_S,
+        },
+        UREA: {
           TA1: c1_UREA_TA1_S,
           TA2: c1_UREA_TA2_S,
           TA3: c1_UREA_TA3_S,
@@ -331,22 +331,12 @@ function calculations(phos, pota, nitr, SYT_S, SYT_P, SYT_A) {
       },
     },
     c2: {
-      SSP: {
-        A: {
+      A: {
+        SSP: {
           TA1: c2_SSP_TA1_A,
           TA2: c2_SSP_TA2_A,
         },
-        P: {
-          TA1: c2_SSP_TA1_P,
-          TA2: c2_SSP_TA2_P,
-        },
-        S: {
-          TA1: c2_SSP_TA1_S,
-          TA2: c2_SSP_TA2_S,
-        },
-      },
-      MOP: {
-        A: {
+        MOP: {
           TA1: c2_MOP_TA1_A,
           TA2: c2_MOP_TA2_A,
           TA3: c2_MOP_TA3_A,
@@ -354,25 +344,7 @@ function calculations(phos, pota, nitr, SYT_S, SYT_P, SYT_A) {
           TA5: c2_MOP_TA5_A,
           TA6: c2_MOP_TA6_A,
         },
-        P: {
-          TA1: c2_MOP_TA1_P,
-          TA2: c2_MOP_TA2_P,
-          TA3: c2_MOP_TA3_P,
-          TA4: c2_MOP_TA4_P,
-          TA5: c2_MOP_TA5_P,
-          TA6: c2_MOP_TA6_P,
-        },
-        S: {
-          TA1: c2_MOP_TA1_S,
-          TA2: c2_MOP_TA2_S,
-          TA3: c2_MOP_TA3_S,
-          TA4: c2_MOP_TA4_S,
-          TA5: c2_MOP_TA5_S,
-          TA6: c2_MOP_TA6_S,
-        },
-      },
-      UREA: {
-        A: {
+        UREA: {
           TA1: c2_UREA_TA1_A,
           TA2: c2_UREA_TA2_A,
           TA3: c2_UREA_TA3_A,
@@ -380,7 +352,21 @@ function calculations(phos, pota, nitr, SYT_S, SYT_P, SYT_A) {
           TA5: c2_UREA_TA5_A,
           TA6: c2_UREA_TA6_A,
         },
-        P: {
+      },
+      P: {
+        SSP: {
+          TA1: c2_SSP_TA1_P,
+          TA2: c2_SSP_TA2_P,
+        },
+        MOP: {
+          TA1: c2_MOP_TA1_P,
+          TA2: c2_MOP_TA2_P,
+          TA3: c2_MOP_TA3_P,
+          TA4: c2_MOP_TA4_P,
+          TA5: c2_MOP_TA5_P,
+          TA6: c2_MOP_TA6_P,
+        },
+        UREA: {
           TA1: c2_UREA_TA1_P,
           TA2: c2_UREA_TA2_P,
           TA3: c2_UREA_TA3_P,
@@ -388,7 +374,21 @@ function calculations(phos, pota, nitr, SYT_S, SYT_P, SYT_A) {
           TA5: c2_UREA_TA5_P,
           TA6: c2_UREA_TA6_P,
         },
-        S: {
+      },
+      S: {
+        SSP: {
+          TA1: c2_SSP_TA1_S,
+          TA2: c2_SSP_TA2_S,
+        },
+        MOP: {
+          TA1: c2_MOP_TA1_S,
+          TA2: c2_MOP_TA2_S,
+          TA3: c2_MOP_TA3_S,
+          TA4: c2_MOP_TA4_S,
+          TA5: c2_MOP_TA5_S,
+          TA6: c2_MOP_TA6_S,
+        },
+        UREA: {
           TA1: c2_UREA_TA1_S,
           TA2: c2_UREA_TA2_S,
           TA3: c2_UREA_TA3_S,
@@ -399,22 +399,12 @@ function calculations(phos, pota, nitr, SYT_S, SYT_P, SYT_A) {
       },
     },
     c3: {
-      12: {
-        A: {
+      A: {
+        12: {
           TA1: c3_12_TA1_A,
           TA2: c3_12_TA2_A,
         },
-        P: {
-          TA1: c3_12_TA1_P,
-          TA2: c3_12_TA2_P,
-        },
-        S: {
-          TA1: c3_12_TA1_S,
-          TA2: c3_12_TA2_S,
-        },
-      },
-      MOP: {
-        A: {
+        MOP: {
           TA1: c3_MOP_TA1_A,
           TA2: c3_MOP_TA2_A,
           TA3: c3_MOP_TA3_A,
@@ -422,25 +412,7 @@ function calculations(phos, pota, nitr, SYT_S, SYT_P, SYT_A) {
           TA5: c3_MOP_TA5_A,
           TA6: c3_MOP_TA6_A,
         },
-        P: {
-          TA1: c3_MOP_TA1_P,
-          TA2: c3_MOP_TA2_P,
-          TA3: c3_MOP_TA3_P,
-          TA4: c3_MOP_TA4_P,
-          TA5: c3_MOP_TA5_P,
-          TA6: c3_MOP_TA6_P,
-        },
-        S: {
-          TA1: c3_MOP_TA1_S,
-          TA2: c3_MOP_TA2_S,
-          TA3: c3_MOP_TA3_S,
-          TA4: c3_MOP_TA4_S,
-          TA5: c3_MOP_TA5_S,
-          TA6: c3_MOP_TA6_S,
-        },
-      },
-      UREA: {
-        A: {
+        UREA: {
           TA1: c3_UREA_TA1_A,
           TA2: c3_UREA_TA2_A,
           TA3: c3_UREA_TA3_A,
@@ -448,7 +420,21 @@ function calculations(phos, pota, nitr, SYT_S, SYT_P, SYT_A) {
           TA5: c3_UREA_TA5_A,
           TA6: c3_UREA_TA6_A,
         },
-        P: {
+      },
+      P: {
+        12: {
+          TA1: c3_12_TA1_P,
+          TA2: c3_12_TA2_P,
+        },
+        MOP: {
+          TA1: c3_MOP_TA1_P,
+          TA2: c3_MOP_TA2_P,
+          TA3: c3_MOP_TA3_P,
+          TA4: c3_MOP_TA4_P,
+          TA5: c3_MOP_TA5_P,
+          TA6: c3_MOP_TA6_P,
+        },
+        UREA: {
           TA1: c3_UREA_TA1_P,
           TA2: c3_UREA_TA2_P,
           TA3: c3_UREA_TA3_P,
@@ -456,7 +442,21 @@ function calculations(phos, pota, nitr, SYT_S, SYT_P, SYT_A) {
           TA5: c3_UREA_TA5_P,
           TA6: c3_UREA_TA6_P,
         },
-        S: {
+      },
+      S: {
+        12: {
+          TA1: c3_12_TA1_S,
+          TA2: c3_12_TA2_S,
+        },
+        MOP: {
+          TA1: c3_MOP_TA1_S,
+          TA2: c3_MOP_TA2_S,
+          TA3: c3_MOP_TA3_S,
+          TA4: c3_MOP_TA4_S,
+          TA5: c3_MOP_TA5_S,
+          TA6: c3_MOP_TA6_S,
+        },
+        UREA: {
           TA1: c3_UREA_TA1_S,
           TA2: c3_UREA_TA2_S,
           TA3: c3_UREA_TA3_S,
@@ -467,22 +467,12 @@ function calculations(phos, pota, nitr, SYT_S, SYT_P, SYT_A) {
       },
     },
     c4: {
-      10: {
-        A: {
+      A: {
+        10: {
           TA1: c4_10_TA1_A,
           TA2: c4_10_TA2_A,
         },
-        P: {
-          TA1: c4_10_TA1_P,
-          TA2: c4_10_TA2_P,
-        },
-        S: {
-          TA1: c4_10_TA1_S,
-          TA2: c4_10_TA2_S,
-        },
-      },
-      MOP: {
-        A: {
+        MOP: {
           TA1: c4_MOP_TA1_A,
           TA2: c4_MOP_TA2_A,
           TA3: c4_MOP_TA3_A,
@@ -490,25 +480,7 @@ function calculations(phos, pota, nitr, SYT_S, SYT_P, SYT_A) {
           TA5: c4_MOP_TA5_A,
           TA6: c4_MOP_TA6_A,
         },
-        P: {
-          TA1: c4_MOP_TA1_P,
-          TA2: c4_MOP_TA2_P,
-          TA3: c4_MOP_TA3_P,
-          TA4: c4_MOP_TA4_P,
-          TA5: c4_MOP_TA5_P,
-          TA6: c4_MOP_TA6_P,
-        },
-        S: {
-          TA1: c4_MOP_TA1_S,
-          TA2: c4_MOP_TA2_S,
-          TA3: c4_MOP_TA3_S,
-          TA4: c4_MOP_TA4_S,
-          TA5: c4_MOP_TA5_S,
-          TA6: c4_MOP_TA6_S,
-        },
-      },
-      UREA: {
-        A: {
+        UREA: {
           TA1: c4_UREA_TA1_A,
           TA2: c4_UREA_TA2_A,
           TA3: c4_UREA_TA3_A,
@@ -516,7 +488,21 @@ function calculations(phos, pota, nitr, SYT_S, SYT_P, SYT_A) {
           TA5: c4_UREA_TA5_A,
           TA6: c4_UREA_TA6_A,
         },
-        P: {
+      },
+      P: {
+        10: {
+          TA1: c4_10_TA1_P,
+          TA2: c4_10_TA2_P,
+        },
+        MOP: {
+          TA1: c4_MOP_TA1_P,
+          TA2: c4_MOP_TA2_P,
+          TA3: c4_MOP_TA3_P,
+          TA4: c4_MOP_TA4_P,
+          TA5: c4_MOP_TA5_P,
+          TA6: c4_MOP_TA6_P,
+        },
+        UREA: {
           TA1: c4_UREA_TA1_P,
           TA2: c4_UREA_TA2_P,
           TA3: c4_UREA_TA3_P,
@@ -524,7 +510,21 @@ function calculations(phos, pota, nitr, SYT_S, SYT_P, SYT_A) {
           TA5: c4_UREA_TA5_P,
           TA6: c4_UREA_TA6_P,
         },
-        S: {
+      },
+      S: {
+        10: {
+          TA1: c4_10_TA1_S,
+          TA2: c4_10_TA2_S,
+        },
+        MOP: {
+          TA1: c4_MOP_TA1_S,
+          TA2: c4_MOP_TA2_S,
+          TA3: c4_MOP_TA3_S,
+          TA4: c4_MOP_TA4_S,
+          TA5: c4_MOP_TA5_S,
+          TA6: c4_MOP_TA6_S,
+        },
+        UREA: {
           TA1: c4_UREA_TA1_S,
           TA2: c4_UREA_TA2_S,
           TA3: c4_UREA_TA3_S,

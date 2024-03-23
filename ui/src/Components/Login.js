@@ -84,7 +84,7 @@ const Login = () => {
             setTimeout(() => {
               navigate("/form");
               sessionStorage.setItem("user", JSON.stringify(result));
-              console.log("Login successful:", result);
+              window.location.reload();
             }, 500);
           }
         }
