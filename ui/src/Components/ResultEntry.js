@@ -58,10 +58,7 @@ function ResultEntry() {
         body: JSON.stringify(com),
       })
         .then((response) => response.json())
-        .then((data) => {
-          sessionStorage.setItem("calculations", JSON.stringify(data));
-          sessionStorage.setItem("paramValues", JSON.stringify(resValues));
-        });
+        .then(() => {});
     } catch (error) {
       console.log(error);
     }

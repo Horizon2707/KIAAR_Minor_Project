@@ -65,7 +65,8 @@ function convertDateFormat(dateStr) {
 
 let farmerValues;
 let parameterValues;
-
+let suggestions_all;
+let parameters;
 app.post("/farmerId", async (req, res) => {
   const { farmerId } = req.body;
 
@@ -399,6 +400,7 @@ app.post("/parameters", async (req, res) => {
         PARAMETER_MID: paramMid ? paramMid.VALUE_NAME : null,
       };
     });
+
     res.json(response_array);
   } catch (error) {
     console.error("Parameters not found");
@@ -463,6 +465,10 @@ app.post("/values", async (req, res) => {
       parameterValues[key] = parseInt(paramValues[key], 10);
     }
 
+    const selectedSuggestions = suggestions.filter(
+      (suggestion) => suggestion.selected === true
+    );
+    suggestions_all = selectedSuggestions;
     let tranNo = farmerValues.labNo[0].LAB_TRAN;
     let farmerId = farmerValues.farmerId;
     let tempNo = farmerValues.templateNo[0].TEMPLATE_NO;
@@ -471,6 +477,13 @@ app.post("/values", async (req, res) => {
     console.log(farmerValues);
     console.log(parameterValues);
 
+    // response.obj = {
+    //   values: values,
+    //   paramValues: paramValues,
+    //   suggestions: suggestions,
+    // };
+    // console.log()
+    return;
     const connection = await dbConnection;
     const tran_head = await connection.execute(
       `INSERT INTO GSMAGRI.SW_TRAN_HEAD (
@@ -587,7 +600,17 @@ app.post("/values", async (req, res) => {
     console.log(error);
   }
 });
-
+app.get("/getValues", (req, res) => {
+  response_obj = {
+    values: farmerValues,
+    paramValues: parameterValues,
+    suggestions: suggestions_all,
+  };
+  res.json(response_obj);
+});
+app.post("/yield_target", async (req, res) => {
+  const connection = await dbConnection;
+});
 // Authentication methods
 function isAuthenticated(req, res, next) {
   if (req.session && req.session.user) {

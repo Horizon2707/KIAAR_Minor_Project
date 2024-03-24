@@ -146,7 +146,8 @@ Content-Type: application/json
 
 }
 
-
+### Get values
+GET http://localhost:5000/getValues
 
 ### Login 
 POST http://localhost:5000/login
