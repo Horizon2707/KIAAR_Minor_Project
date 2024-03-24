@@ -561,6 +561,22 @@ function calculations(phos,pota,nitr,SYT_S,SYT_P,SYT_A){
     }
 }
 
+for (var crop in recomm_dict) {
+    if (recomm_dict.hasOwnProperty(crop)) {
+        
+        var fertilizers = recomm_dict[crop];
+        for (var fertilizer in fertilizers) {
+            if (fertilizers.hasOwnProperty(fertilizer)) {
+                
+                var components = fertilizers[fertilizer];
+                for (var component in components) {
+                    if (components.hasOwnProperty(component)) {
+                        
+                        var timings = components[component];
+                        for (var timing in timings) {
+                            if (timings.hasOwnProperty(timing)) {
+                                
+
 
 
 return recomm_dict;
