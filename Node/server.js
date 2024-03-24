@@ -8,6 +8,8 @@ const oracledb = require("oracledb");
 
 const calculations = require("./calculations.js");
 const dbConnection = require("./dbconnect.js");
+const { reportGen } = require("./excel_gen.js");
+
 oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;
 
 const app = express();
@@ -67,6 +69,10 @@ let farmerValues;
 let parameterValues;
 let suggestions_all;
 let parameters;
+let report_values;
+let parameter_names;
+let farmerInformation;
+let all_local;
 app.post("/farmerId", async (req, res) => {
   const { farmerId } = req.body;
 
@@ -400,7 +406,7 @@ app.post("/parameters", async (req, res) => {
         PARAMETER_MID: paramMid ? paramMid.VALUE_NAME : null,
       };
     });
-
+    parameter_names = response_array;
     res.json(response_array);
   } catch (error) {
     console.error("Parameters not found");
@@ -457,25 +463,27 @@ app.post("/newSuggestion", async (req, res) => {
 });
 app.post("/values", async (req, res) => {
   try {
-    const { values, paramValues, suggestions } = req.body;
-    console.log(suggestions);
+    const { values, paramValues, suggestions, farmerInfo, local } = req.body;
+    // console.log(suggestions);
     farmerValues = values;
     parameterValues = {};
     for (const key in paramValues) {
       parameterValues[key] = parseInt(paramValues[key], 10);
     }
-
+    console.log(farmerInfo);
+    farmerInformation = farmerInfo;
+    all_local = local;
     const selectedSuggestions = suggestions.filter(
       (suggestion) => suggestion.selected === true
     );
     suggestions_all = selectedSuggestions;
+
     let tranNo = farmerValues.labNo[0].LAB_TRAN;
     let farmerId = farmerValues.farmerId;
     let tempNo = farmerValues.templateNo[0].TEMPLATE_NO;
 
-    convertDateFormat(farmerValues.dtOfSampling);
-    console.log(farmerValues);
-    console.log(parameterValues);
+    // console.log(farmerValues);
+    // console.log(parameterValues);
 
     // response.obj = {
     //   values: values,
@@ -593,6 +601,7 @@ app.post("/values", async (req, res) => {
           );
         }
         return value;
+        // excelColor(values)
       })
     );
     console.log(tran_head);
@@ -600,17 +609,58 @@ app.post("/values", async (req, res) => {
     console.log(error);
   }
 });
-app.get("/getValues", (req, res) => {
-  response_obj = {
+app.get("/getValues", async (req, res) => {
+  const values_all = {
     values: farmerValues,
     paramValues: parameterValues,
     suggestions: suggestions_all,
   };
-  res.json(response_obj);
+  report_values = values_all;
+  const cdtonames = await codeToName();
+  console.log(cdtonames);
+  reportGen(
+    values_all,
+    parameter_names,
+    farmerInformation,
+    all_local,
+    cdtonames
+  );
+  // res.json(response_obj);
 });
 app.post("/yield_target", async (req, res) => {
   const connection = await dbConnection;
 });
+
+const codeToName = async () => {
+  const connection = await dbConnection;
+  const villageCd = parseInt(farmerValues.village);
+  const clusterCd = parseInt(farmerValues.cluster);
+  const soilTypeCd = parseInt(farmerValues.soilType);
+  const irrigationCd = parseInt(farmerValues.irrigationSource);
+
+  const villagename = await connection.execute(
+    `SELECT DISTINCT VILLAGE_NAME FROM GSMAGRI.FARMER_PLOTS WHERE VILLAGE_CD=:villagecd`,
+    [villageCd]
+  );
+  const clustername = await connection.execute(
+    `SELECT DISTINCT CLUSTER_NAME FROM GSMAGRI.FARMER_PLOTS WHERE CLUSTER_CD=:clustercd`,
+    [clusterCd]
+  );
+  const soilname = await connection.execute(
+    `SELECT DISTINCT SOIL_TYPE_NAME FROM GSMAGRI.SOIL_TYPE_DIR WHERE SOIL_TYPE_CD=:soilcd`,
+    [soilTypeCd]
+  );
+  const irrgationname = await connection.execute(
+    `SELECT DISTINCT IRRIGATION_NAME FROM GSMAGRI.IRRIGATION_DIR WHERE IRRIGATION_CD=:irrgationcd`,
+    [irrigationCd]
+  );
+  return {
+    villageName: villagename.rows,
+    clusterName: clustername.rows,
+    soilName: soilname.rows,
+    irrigationName: irrgationname.rows,
+  };
+};
 // Authentication methods
 function isAuthenticated(req, res, next) {
   if (req.session && req.session.user) {

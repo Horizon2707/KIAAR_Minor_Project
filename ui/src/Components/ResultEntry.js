@@ -40,12 +40,15 @@ function ResultEntry() {
   let values = sessionStorage.getItem("values");
   let local = sessionStorage.getItem("local");
   values = JSON.parse(values);
+  local = JSON.parse(local);
   let postData = () => {
+    console.log(local.farmInfo);
     let com = {
-      local: local,
+      farmerInfo: local.farmInfo,
       paramValues: resValues,
       values: values,
       suggestions: suggestion,
+      local: local,
     };
     const dataString = JSON.stringify(com);
     sessionStorage.setItem("combined", dataString);
@@ -213,8 +216,8 @@ function ResultEntry() {
                                       onChange={(e) => {
                                         ressetValues({
                                           ...resValues,
-                                          [element.PARAMETER_NAME]:
-                                            e.target.value,
+                                          // [element.PARAMETER_NAME]:
+                                          //   e.target.value,
                                           [element.PARAMETER_ID]:
                                             e.target.value,
                                         });
