@@ -9,9 +9,10 @@ function reportGen(
   parameter_names,
   farmerInformation,
   local,
-  cdtonames
+  cdtonames,
+  remarks
 ) {
-  console.log(farmerInformation);
+  console.log(remarks);
   const headingText = "K.J. Somaiya Institute of Applied Agricultural Research";
   const document_width = 121.8;
   const th = {
@@ -19,6 +20,40 @@ function reportGen(
     alignment: {
       horizontal: "center",
       vertical: "center",
+    },
+    border: {
+      left: { style: "thin" },
+      right: { style: "thin" },
+      top: { style: "thin" },
+      bottom: { style: "thin" },
+    },
+  };
+  const rmk = {
+    font: { bold: false, size: 14 },
+    alignment: {
+      wrapText: true,
+      horizontal: "justify", // Justify horizontally
+      vertical: "top", // Justify vertically
+    },
+    border: {
+      left: { style: "thin" },
+      right: { style: "thin" },
+      top: { style: "thin" },
+      bottom: { style: "thin" },
+    },
+  };
+
+  const th_s = {
+    font: { bold: true, size: 14 },
+    alignment: {
+      horizontal: "center",
+      vertical: "center",
+    },
+    border: {
+      left: { style: "thin" },
+      right: { style: "thin" },
+      top: { style: "thin" },
+      bottom: { style: "thin" },
     },
   };
   const heading = {
@@ -55,6 +90,12 @@ function reportGen(
     alignment: {
       horizontal: "center",
       vertical: "center",
+    },
+    border: {
+      left: { style: "thin" },
+      right: { style: "thin" },
+      top: { style: "thin" },
+      bottom: { style: "thin" },
     },
   };
 
@@ -190,7 +231,7 @@ function reportGen(
 
   let i = 12;
   let j = 1;
-
+  //parameter Values Table
   parameter_names.forEach((e) => {
     if (e.PARAMETER_TYPE === "HEADING") {
       ws.row(i).setHeight(30);
@@ -201,12 +242,12 @@ function reportGen(
       i++;
     } else {
       ws.cell(i, 1).number(j).style(h2);
-      ws.cell(i, 2, i, 4, true).string(e.PARAMETER_NAME).style(h2);
+      ws.cell(i, 2, i, 4, true).string(e.PARAMETER_NAME.substring(2)).style(h2);
 
       const paramId = e.PARAMETER_ID;
       const paramId_s = paramId.toString();
       const paramValue = values.paramValues[paramId_s];
-      console.log(paramValue);
+
       if (paramValue !== undefined) {
         ws.cell(i, 5, i, 6, true).number(paramValue).style(h2);
       } else {
@@ -219,7 +260,83 @@ function reportGen(
       j++;
     }
   });
+  let sr = 1;
+  //Recommendations
+  ws.row(i).setHeight(30);
+  ws.cell(i, 1, i, 10, true)
+    .string("Recommendations")
+    .style(th)
+    .style(border_all);
+  i++;
+  ws.row(i).setHeight(30);
+  ws.cell(i, 1, i, 10, true)
+    .string("Soil Reclamation")
+    .style(th_s)
+    .style(border_all);
+  i++;
+  ws.cell(i, 1).number(sr).style(h2);
+  ws.cell(i, 2, i, 4, true).string("Gypsum(tonne/acre)").style(text);
+  ws.cell(i, 5, i, 6, true).number(0.0).style(text);
+  ws.cell(i, 7).string("-").style(h2);
+  ws.cell(i, 8, i, 9, true).string("-").style(h2);
+  ws.cell(i, 10).string("-").style(h2);
+  i++;
+  ws.cell(i, 1, i, 10, true).string("OR").style(th_s).style(border_all);
+  i++;
+  sr++;
+  ws.cell(i, 1).number(sr).style(h2);
+  ws.cell(i, 2, i, 4, true).string("Sulphur(tonne/acre)").style(text);
+  ws.cell(i, 5, i, 6, true).number(0.0).style(text);
+  ws.cell(i, 7).string("-").style(h2);
+  ws.cell(i, 8, i, 9, true).string("-").style(h2);
+  ws.cell(i, 10).string("-").style(h2);
+  i++;
+  sr = 1;
+  ws.cell(i, 1).string("Sr.No").style(h2);
+  ws.cell(i, 2, i, 7, true).string("Biofertilizers").style(h2);
+  ws.cell(i, 8, i, 10, true).string("Quantity").style(h2);
+  i++;
+  ws.cell(i, 1).number(sr).style(h2);
+  ws.cell(i, 2, i, 7, true)
+    .string("Azospirillum (N-Fixer) (kg/acre)")
+    .style(text);
+  ws.cell(i, 8, i, 10, true).number(4).style(text);
+  i++;
+  sr++;
+  ws.cell(i, 1).number(sr).style(h2);
+  ws.cell(i, 2, i, 7, true)
+    .string("Bacilus Megatarium (P-Solubilizer) (kg/acre)")
+    .style(text);
+  ws.cell(i, 8, i, 10, true).number(4.0).style(text);
+  i++;
+  sr = 1;
+  ws.cell(i, 1, i, 10, true)
+    .string("Organic Manures")
+    .style(th)
+    .style(border_all);
+  i++;
+  ws.cell(i, 1).string("Sr.no").style(h2);
+  ws.cell(i, 2, i, 7, true).string("Manure").style(h2);
+  ws.cell(i, 8, i, 10, true).string("Quantity").style(h2);
 
+  i++;
+  ws.cell(i, 1).number(sr).style(h2);
+  ws.cell(i, 2, i, 7, true)
+    .string("Farm Yard Manure (FYM) (tonne/acre)")
+    .style(text);
+  ws.cell(i, 8, i, 10, true).number(10).style(text);
+  i++;
+  sr++;
+
+  ws.cell(i, 1, i, 10, true).string("OR").style(th_s).style(border_all);
+  i++;
+  ws.cell(i, 1).number(sr).style(h2);
+  ws.cell(i, 2, i, 7, true).string("Bhumilabh (tonne/acre)").style(text);
+  ws.cell(i, 8, i, 10, true).number(2).style(text);
+  i++;
+  ws.row(i).setHeight(60);
+  ws.cell(i, 1, i, 10, true).string(remarks).style(rmk).style(border_all);
+  i++;
   function writeBack() {
     wb.write("output.xlsx", (err, stats) => {
       if (err) {

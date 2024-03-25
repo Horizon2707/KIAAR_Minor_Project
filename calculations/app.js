@@ -286,7 +286,7 @@ function calculations(phos,pota,nitr,SYT_S,SYT_P,SYT_A){
         c4_UREA_TA6_S=(c4_UREA_TA1_S*0.25)
         
     
-    recomm_dict = {
+    crecomm_dict = {
     "c1": {
         "DAP": {
             "A": {
@@ -583,4 +583,4 @@ return recomm_dict;
 
     }
 
-    
+

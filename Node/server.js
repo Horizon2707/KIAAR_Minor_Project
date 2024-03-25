@@ -73,6 +73,7 @@ let report_values;
 let parameter_names;
 let farmerInformation;
 let all_local;
+let remarks;
 app.post("/farmerId", async (req, res) => {
   const { farmerId } = req.body;
 
@@ -463,7 +464,14 @@ app.post("/newSuggestion", async (req, res) => {
 });
 app.post("/values", async (req, res) => {
   try {
-    const { values, paramValues, suggestions, farmerInfo, local } = req.body;
+    const {
+      values,
+      paramValues,
+      suggestions,
+      farmerInfo,
+      local,
+      finalRemarks,
+    } = req.body;
     // console.log(suggestions);
     farmerValues = values;
     parameterValues = {};
@@ -477,7 +485,7 @@ app.post("/values", async (req, res) => {
       (suggestion) => suggestion.selected === true
     );
     suggestions_all = selectedSuggestions;
-
+    remarks = finalRemarks;
     let tranNo = farmerValues.labNo[0].LAB_TRAN;
     let farmerId = farmerValues.farmerId;
     let tempNo = farmerValues.templateNo[0].TEMPLATE_NO;
@@ -623,7 +631,8 @@ app.get("/getValues", async (req, res) => {
     parameter_names,
     farmerInformation,
     all_local,
-    cdtonames
+    cdtonames,
+    remarks
   );
   // res.json(response_obj);
 });

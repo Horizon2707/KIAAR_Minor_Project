@@ -43,7 +43,9 @@ function ResultEntry() {
   local = JSON.parse(local);
   let postData = () => {
     console.log(local.farmInfo);
+
     let com = {
+      finalRemarks: finalRemarks,
       farmerInfo: local.farmInfo,
       paramValues: resValues,
       values: values,
@@ -129,18 +131,28 @@ function ResultEntry() {
   let validate = () => {
     const Errors = {};
     for (const element of forParams) {
-      if (
-        !resValues[element.PARAMETER_ID] &&
-        element.PARAMETER_TYPE !== "HEADING"
-      ) {
-        Errors[element.PARAMETER_ID] =
-          "Please enter a value for " + element.PARAMETER_NAME;
+      if (element.PARAMETER_TYPE !== "HEADING") {
+        if (!resValues[element.PARAMETER_ID]) {
+          Errors[element.PARAMETER_ID] =
+            "Please enter a value for " + element.PARAMETER_NAME;
+        } else {
+          const value = parseInt(resValues[element.PARAMETER_ID]);
+          if (isNaN(value)) {
+            Errors[element.PARAMETER_ID] =
+              "Please enter a valid number for " + element.PARAMETER_NAME;
+          } else if (value < 0 || value > 999) {
+            Errors[element.PARAMETER_ID] =
+              "Please enter a value between 0 and 999 for " +
+              element.PARAMETER_NAME;
+          }
+        }
       }
     }
     setErrors(Errors);
     console.log(Errors);
     return Object.keys(Errors).length === 0;
   };
+
   return (
     <>
       {alertTog && (
@@ -381,11 +393,11 @@ function ResultEntry() {
               size="md"
               onClick={() => {
                 if (validate()) {
-                  postData();
                   const dataString = JSON.stringify(resValues);
                   sessionStorage.setItem("result", dataString);
                   setToggle(!toggle);
                   setalertTog(true);
+                  postData();
                 }
               }}
             >
