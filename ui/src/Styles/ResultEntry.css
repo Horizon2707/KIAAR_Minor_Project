@@ -28,6 +28,12 @@
   gap: 2vh;
 }
 
+.stickyAlert {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+
 .head {
   gap: 10vh;
   margin-top: 3vh;

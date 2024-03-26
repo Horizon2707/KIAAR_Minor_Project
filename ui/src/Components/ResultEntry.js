@@ -4,6 +4,10 @@ import "../Styles/ResultEntry.css";
 import { Button } from "@chakra-ui/react";
 import { Checkbox } from "@chakra-ui/react";
 import { Textarea } from "@chakra-ui/react";
+import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
+import "@react-pdf-viewer/default-layout/lib/styles/index.css";
+import { Viewer } from "@react-pdf-viewer/core";
+import { Worker } from "@react-pdf-viewer/core";
 import {
   Tabs,
   TabList,
@@ -26,6 +30,7 @@ import {
 } from "@chakra-ui/react";
 
 function ResultEntry() {
+  const [pdf, setPdf] = useState();
   var [addSug, setaddSug] = useState("");
   var [forParams, setForParams] = useState([]);
   var [bool, setBool] = useState();
@@ -41,6 +46,8 @@ function ResultEntry() {
   let local = sessionStorage.getItem("local");
   values = JSON.parse(values);
   local = JSON.parse(local);
+  const [missing, setMissing] = useState(false);
+  const defaultLayoutPluginInstance = defaultLayoutPlugin();
   let postData = () => {
     console.log(local.farmInfo);
 
@@ -67,6 +74,28 @@ function ResultEntry() {
     } catch (error) {
       console.log(error);
     }
+
+    fetch("http://localhost:5000/combined", {
+      method: "GET",
+      headers: {
+        Accept: "application/pdf",
+      },
+      responseType: "arraybuffer",
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.arrayBuffer();
+      })
+      .then((arrayBuffer) => {
+        const blob = new Blob([arrayBuffer], { type: "application/pdf" });
+        const blobUrl = URL.createObjectURL(blob);
+        setPdf(blobUrl);
+      })
+      .catch((error) => {
+        console.error("There was a problem with the fetch operation:", error);
+      });
   };
   const setin = sessionStorage.getItem("paramValues");
   useEffect(() => {
@@ -149,6 +178,9 @@ function ResultEntry() {
       }
     }
     setErrors(Errors);
+    if (Errors.length !== 0) {
+      setMissing(true);
+    }
     console.log(Errors);
     return Object.keys(Errors).length === 0;
   };
@@ -156,13 +188,32 @@ function ResultEntry() {
   return (
     <>
       {alertTog && (
-        <Alert status="success">
-          <AlertIcon />
-          Data uploaded to the server.
-        </Alert>
+        <>
+          <Alert status="success">
+            <AlertIcon />
+            Data uploaded to the server.
+          </Alert>
+          {pdf && (
+            <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
+              <Viewer
+                plugins={[defaultLayoutPluginInstance]}
+                fileUrl={pdf}
+              ></Viewer>
+            </Worker>
+          )}
+        </>
       )}
       {!toggle && (
         <>
+          {missing && (
+            <>
+              {" "}
+              <Alert status="error" className="stickyAlert">
+                <AlertIcon />
+                Please fill in all the fields.
+              </Alert>
+            </>
+          )}
           <h1
             style={{
               fontSize: "x-large",
@@ -397,6 +448,7 @@ function ResultEntry() {
                   sessionStorage.setItem("result", dataString);
                   setToggle(!toggle);
                   setalertTog(true);
+                  setMissing(false);
                   postData();
                 }
               }}

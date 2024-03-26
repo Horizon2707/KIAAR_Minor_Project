@@ -56,12 +56,12 @@ const combination_list_fetch = () => {
     }
   });
 };
-
+let final_calc = {};
 combination_list_fetch()
   .then((transformedObject) => {
     const comb_values = transformedObject;
     const comb_formulae = calculations(8.33, 203, 117.9, 70, 50, 40);
-    console.log(JSON.stringify(comb_formulae, null, 2));
+    // console.log(JSON.stringify(comb_formulae, null, 2));
     // console.log(JSON.stringify(comb_values, null, 2));
     // for (const combId in comb_formulae) {
     //   if (
@@ -75,7 +75,52 @@ combination_list_fetch()
     //   }
     // }
 
-    // console.log(JSON.stringify(comb_values, null, 2)); // Output the updated comb_values
+    for (var key1 in comb_formulae) {
+      if (comb_formulae.hasOwnProperty(key1)) {
+        var comb_arr = comb_formulae[key1];
+        final_calc[key1] = {};
+        for (var key2 in comb_arr) {
+          if (comb_arr.hasOwnProperty(key2)) {
+            var season_arr = comb_arr[key2];
+            final_calc[key1][key2] = {};
+            for (var key3 in season_arr) {
+              if (season_arr.hasOwnProperty(key3)) {
+                var product_arr = season_arr[key3];
+                final_calc[key1][key2][key3] = {};
+                for (var key4 in product_arr) {
+                  if (product_arr.hasOwnProperty(key4)) {
+                    var toa = product_arr[key4];
+                    final_calc[key1][key2][key3][key4] = toa;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // var final_calc = {};
+    // for (var key1 in recomm) {
+    //   if (recomm.hasOwnProperty(key1)) {
+    //     var innerObj1 = recomm[key1];
+    //     final_calc[key1] = {};
+    //     for (var key2 in innerObj1) {
+    //       if (innerObj1.hasOwnProperty(key2)) {
+    //         var innerObj2 = innerObj1[key2];
+    //         final_calc[key1][key2] = {};
+    //         for (var key3 in innerObj2) {
+    //           if (innerObj2.hasOwnProperty(key3)) {
+    //             var value = innerObj2[key3];
+    //             final_calc[key1][key2][key3] = value;
+    //           }
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
+
+    // Output the updated comb_values
   })
   .catch((err) => {
     console.error(err);
@@ -84,3 +129,4 @@ combination_list_fetch()
 // console.log(comb_values);
 // const values = JSON.parse(calculations.calc(8.33, 203, 117.9, 70, 50, 40));
 // console.log(values);
+module.exports = { final_calc };

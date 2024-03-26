@@ -142,12 +142,23 @@ Content-Type: application/json
   "5> Sodium(Na) PPM": "3",
   "3> Iron(Fe) PPM": "4",
   "1> pH(2:5)": "2"
-}
-
+},
+    "suggestions" : [
+        
+    ]
 }
 
 ### Get values
 GET http://localhost:5000/getValues
+
+###Yield Target
+POST http://localhost:5000/yield_target
+Content-Type: application/json
+
+### Codes
+POST http://localhost:5000/combination_cds
+Content-Type: application/json
+
 
 ### Login 
 POST http://localhost:5000/login

@@ -74,6 +74,7 @@ let parameter_names;
 let farmerInformation;
 let all_local;
 let remarks;
+let yield_targets;
 app.post("/farmerId", async (req, res) => {
   const { farmerId } = req.body;
 
@@ -625,21 +626,80 @@ app.get("/getValues", async (req, res) => {
   };
   report_values = values_all;
   const cdtonames = await codeToName();
-  console.log(cdtonames);
+  const { combination_cd, product_cd, time_apply_cd, crop_season_cd } =
+    await combination_cds();
   reportGen(
     values_all,
     parameter_names,
     farmerInformation,
     all_local,
     cdtonames,
-    remarks
+    remarks,
+    yield_targets,
+    combination_cd,
+    product_cd,
+    time_apply_cd,
+    crop_season_cd
   );
   // res.json(response_obj);
 });
 app.post("/yield_target", async (req, res) => {
   const connection = await dbConnection;
+  const yield_target_all = await connection.execute(
+    `SELECT * FROM GSMAGRI.CROP_NAME_YT`
+  );
+  const yield_target = yield_target_all.rows;
+  yield_targets = yield_target;
 });
 
+const combination_cds = async () => {
+  const connection = await dbConnection;
+  const combination_cd_all = await connection.execute(
+    `SELECT DISTINCT COMBINATION_CD,COMBINATION_NAME FROM GSMAGRI.SW_COMBINATION_LIST`
+  );
+  const combination_cd = combination_cd_all.rows;
+
+  const product_cd_all = await connection.execute(
+    `SELECT DISTINCT PRODUCT_CD,SW_PRODUCT_NAME FROM GSMAGRI.SW_COMBINATION_LIST`
+  );
+  const product_cd = product_cd_all.rows;
+
+  const crop_season_cd_all = await connection.execute(
+    `SELECT DISTINCT CROP_SEASON_CD,CROP_SEASON FROM GSMAGRI.SW_CROP_SEASON_DIR`
+  );
+  const crop_season_cd = crop_season_cd_all.rows;
+
+  const time_apply_cd_all = await connection.execute(
+    `SELECT DISTINCT RECOM_APPLY_TIME_CD,RECOM_APPLY_TIME FROM GSMAGRI.SW_RECOM_APPLY_TIME_DIR`
+  );
+  const time_apply_cd = time_apply_cd_all.rows.slice(0, 5);
+
+  return { combination_cd, product_cd, time_apply_cd, crop_season_cd };
+};
+app.post("/combination_cds", async (req, res) => {
+  const connection = await dbConnection;
+  const combination_cd_all = await connection.execute(
+    `SELECT DISTINCT COMBINATION_CD,COMBINATION_NAME FROM GSMAGRI.SW_COMBINATION_LIST`
+  );
+  const combination_cd = combination_cd_all.rows;
+
+  const product_cd_all = await connection.execute(
+    `SELECT DISTINCT PRODUCT_CD,SW_PRODUCT_NAME FROM GSMAGRI.SW_COMBINATION_LIST`
+  );
+  const product_cd = product_cd_all.rows;
+
+  const crop_season_cd_all = await connection.execute(
+    `SELECT DISTINCT CROP_SEASON_CD,CROP_SEASON FROM GSMAGRI.SW_CROP_SEASON_DIR`
+  );
+  const crop_season_cd = crop_season_cd_all.rows;
+
+  const time_apply_cd_all = await connection.execute(
+    `SELECT DISTINCT RECOM_APPLY_TIME_CD,RECOM_APPLY_TIME FROM GSMAGRI.SW_RECOM_APPLY_TIME_DIR`
+  );
+  const time_apply_cd = time_apply_cd_all.rows.slice(0, 5);
+
+  console.log(combination_cd, product_cd, time_apply_cd, crop_season_cd);
+});
 const codeToName = async () => {
   const connection = await dbConnection;
   const villageCd = parseInt(farmerValues.village);
