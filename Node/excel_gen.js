@@ -17,15 +17,17 @@ function reportGen(
   time_apply_cd,
   crop_season_cd
 ) {
+  time_apply_cd.push({ RECOM_APPLY_TIME_CD: 0, RECOM_APPLY_TIME: "Total" });
+  time_apply_cd.sort((a, b) => a.RECOM_APPLY_TIME_CD - b.RECOM_APPLY_TIME_CD);
   function getCombinationName(code) {
     const found = combination_cd.find(
-      (item) => item[`COMBINATION_CD`] === code
+      (item) => item[`COMBINATION_CD`] === parseInt(code)
     );
     return found ? found["COMBINATION_NAME"] : "NOT FOUND";
   }
   function getProductName(code) {
     const found = product_cd.find((item) => item[`PRODUCT_CD`] === code);
-    return found ? found["PRODUCT_NAME"] : "NOT FOUND";
+    return found ? found["SW_PRODUCT_NAME"] : "NOT FOUND";
   }
   function getSeasonName(code) {
     const found = crop_season_cd.find(
@@ -40,6 +42,9 @@ function reportGen(
     return found ? found["RECOM_APPLY_TIME"] : "NOT FOUND";
   }
   console.log(getCombinationName(12));
+  console.log(getProductName(22));
+  console.log(getSeasonName(1));
+  console.log(getTimeApply(1));
   const headingText = "K.J. Somaiya Institute of Applied Agricultural Research";
   const document_width = 121.8;
   const th = {
@@ -375,6 +380,7 @@ function reportGen(
   ws.cell(i, 7, i, 9, true).string("Pre-seasonal").style(th);
   ws.cell(i, 10, i, 12, true).string("Seasonal").style(th);
   i++;
+  ws.row(i).setHeight(30);
   ws.cell(i, 1, i, 3, true)
     .string("Sugarcane Yield Target(tonne/acre)")
     .style(th);
@@ -388,6 +394,135 @@ function reportGen(
     .style(border_all);
   i++;
   sr = 1;
+
+  //calculations parsing in the excel
+  //nutrients[level][code]["1"];
+  const nutrients = final_calc[12];
+  codesToRetrieve = [27, 28, 29];
+  codesToRetrieve.forEach((code) => {
+    const valuesForCode = {};
+    ws.cell(i, 1, i, 3, true).string(getProductName(code)).style(h2);
+    let x = 0;
+    Object.keys(nutrients).forEach((level) => {
+      ws.cell(i, 4 + x, i, 6 + x, true)
+        .number(nutrients[level][code]["1"])
+        .style(text);
+      x = x + 3;
+    });
+    i++;
+    console.log(`Values for code ${code}:`, valuesForCode);
+  });
+  ws.cell(i, 1, i, 12, true)
+    .string("Recommended dose of straight and complext fertilizers (kg/acre)")
+    .style(th_s)
+    .style(border_all);
+  i++;
+  ws.cell(i, 1, i, 3, true).string("Sugarcane Season").style(th);
+  ws.cell(i, 4, i, 6, true).string("Adsali").style(th);
+  ws.cell(i, 7, i, 9, true).string("Pre-seasonal").style(th);
+  ws.cell(i, 10, i, 12, true).string("Seasonal").style(th);
+  i++;
+  //calculations the main beast
+
+  let _103 = [23, 32, 20];
+  let _104 = [25, 32, 20];
+  let _105 = [24, 32, 20];
+  let _106 = [22, 32, 20];
+  let setComb = 1;
+  // try {
+  //   // const season_cd = Object.keys(season);
+  //   // ws.cell(i, 1, i, 3, true).string(getSeasonName(season_cd)).style(h2);
+  //   for (const comb_cd in final_calc) {
+  //     if (setComb == 1) {
+  //       ws.cell(i, 1, i, 3, true).string(getCombinationName(comb_cd)).style(h2);
+  //       i++;
+  //       let row = 0;
+  //       let col = 4;
+  //       x = 0;
+
+  //       if (row == 0) {
+  //         ws.cell(i, 1, i, 3, true).string("Time Of Application").style(th);
+
+  //     if (comb_cd === 103) {
+  //       for (m = 0; m < 3; m++) {
+  //         _103.forEach((child) => {
+  //           ws.cell(i, col).string(getProductName(child)).style(h2);
+  //           col++;
+  //           setComb = 0;
+  //         });
+  //       }
+  //     } else if (comb_cd === 104) {
+  //       for (m = 0; m < 3; m++) {
+  //         _104.forEach((child) => {
+  //           ws.cell(i, col).string(getProductName(child)).style(h2);
+  //           col++;
+
+  //           setComb = 0;
+  //         });
+  //       }
+  //     } else if (comb_cd === 105) {
+  //       for (m = 0; m < 3; m++) {
+  //         _105.forEach((child) => {
+  //           ws.cell(i, col).string(getProductName(child)).style(h2);
+  //           col++;
+  //           setComb = 0;
+  //         });
+  //       }
+  //     } else if (comb_cd === 106) {
+  //       for (m = 0; m < 3; m++) {
+  //         _106.forEach((child) => {
+  //           ws.cell(i, col).string(getProductName(child)).style(h2);
+  //           col++;
+  //           setComb = 0;
+  //         });
+  //       }
+  //     }
+  //     row++;
+  //     time_apply_cd.forEach((ta) => {
+  //       ws.cell(i + row, 1, i + row, 3, true)
+  //         .string(ta.RECOM_APPLY_TIME)
+  //         .style(h2);
+  //       row++;
+  //     });
+  //     row = 1;
+  //     col = 4;
+  //     ws.cell(i, 1, i, 3, true)
+  //       .string(getCombinationName(comb_cd))
+  //       .style(h2);
+  //   }
+  // } else {
+  //   for (const season_cd in final_calc[comb_cd]) {
+  //     for (const product_cd in final_calc[comb_cd][season_cd]) {
+  //       for (const t_apply in product_cd) {
+  //         const lol = 6;
+  //       }
+  //     }
+  //   }
+  //   console.log("NOTONTOTN");
+  // }
+  //   }
+  // } catch (e) {
+  //   console.log(e);
+  // }
+
+  ws.cell(i, 1, i, 3, true).string("Combination-01").style(h2);
+  i++;
+  ws.cell(i, 1, i, 3, true).string("Time of Aplication").style(h2);
+  let col = 4;
+  for (let m = 0; m < 3; m++) {
+    _103.forEach((child) => {
+      ws.cell(i, col).string(getProductName(child)).style(h2);
+      col++;
+    });
+    col = 4;
+  }
+  let row = 0;
+  time_apply_cd.forEach((ta) => {
+    ws.cell(i + row, 1, i + row, 3, true)
+      .string(ta.RECOM_APPLY_TIME)
+      .style(h2);
+    row++;
+  });
 
   function writeBack() {
     wb.write("output.xlsx", (err, stats) => {

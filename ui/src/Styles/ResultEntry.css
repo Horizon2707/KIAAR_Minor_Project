@@ -27,7 +27,12 @@
   flex-direction: column;
   gap: 2vh;
 }
-
+.logOutp {
+  display: flex;
+  flex-direction: row;
+  gap: 2vh;
+  justify-content: flex-start;
+}
 .stickyAlert {
   position: sticky;
   top: 0;

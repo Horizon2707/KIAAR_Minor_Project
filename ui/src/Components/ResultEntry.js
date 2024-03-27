@@ -28,8 +28,9 @@ import {
   Td,
   TableContainer,
 } from "@chakra-ui/react";
-
+import { useRef } from "react";
 function ResultEntry() {
+  const alertRef = useRef(null);
   const [pdf, setPdf] = useState();
   var [addSug, setaddSug] = useState("");
   var [forParams, setForParams] = useState([]);
@@ -48,6 +49,11 @@ function ResultEntry() {
   local = JSON.parse(local);
   const [missing, setMissing] = useState(false);
   const defaultLayoutPluginInstance = defaultLayoutPlugin();
+  const scrollToAlert = () => {
+    if (alertRef.current) {
+      alertRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
   let postData = () => {
     console.log(local.farmInfo);
 
@@ -207,24 +213,41 @@ function ResultEntry() {
         <>
           {missing && (
             <>
-              {" "}
-              <Alert status="error" className="stickyAlert">
-                <AlertIcon />
-                Please fill in all the fields.
-              </Alert>
+              <div ref={alertRef} className="stickyAlert">
+                <Alert status="error">
+                  <AlertIcon />
+                  Please fill in all the fields.
+                </Alert>
+              </div>
             </>
           )}
-          <h1
-            style={{
-              fontSize: "x-large",
-              marginTop: "1.5vh",
-              color: "black",
-              textAlign: "left",
-              marginLeft: "5vh",
-            }}
-          >
-            Soil Water Test Entry Form
-          </h1>
+          <div className="logOutp">
+            <h1
+              style={{
+                fontSize: "x-large",
+                marginTop: "1.5vh",
+                color: "black",
+                textAlign: "left",
+                marginLeft: "5vh",
+              }}
+            >
+              Soil Water Test Entry Form
+            </h1>
+            <Button
+              sx={{ marginTop: "1.5vh" }}
+              onClick={() => {
+                if (window.confirm("Are you sure you want to log out?")) {
+                  sessionStorage.clear();
+                  window.location.reload();
+                }
+              }}
+              background="#CCE5FF"
+              color="#000000"
+              size="md"
+            >
+              Log Out
+            </Button>
+          </div>
           <div className="recom">
             <Tabs
               align="center"
@@ -450,6 +473,9 @@ function ResultEntry() {
                   setalertTog(true);
                   setMissing(false);
                   postData();
+                } else {
+                  setMissing(true);
+                  scrollToAlert();
                 }
               }}
             >

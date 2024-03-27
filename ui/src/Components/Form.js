@@ -405,9 +405,24 @@ function Form() {
 
   return (
     <>
-      <h1 style={{ marginTop: "0.5vh", color: "black" }}>
-        Soil Water Test Entry Form
-      </h1>
+      <div className="logOut">
+        <h1 style={{ marginTop: "0.5vh", color: "black" }}>
+          Soil Water Test Entry Form
+        </h1>
+        <Button
+          onClick={() => {
+            if (window.confirm("Are you sure you want to log out?")) {
+              sessionStorage.clear();
+              window.location.reload();
+            }
+          }}
+          background="#CCE5FF"
+          color="#000000"
+          size="md"
+        >
+          Log Out
+        </Button>
+      </div>
       <div className="container">
         <div className="common">
           <div className="litspace item">
