@@ -221,20 +221,17 @@ function ResultEntry() {
               </div>
             </>
           )}
-          <div className="logOutp">
+          <div className="navbar">
             <h1
               style={{
-                fontSize: "x-large",
-                marginTop: "1.5vh",
+                fontSize: "2.5vh",
                 color: "black",
                 textAlign: "left",
-                marginLeft: "5vh",
               }}
             >
               Soil Water Test Entry Form
             </h1>
             <Button
-              sx={{ marginTop: "1.5vh" }}
               onClick={() => {
                 if (window.confirm("Are you sure you want to log out?")) {
                   sessionStorage.clear();

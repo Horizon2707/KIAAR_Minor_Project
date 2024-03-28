@@ -1,6 +1,7 @@
 const excel = require("excel4node");
 const wb = new excel.Workbook();
 const ws = wb.addWorksheet("Report");
+const ws2 = wb.addWorksheet("WOW");
 const { final_calc } = require("./calc.js");
 //😞
 // Add data to cell A1
@@ -27,8 +28,13 @@ function reportGen(
   }
   function getProductName(code) {
     const found = product_cd.find((item) => item[`PRODUCT_CD`] === code);
-    return found ? found["SW_PRODUCT_NAME"] : "NOT FOUND";
+    if (found) {
+      return found["SW_PRODUCT_NAME"].replace("COMPLEX ", "");
+    } else {
+      return "NOT FOUND";
+    }
   }
+
   function getSeasonName(code) {
     const found = crop_season_cd.find(
       (item) => item[`CROP_SEASON_CD`] === code
@@ -398,8 +404,8 @@ function reportGen(
   //calculations parsing in the excel
   //nutrients[level][code]["1"];
   const nutrients = final_calc[12];
-  codesToRetrieve = [27, 28, 29];
-  codesToRetrieve.forEach((code) => {
+  let npk = [27, 28, 29];
+  npk.forEach((code) => {
     const valuesForCode = {};
     ws.cell(i, 1, i, 3, true).string(getProductName(code)).style(h2);
     let x = 0;
@@ -417,18 +423,42 @@ function reportGen(
     .style(th_s)
     .style(border_all);
   i++;
-  ws.cell(i, 1, i, 3, true).string("Sugarcane Season").style(th);
-  ws.cell(i, 4, i, 6, true).string("Adsali").style(th);
-  ws.cell(i, 7, i, 9, true).string("Pre-seasonal").style(th);
-  ws.cell(i, 10, i, 12, true).string("Seasonal").style(th);
+  ws.cell(i, 1, i, 3, true).string("Sugarcane Season").style(h2);
+  ws.cell(i, 4, i, 6, true).string("Adsali").style(h2);
+  ws.cell(i, 7, i, 9, true).string("Pre-seasonal").style(h2);
+  ws.cell(i, 10, i, 12, true).string("Seasonal").style(h2);
   i++;
   //calculations the main beast
+  delete final_calc[12];
+  const order = {
+    103: [23, 32, 20],
+    104: [25, 32, 20],
+    105: [24, 32, 20],
+    106: [22, 32, 20],
+  };
 
-  let _103 = [23, 32, 20];
-  let _104 = [25, 32, 20];
-  let _105 = [24, 32, 20];
-  let _106 = [22, 32, 20];
-  let setComb = 1;
+  const arrangeObject = (sourceObject, orderObject) => {
+    const arrangedObject = {};
+
+    for (const key in orderObject) {
+      if (Object.hasOwnProperty.call(sourceObject, key)) {
+        arrangedObject[key] = {};
+        orderObject[key].forEach((subKey) => {
+          const season_cd = Object.keys(sourceObject[key]);
+          season_cd.map((season) => {
+            arrangedObject[key][season][subKey] =
+              sourceObject[key][season][subKey];
+          });
+        });
+      }
+    }
+
+    return arrangedObject;
+  };
+
+  const arrangedFinalCalc = arrangeObject(final_calc, order);
+
+  console.log(arrangedFinalCalc["103"]);
   // try {
   //   // const season_cd = Object.keys(season);
   //   // ws.cell(i, 1, i, 3, true).string(getSeasonName(season_cd)).style(h2);
@@ -505,24 +535,97 @@ function reportGen(
   //   console.log(e);
   // }
 
-  ws.cell(i, 1, i, 3, true).string("Combination-01").style(h2);
+  const comb_heading = () => {
+    try {
+      const comb_cd = Object.keys(final_calc);
+      let row = 0;
+      let col = 4;
+      comb_cd.map((comb) => {
+        for (let t = 0; t < 2; t++) {
+          if (row === 0) {
+            ws.cell(i, 1, i, 3, true)
+              .string(getCombinationName(comb))
+              .style(h2);
+            row = (row + 1) % 8;
+          } else if (col < 13) {
+            ws.cell(i + row, 1, i + row, 3, true)
+              .string("Time of Application")
+              .style(h2);
+            const season_cd = Object.keys(final_calc[comb]);
+            season_cd.map((season) => {
+              const product_cd = Object.keys(final_calc[comb][season]);
+              product_cd.map((product) => {
+                ws.cell(i + row, col)
+                  .string(getProductName(parseInt(product)))
+                  .style(h2);
+                col++;
+              });
+            });
+          }
+        }
+        i = i + 8;
+        row = 0;
+        col = 4;
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  let temp_i = i;
+  comb_heading();
+  i = temp_i + 2;
+
+  const comb_values = () => {
+    try {
+      const comb_cd = Object.keys(final_calc);
+      let row = 0;
+      let col = 1;
+      comb_cd.map((comb) => {
+        for (let u = 0; u < 2; u++) {
+          if (col < 4) {
+            time_apply_cd.map((e) => {
+              ws.cell(i + row, col, i + row, col + 2, true)
+                .string(e.RECOM_APPLY_TIME)
+                .style(h2);
+              row++;
+            });
+            col = 4;
+            row = 0;
+          } else if (col < 13) {
+            const season_cd = Object.keys(final_calc[comb]);
+            season_cd.map((season) => {
+              const product_cd = Object.keys(final_calc[comb][season]);
+              product_cd.map((product) => {
+                const ta_cd = Object.keys(final_calc[comb][season][product]);
+                ta_cd.map((value) => {
+                  ws.cell(i + row, col)
+                    .number(parseInt(final_calc[comb][season][product][value]))
+                    .style(text);
+                  row++;
+                });
+                col++;
+                row = 0;
+              });
+            });
+            row = 0;
+            col = 1;
+            i = i + 8;
+          }
+        }
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  comb_values();
   i++;
-  ws.cell(i, 1, i, 3, true).string("Time of Aplication").style(h2);
-  let col = 4;
-  for (let m = 0; m < 3; m++) {
-    _103.forEach((child) => {
-      ws.cell(i, col).string(getProductName(child)).style(h2);
-      col++;
-    });
-    col = 4;
-  }
-  let row = 0;
-  time_apply_cd.forEach((ta) => {
-    ws.cell(i + row, 1, i + row, 3, true)
-      .string(ta.RECOM_APPLY_TIME)
-      .style(h2);
-    row++;
-  });
+  ws.cell(i, 1, i, 12, true).string("Micronutrients").style(th);
+  i++;
+  ws.cell(i, 1, i, 2, true).string("Sr No.").style(h2);
+  ws.cell(i, 3, i, 9, true).string("Fertilizer").style(h2);
+  ws.cell(i, 10, i, 12, true).string("Quantitiy(kg/acre)").style(h2);
 
   function writeBack() {
     wb.write("output.xlsx", (err, stats) => {

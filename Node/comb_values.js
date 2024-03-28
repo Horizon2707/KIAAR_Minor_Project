@@ -429,3 +429,139 @@ console.log(getProductName(23));
 console.log(getSeasonName(1));
 console.log(getTimeApply(1));
 console.log(getCombinationName(103));
+
+const recomm = {
+  12: {
+    1: {
+      6: { 1: 0 },
+      8: { 1: 0 },
+      9: { 1: 0 },
+      10: { 1: 0 },
+      27: { 1: "nitr_A" },
+      28: { 1: "pota_A" },
+      29: { 1: "phos_A" },
+      47: { 1: 0 },
+    },
+    2: {
+      27: { 1: "nitr_P" },
+      28: { 1: "pota_P" },
+      29: { 1: "phos_P" },
+    },
+    3: {
+      27: { 1: "nitr_S" },
+      28: { 1: "pota_S" },
+      29: { 1: "phos_S" },
+    },
+  },
+  103: {
+    1: {
+      23: { 0: "c1_DAP_0_A", 1: "c1_DAP_0_A", 2: 0, 3: 0, 4: 0, 5: 0 },
+      32: {
+        0: "c1_MOP_0_A",
+        1: "c1_MOP_TA1_A",
+        2: "c1_MOP_TA2_A",
+        3: "c1_MOP_TA3_A",
+        4: "c1_MOP_TA4_A",
+        5: "c1_MOP_TA5_A",
+      },
+      20: {
+        0: "c1_UREA_0_A",
+        1: "c1_UREA_TA1_A",
+        2: "c1_UREA_TA2_A",
+        3: "c1_UREA_TA3_A",
+        4: "c1_UREA_TA4_A",
+        5: "c1_UREA_TA5_A",
+      },
+    },
+    2: {
+      23: { 0: "c1_DAP_0_P", 1: "c1_DAP_0_P", 2: 0, 3: 0, 4: 0, 5: 0 },
+      32: {
+        0: "c1_MOP_0_P",
+        1: "c1_MOP_TA1_P",
+        2: "c1_MOP_TA2_P",
+        3: "c1_MOP_TA3_P",
+        4: "c1_MOP_TA4_P",
+        5: "c1_MOP_TA5_P",
+      },
+      20: {
+        0: "c1_UREA_0_P",
+        1: "c1_UREA_TA1_P",
+        2: "c1_UREA_TA2_P",
+        3: "c1_UREA_TA3_P",
+        4: "c1_UREA_TA4_P",
+        5: "c1_UREA_TA5_P",
+      },
+    },
+    3: {
+      23: { 0: "c1_DAP_0_S", 1: "c1_DAP_0_S", 2: 0, 3: 0, 4: 0, 5: 0 },
+      32: {
+        0: "c1_MOP_0_S",
+        1: "c1_MOP_TA1_S",
+        2: "c1_MOP_TA2_S",
+        3: "c1_MOP_TA3_S",
+        4: "c1_MOP_TA4_S",
+        5: "c1_MOP_TA5_S",
+      },
+      20: {
+        0: "c1_UREA_0_S",
+        1: "c1_UREA_TA1_S",
+        2: "c1_UREA_TA2_S",
+        3: "c1_UREA_TA3_S",
+        4: "c1_UREA_TA4_S",
+        5: "c1_UREA_TA5_S",
+      },
+    },
+  },
+  104: {
+    // Object content for 104
+  },
+  105: {
+    // Object content for 105
+  },
+  106: {
+    // Object content for 106
+  },
+};
+
+// Create a new Excel workbook
+const wb = new xl.Workbook();
+
+// Add a worksheet to the workbook
+const ws2 = wb.addWorksheet("Recommendations");
+
+// Function to recursively iterate over the object and add data to the Excel sheet
+function addDataToSheet(obj, rowNum = 1) {
+  for (const key in obj) {
+    if (typeof obj[key] === "object") {
+      // If it's an object, recurse
+      addDataToSheet(obj[key], rowNum);
+    } else {
+      // If it's a value, add it to the Excel sheet
+      ws2.cell(rowNum, 1).number(parseInt(key)); // Assuming key is a number
+      ws2.cell(rowNum, 2).number(parseInt(Object.keys(obj[key])[0])); // Assuming obj[key] has only one key
+      ws2
+        .cell(rowNum, 3)
+        .number(parseInt(Object.keys(obj[key][Object.keys(obj[key])[0]])[0])); // Assuming obj[key][Object.keys(obj[key])[0]] has only one key
+      ws2
+        .cell(rowNum, 4)
+        .string(
+          obj[key][Object.keys(obj[key])[0]][
+            Object.keys(obj[key][Object.keys(obj[key])[0]])[0]
+          ].toString()
+        ); // Assuming obj[key][Object.keys(obj[key])[0]][Object.keys(obj[key][Object.keys(obj[key])[0]])[0]] is a string
+      rowNum++;
+    }
+  }
+}
+
+// Call the function to populate the Excel sheet
+addDataToSheet(recomm);
+
+// Write the Excel file to disk
+wb.write("recommendations.xlsx", (err, stats) => {
+  if (err) {
+    console.error("Error writing Excel report:", err);
+  } else {
+    console.log("Excel report generated successfully!");
+  }
+});

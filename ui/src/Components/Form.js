@@ -405,8 +405,14 @@ function Form() {
 
   return (
     <>
-      <div className="logOut">
-        <h1 style={{ marginTop: "0.5vh", color: "black" }}>
+      <div className="navbar">
+        <h1
+          style={{
+            fontSize: "2.5vh",
+            color: "black",
+            textAlign: "left",
+          }}
+        >
           Soil Water Test Entry Form
         </h1>
         <Button
