@@ -437,28 +437,84 @@ function reportGen(
     106: [22, 32, 20],
   };
 
-  const arrangeObject = (sourceObject, orderObject) => {
-    const arrangedObject = {};
+  const reArr = {};
+  const rearrangedObj = {};
 
-    for (const key in orderObject) {
-      if (Object.hasOwnProperty.call(sourceObject, key)) {
-        arrangedObject[key] = {};
-        orderObject[key].forEach((subKey) => {
-          const season_cd = Object.keys(sourceObject[key]);
-          season_cd.map((season) => {
-            arrangedObject[key][season][subKey] =
-              sourceObject[key][season][subKey];
-          });
-        });
+  // Loop through order object
+  for (const key in order) {
+    if (order.hasOwnProperty(key)) {
+      const elements = order[key];
+      // Initialize inner objects for each key
+      rearrangedObj[key] = {};
+      // Loop through elements
+      elements.forEach((element) => {
+        // Initialize inner objects for each element
+        rearrangedObj[key][element] = {};
+        // Copy the structure from final_calc
+        for (const cKey in final_calc) {
+          if (final_calc.hasOwnProperty(cKey)) {
+            const cValue = final_calc[cKey];
+            // Check if the structure exists for the current element in final_calc
+            if (cValue.hasOwnProperty(element)) {
+              // Copy the structure to rearrangedObj
+              rearrangedObj[key][element][cKey] = { ...cValue[element] };
+            }
+          }
+        }
+      });
+    }
+  }
+
+  // Loop through rearrangedObj to add time of applications
+  for (const key in rearrangedObj) {
+    if (rearrangedObj.hasOwnProperty(key)) {
+      const innerObj = rearrangedObj[key];
+      // Loop through each inner object
+      for (const innerKey in innerObj) {
+        if (innerObj.hasOwnProperty(innerKey)) {
+          const products = innerObj[innerKey];
+          // Loop through products
+          for (const product in products) {
+            if (products.hasOwnProperty(product)) {
+              // Check if the product exists in final_calc and order
+              if (
+                final_calc[innerKey] &&
+                final_calc[innerKey][product] &&
+                order[key]
+              ) {
+                // Get the time from order[key]
+                const time = order[key][product];
+                // Add the time to the object
+                rearrangedObj[key][innerKey][product]["time"] = time;
+              }
+            }
+          }
+        }
       }
     }
+  }
 
-    return arrangedObject;
-  };
+  console.log(rearrangedObj);
 
-  const arrangedFinalCalc = arrangeObject(final_calc, order);
+  //   for (const key in orderObject) {
+  //     if (Object.hasOwnProperty.call(sourceObject, key)) {
+  //       arrangedObject[key] = {};
+  //       orderObject[key].forEach((subKey) => {
+  //         const season_cd = Object.keys(sourceObject[key]);
+  //         season_cd.map((season) => {
+  //           arrangedObject[key][season][subKey] =
+  //             sourceObject[key][season][subKey];
+  //         });
+  //       });
+  //     }
+  //   }
 
-  console.log(arrangedFinalCalc["103"]);
+  //   return arrangedObject;
+  // };
+
+  // const arrangedFinalCalc = arrangeObject(final_calc, order);
+
+  // console.log(arrangedFinalCalc["103"]);
   // try {
   //   // const season_cd = Object.keys(season);
   //   // ws.cell(i, 1, i, 3, true).string(getSeasonName(season_cd)).style(h2);
@@ -626,6 +682,14 @@ function reportGen(
   ws.cell(i, 1, i, 2, true).string("Sr No.").style(h2);
   ws.cell(i, 3, i, 9, true).string("Fertilizer").style(h2);
   ws.cell(i, 10, i, 12, true).string("Quantitiy(kg/acre)").style(h2);
+  i++;
+  const micronutrients = (key) => !npk.includes(parseInt(key));
+  // Object.keys(nutrients[1]).forEach((index, key) => {
+  //   if (micronutrients(index)) {
+  //     const values = nutrients[index];
+  //     console.log(`${index}, ${key}, ${JSON.stringify(values)}`);
+  //   }
+  // });
 
   function writeBack() {
     wb.write("output.xlsx", (err, stats) => {
