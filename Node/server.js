@@ -8,8 +8,9 @@ const oracledb = require("oracledb");
 const { calculations } = require("./calculations.js");
 const dbConnection = require("./dbconnect.js");
 const { reportGen } = require("./excel_gen.js");
-
+const fs = require("fs");
 oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;
+const jsonFilePath = "../Node/assests/data.json";
 
 const app = express();
 
@@ -462,6 +463,7 @@ app.post("/newSuggestion", async (req, res) => {
     console.error("New Suggestion not added", error);
   }
 });
+
 app.post("/values", async (req, res) => {
   try {
     const {
@@ -478,6 +480,20 @@ app.post("/values", async (req, res) => {
       parameterValues[key] = parseInt(paramValues[key], 10);
     }
     //      calculations(parameterValues.phos, parameterValues.pota, parameterValues.nitr, 40, 50, 70);
+
+    const npk = {
+      nitrogen: parameterValues[15],
+      phosphorus: parameterValues[16],
+      potassium: parameterValues[17],
+    };
+    const npkObj = JSON.stringify(npk);
+    fs.writeFileSync(jsonFilePath, npkObj, "utf8", (err) => {
+      if (err) {
+        console.error("Error writing JSON file:", err);
+        return;
+      }
+      console.log("JSON file updated successfully.");
+    });
     farmerInformation = farmerInfo;
     all_local = local;
     const selectedSuggestions = suggestions.filter(
@@ -665,6 +681,7 @@ app.post("/npk", async (req, res) => {
     console.log(e);
   }
 });
+
 const get_yields = async () => {
   const connection = await dbConnection;
   const yield_target_all = await connection.execute(

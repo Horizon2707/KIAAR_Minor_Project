@@ -11,6 +11,7 @@ import ResultEntry from "./ResultEntry";
 import NotDefined from "./NotDefined";
 import Login from "./Login";
 import Sign from "./Sign";
+import PdfViewerComponent from "./PdfViewerComponent";
 
 function App() {
   const [user, setUser] = useState(JSON.parse(sessionStorage.getItem("user")));
@@ -39,6 +40,10 @@ function App() {
             element={user ? <ResultEntry /> : <Navigate to="/" replace />}
           />
           <Route path="*" element={<NotDefined />} />
+          <Route
+            path="/pdfviewer"
+            element={<PdfViewerComponent document={"output.xlsx"} />}
+          />
         </Routes>
       </Router>
     </div>

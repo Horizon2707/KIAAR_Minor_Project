@@ -3,7 +3,14 @@ const wb = new excel.Workbook();
 const ws = wb.addWorksheet("Report");
 const ws2 = wb.addWorksheet("WOW");
 const { final_calc } = require("./calc.js");
-//😞
+const fs = require("fs");
+const { load } = require("@pspdfkit/nodejs");
+const path = require("path");
+const libre = require("libreoffice-convert");
+libre.convertAsync = require("util").promisify(libre.convert);
+const ExcelJS = require("exceljs");
+const PDFDocument = require("pdfkit");
+// 😊
 // Add data to cell A1
 function reportGen(
   values,
@@ -47,10 +54,11 @@ function reportGen(
     );
     return found ? found["RECOM_APPLY_TIME"] : "NOT FOUND";
   }
-  console.log(getCombinationName(12));
-  console.log(getProductName(22));
-  console.log(getSeasonName(1));
-  console.log(getTimeApply(1));
+  // console.log(getCombinationName(12));
+  // console.log(getProductName(22));
+  // console.log(getSeasonName(1));
+  // console.log(getTimeApply(1));
+  console.log(JSON.stringify(final_calc, null, 2));
   const headingText = "K.J. Somaiya Institute of Applied Agricultural Research";
   const document_width = 121.8;
   const th = {
@@ -170,15 +178,15 @@ function reportGen(
 
   //Taluka District
   ws.row(2).setHeight(24);
-  ws.cell(2, 1, 2, 3, true)
+  ws.cell(2, 1, 2, 4, true)
     .string("Taluka: Rabakavi-Banahatti")
     .style(h2_r2)
     .style(bottom_border);
-  ws.cell(2, 4, 2, 7, true)
+  ws.cell(2, 5, 2, 8, true)
     .string("Sameerwadi-587 316")
     .style(h2_r2)
     .style(bottom_border);
-  ws.cell(2, 8, 2, 12, true)
+  ws.cell(2, 9, 2, 12, true)
     .string("Dt: Bagalkot")
     .style(h2_r2)
     .style(bottom_border);
@@ -573,29 +581,69 @@ function reportGen(
   ws.cell(i, 10, i, 12, true).string("Quantitiy(kg/acre)").style(h2);
   i++;
   sr = 1;
-  // const micronutrients = (key) => !npk.includes(parseInt(key));
-  // Object.keys(nutrients[1]).forEach((key) => {
-  //   if (micronutrients(key)) {
-  //     const values = nutrients[key];
-  //     ws.cell(i, 1, i, 2, true).number(sr).style(h2);
-  //     ws.cell(i, 3, i, 9, true)
-  //       .string(getProductName(parseInt(key)))
-  //       .style(h2);
-  //     ws.cell(i, 10, i, 12, true).number(parseInt(values)).style(h2);
-  //     i++;
-  //     sr++;
-  //   }
-  // });
+  const micronutrients = (key) => !npk.includes(parseInt(key));
+  Object.keys(nutrients[1]).forEach((key) => {
+    if (micronutrients(key)) {
+      const values = nutrients[1][key];
+      ws.cell(i, 1, i, 2, true).number(sr).style(h2);
+      ws.cell(i, 3, i, 9, true)
+        .string(getProductName(parseInt(key)))
+        .style(h2);
+      ws.cell(i, 10, i, 12, true).number(values[1]).style(h2);
 
+      i++;
+      sr++;
+    }
+  });
+
+  // const convert = async () => {
+  //   const ext = "pdf";
+  //   const inputPath = path.join(__dirname, "/output.xlsx");
+  //   const outputPath = path.join(__dirname, `/report.${ext}`);
+
+  //   const xlsxBuf = await fs.readFile(inputPath);
+  //   let pdfBuf = await libre.convertAsync(xlsxBuf, ext, undefined);
+  //   await fs.writeFile(outputPath, pdfBuf);
+  // };
+  // const convertToPdf = async () => {
+  //   try {
+  //     const workbook = new ExcelJS.Workbook();
+  //     await workbook.xlsx.readFile("output.xlsx");
+  //     const worksheet = workbook.getWorksheet("Report");
+  //     const pdfDoc = new PDFDocument();
+  //     pdfDoc.pipe(fs.createWriteStream("converted.pdf"));
+  //     let colSpacing = 80;
+  //     worksheet.eachRow((row, rowIndex) => {
+  //       row.eachCell((cell, colIndex) => {
+  //         const xpos = colIndex * 40 + (colIndex - 1) * colSpacing;
+  //         const ypos = rowIndex * 40;
+  //         pdfDoc.text(cell.text, xpos, ypos);
+  //       });
+  //     });
+  //     pdfDoc.end();
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // };
+  // const convertToPdf = async () => {
+  //   const docxFile = fs.readFileSync("output.xlsx");
+  //   const instance = await load({ document: docxFile });
+  //   const buffer = await instance.exportPDF();
+
+  //   fs.writeFileSync("converted.pdf", Buffer.from(buffer));
+  //   await instance.close();
+  // };
   function writeBack() {
     wb.write("output.xlsx", (err, stats) => {
       if (err) {
         console.error(err);
       } else {
         console.log("Excel file created successfully!");
+        convertToPdf();
       }
     });
   }
   writeBack();
 }
+
 module.exports = { reportGen };

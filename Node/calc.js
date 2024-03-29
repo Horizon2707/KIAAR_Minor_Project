@@ -2,7 +2,7 @@ const oracledb = require("oracledb");
 const dbConnection = require("./dbconnect.js");
 oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;
 const { calculations } = require("./calculations.js");
-
+const npk = require("../Node/assests/data.json");
 const combination_list_fetch = () => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -65,46 +65,47 @@ const get_yields = async () => {
   const yield_target = yield_target_all.rows;
   return { yield_target };
 };
-const get_npk = async () => {
-  try {
-    fetch("http://localhost:5000/npk", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => {
-        response.json();
-      })
-      .then((data) => {
-        console.log(data);
-        return data;
-      });
-  } catch (err) {
-    console.error(err);
-  }
-};
+// const get_npk = async () => {
+//   try {
+//     fetch("http://localhost:5000/npk", {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//     })
+//       .then((response) => {
+//         response.json();
+//       })
+//       .then((data) => {
+//         console.log(data);
+//         return data;
+//       });
+//   } catch (err) {
+//     console.error(err);
+//   }
+// };
+
 combination_list_fetch()
   .then(async (transformedObject) => {
     const { yield_target } = await get_yields();
     const yt_A = yield_target[0].TARGET_YIELD;
     const yt_P = yield_target[1].TARGET_YIELD;
     const yt_S = yield_target[2].TARGET_YIELD;
-    const npk = await get_npk();
+    // const npk = await get_npk();
 
     // console.log(nitrogen, phosphorus, potash, yt_A, yt_P, yt_S);
     const comb_values = transformedObject;
     let comb_formulae = null;
-    if (npk) {
-      comb_formulae = calculations(
-        npk.phosphorus,
-        npk.potash,
-        npk.nitrogen,
-        yt_A,
-        yt_P,
-        yt_S
-      );
-    }
+    console.log(npk);
+
+    comb_formulae = calculations(
+      npk.phosphorus,
+      npk.potassium,
+      npk.nitrogen,
+      yt_A,
+      yt_P,
+      yt_S
+    );
 
     // const comb_formulae = calculations(8.33, 203, 117.9, yt_A, yt_P, yt_S);
     // console.log(JSON.stringify(comb_formulae, null, 2));

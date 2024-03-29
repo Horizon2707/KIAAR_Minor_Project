@@ -4,10 +4,10 @@ import "../Styles/ResultEntry.css";
 import { Button } from "@chakra-ui/react";
 import { Checkbox } from "@chakra-ui/react";
 import { Textarea } from "@chakra-ui/react";
-import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
+// import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";
-import { Viewer } from "@react-pdf-viewer/core";
-import { Worker } from "@react-pdf-viewer/core";
+// import { Viewer } from "@react-pdf-viewer/core";
+// import { Worker } from "@react-pdf-viewer/core";
 import {
   Tabs,
   TabList,
@@ -48,7 +48,7 @@ function ResultEntry() {
   values = JSON.parse(values);
   local = JSON.parse(local);
   const [missing, setMissing] = useState(false);
-  const defaultLayoutPluginInstance = defaultLayoutPlugin();
+  // const defaultLayoutPluginInstance = defaultLayoutPlugin();
   const scrollToAlert = () => {
     if (alertRef.current) {
       alertRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -56,17 +56,6 @@ function ResultEntry() {
   };
   let postData = () => {
     console.log(local.farmInfo);
-    // try {
-    //   fetch("http://localhost:5000/getValues")
-    //     .then((response) => {
-    //       response.json();
-    //     })
-    //     .then((data) => {
-    //       console.log(data);
-    //     });
-    // } catch (error) {
-    //   console.log(error);
-    // }
     let com = {
       finalRemarks: finalRemarks,
       farmerInfo: local.farmInfo,
@@ -85,8 +74,20 @@ function ResultEntry() {
         },
         body: JSON.stringify(com),
       })
-        .then((response) => response.json())
-        .then(() => {});
+        // .then((response) => response.json())
+        .then(() => {
+          try {
+            fetch("http://localhost:5000/getValues")
+              .then((response) => {
+                response.json();
+              })
+              .then((data) => {
+                console.log(data);
+              });
+          } catch (error) {
+            console.log(error);
+          }
+        });
     } catch (error) {
       console.log(error);
     }
@@ -210,12 +211,13 @@ function ResultEntry() {
             Data uploaded to the server.
           </Alert>
           {pdf && (
-            <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-              <Viewer
-                plugins={[defaultLayoutPluginInstance]}
-                fileUrl={pdf}
-              ></Viewer>
-            </Worker>
+            // <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
+            //   <Viewer
+            //     plugins={[defaultLayoutPluginInstance]}
+            //     fileUrl={pdf}
+            //   ></Viewer>
+            // </Worker>
+            <></>
           )}
         </>
       )}
@@ -480,6 +482,7 @@ function ResultEntry() {
                   setalertTog(true);
                   setMissing(false);
                   postData();
+                  navigate("/pdfviewer");
                 } else {
                   setMissing(true);
                   scrollToAlert();
