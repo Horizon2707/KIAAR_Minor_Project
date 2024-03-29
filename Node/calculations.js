@@ -996,6 +996,6 @@ function calculations(phos, pota, nitr, SYT_A, SYT_P, SYT_S) {
 
   return recomm;
 }
-const data = calculations(8.33, 203, 117.9, 70, 50, 40);
+// const data = calculations(8.33, 203, 117.9, 70, 50, 40);
 // console.log(JSON.stringify(data, null, 2));
 module.exports = { calculations };

@@ -430,40 +430,14 @@ function reportGen(
   i++;
   //calculations the main beast
   delete final_calc[12];
-  const order = {
-    103: [23, 32, 20],
-    104: [25, 32, 20],
-    105: [24, 32, 20],
-    106: [22, 32, 20],
-  };
+  const order = [
+    { 103: [23, 32, 20] },
+    { 104: [25, 32, 20] },
+    { 105: [24, 32, 20] },
+    { 106: [22, 32, 20] },
+  ];
+  const season_keys = [1, 2, 3];
 
-
-  function rearrangeInnerObjects(finalCalc, order) {
-    const rearrangedFinalCalc = {};
-  
-    for (const key in finalCalc) {
-      if (Object.prototype.hasOwnProperty.call(finalCalc, key)) {
-        const innerObj = finalCalc[key];
-        const orderedKeys = order[key];
-        rearrangedFinalCalc[key] = {};
-  
-        for (const innerKey of orderedKeys) {
-          if (Object.prototype.hasOwnProperty.call(innerObj, innerKey)) {
-            rearrangedFinalCalc[key][innerKey] = innerObj[innerKey];
-          }
-        }
-      }
-    }
-  
-    return rearrangedFinalCalc;
-  }
-  
-  // Rearrange innermost objects
-  const rearrangedFinalCalc = rearrangeInnerObjects(final_calc[103], order);
-  const rearrangedFinalCalc1 = rearrangeInnerObjects(final_calc[104], order);
-  const rearrangedFinalCalc2 = rearrangeInnerObjects(final_calc[105], order);
-  const rearrangedFinalCalc3 = rearrangeInnerObjects(final_calc[106], order);
-  console.log(rearrangedFinalCalc, rearrangedFinalCalc1, rearrangedFinalCalc2, rearrangedFinalCalc3);
   // for (const key in order) {
   //   if (order.hasOwnProperty(key)) {
   //     const elements = order[key];
@@ -506,123 +480,6 @@ function reportGen(
   // }
 
   // console.log(rearrangedObj);
-
-  // try {
-  //   // const season_cd = Object.keys(season);
-  //   // ws.cell(i, 1, i, 3, true).string(getSeasonName(season_cd)).style(h2);
-  //   for (const comb_cd in final_calc) {
-  //     if (setComb == 1) {
-  //       ws.cell(i, 1, i, 3, true).string(getCombinationName(comb_cd)).style(h2);
-  //       i++;
-  //       let row = 0;
-  //       let col = 4;
-  //       x = 0;
-
-  //       if (row == 0) {
-  //         ws.cell(i, 1, i, 3, true).string("Time Of Application").style(th);
-
-  //     if (comb_cd === 103) {
-  //       for (m = 0; m < 3; m++) {
-  //         _103.forEach((child) => {
-  //           ws.cell(i, col).string(getProductName(child)).style(h2);
-  //           col++;
-  //           setComb = 0;
-  //         });
-  //       }
-  //     } else if (comb_cd === 104) {
-  //       for (m = 0; m < 3; m++) {
-  //         _104.forEach((child) => {
-  //           ws.cell(i, col).string(getProductName(child)).style(h2);
-  //           col++;
-
-  //           setComb = 0;
-  //         });
-  //       }
-  //     } else if (comb_cd === 105) {
-  //       for (m = 0; m < 3; m++) {
-  //         _105.forEach((child) => {
-  //           ws.cell(i, col).string(getProductName(child)).style(h2);
-  //           col++;
-  //           setComb = 0;
-  //         });
-  //       }
-  //     } else if (comb_cd === 106) {
-  //       for (m = 0; m < 3; m++) {
-  //         _106.forEach((child) => {
-  //           ws.cell(i, col).string(getProductName(child)).style(h2);
-  //           col++;
-  //           setComb = 0;
-  //         });
-  //       }
-  //     }
-  //     row++;
-  //     time_apply_cd.forEach((ta) => {
-  //       ws.cell(i + row, 1, i + row, 3, true)
-  //         .string(ta.RECOM_APPLY_TIME)
-  //         .style(h2);
-  //       row++;
-  //     });
-  //     row = 1;
-  //     col = 4;
-  //     ws.cell(i, 1, i, 3, true)
-  //       .string(getCombinationName(comb_cd))
-  //       .style(h2);
-  //   }
-  // } else {
-  //   for (const season_cd in final_calc[comb_cd]) {
-  //     for (const product_cd in final_calc[comb_cd][season_cd]) {
-  //       for (const t_apply in product_cd) {
-  //         const lol = 6;
-  //       }
-  //     }
-  //   }
-  //   console.log("NOTONTOTN");
-  // }
-  //   }
-  // } catch (e) {
-  //   console.log(e);
-  // }
-
-  const comb_heading = () => {
-    try {
-      const comb_cd = Object.keys(final_calc);
-      let row = 0;
-      let col = 4;
-      comb_cd.map((comb) => {
-        for (let t = 0; t < 2; t++) {
-          if (row === 0) {
-            ws.cell(i, 1, i, 3, true)
-              .string(getCombinationName(comb))
-              .style(h2);
-            row = (row + 1) % 8;
-          } else if (col < 13) {
-            ws.cell(i + row, 1, i + row, 3, true)
-              .string("Time of Application")
-              .style(h2);
-            const season_cd = Object.keys(final_calc[comb]);
-            season_cd.map((season) => {
-              const product_cd = Object.keys(final_calc[comb][season]);
-              product_cd.map((product) => {
-                ws.cell(i + row, col)
-                  .string(getProductName(parseInt(product)))
-                  .style(h2);
-                col++;
-              });
-            });
-          }
-        }
-        i = i + 8;
-        row = 0;
-        col = 4;
-      });
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  let temp_i = i;
-  comb_heading();
-  i = temp_i + 2;
 
   const comb_values = () => {
     try {
@@ -667,19 +524,66 @@ function reportGen(
     }
   };
 
+  const comb_heading = () => {
+    try {
+      const comb_cd = Object.keys(final_calc);
+      let row = 0;
+      let col = 4;
+      comb_cd.map((comb) => {
+        for (let t = 0; t < 2; t++) {
+          if (row === 0) {
+            ws.cell(i, 1, i, 3, true)
+              .string(getCombinationName(comb))
+              .style(h2);
+            row = (row + 1) % 8;
+          } else if (col < 13) {
+            ws.cell(i + row, 1, i + row, 3, true)
+              .string("Time of Application")
+              .style(h2);
+            const season_cd = Object.keys(final_calc[comb]);
+            season_cd.map((season) => {
+              const product_cd = Object.keys(final_calc[comb][season]);
+              product_cd.map((product) => {
+                ws.cell(i + row, col)
+                  .string(getProductName(parseInt(product)))
+                  .style(h2);
+                col++;
+              });
+            });
+          }
+        }
+        i = i + 8;
+        row = 0;
+        col = 4;
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  let temp_i = i;
+  comb_heading();
+  i = temp_i + 2;
   comb_values();
-  i++;
+  i = i - 2;
   ws.cell(i, 1, i, 12, true).string("Micronutrients").style(th);
   i++;
   ws.cell(i, 1, i, 2, true).string("Sr No.").style(h2);
   ws.cell(i, 3, i, 9, true).string("Fertilizer").style(h2);
   ws.cell(i, 10, i, 12, true).string("Quantitiy(kg/acre)").style(h2);
   i++;
-  const micronutrients = (key) => !npk.includes(parseInt(key));
-  // Object.keys(nutrients[1]).forEach((index, key) => {
-  //   if (micronutrients(index)) {
-  //     const values = nutrients[index];
-  //     console.log(`${index}, ${key}, ${JSON.stringify(values)}`);
+  sr = 1;
+  // const micronutrients = (key) => !npk.includes(parseInt(key));
+  // Object.keys(nutrients[1]).forEach((key) => {
+  //   if (micronutrients(key)) {
+  //     const values = nutrients[key];
+  //     ws.cell(i, 1, i, 2, true).number(sr).style(h2);
+  //     ws.cell(i, 3, i, 9, true)
+  //       .string(getProductName(parseInt(key)))
+  //       .style(h2);
+  //     ws.cell(i, 10, i, 12, true).number(parseInt(values)).style(h2);
+  //     i++;
+  //     sr++;
   //   }
   // });
 

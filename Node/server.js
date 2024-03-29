@@ -5,8 +5,7 @@ const cors = require("cors");
 const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
 const oracledb = require("oracledb");
-
-const calculations = require("./calculations.js");
+const { calculations } = require("./calculations.js");
 const dbConnection = require("./dbconnect.js");
 const { reportGen } = require("./excel_gen.js");
 
@@ -66,7 +65,7 @@ function convertDateFormat(dateStr) {
 // Example usage:
 
 let farmerValues;
-let parameterValues;
+let parameterValues = {};
 let suggestions_all;
 let parameters;
 let report_values;
@@ -74,7 +73,7 @@ let parameter_names;
 let farmerInformation;
 let all_local;
 let remarks;
-let yield_targets;
+let formulae;
 app.post("/farmerId", async (req, res) => {
   const { farmerId } = req.body;
 
@@ -473,13 +472,12 @@ app.post("/values", async (req, res) => {
       local,
       finalRemarks,
     } = req.body;
-    // console.log(suggestions);
     farmerValues = values;
     parameterValues = {};
     for (const key in paramValues) {
       parameterValues[key] = parseInt(paramValues[key], 10);
     }
-    console.log(farmerInfo);
+    //      calculations(parameterValues.phos, parameterValues.pota, parameterValues.nitr, 40, 50, 70);
     farmerInformation = farmerInfo;
     all_local = local;
     const selectedSuggestions = suggestions.filter(
@@ -487,19 +485,22 @@ app.post("/values", async (req, res) => {
     );
     suggestions_all = selectedSuggestions;
     remarks = finalRemarks;
-    let tranNo = farmerValues.labNo[0].LAB_TRAN;
-    let farmerId = farmerValues.farmerId;
-    let tempNo = farmerValues.templateNo[0].TEMPLATE_NO;
+    // console.log(parameterValues[15], parameterValues[16], parameterValues[17]);
+    // let A_obj = yield_target.find((e) => {
+    //   e.CROP_SEASON === "ADASALI";
+    // });
+    // let P_obj = yield_target.find((e) => {
+    //   e.CROP_SEASON === "PRE-SEASONAL";
+    // });
 
-    // console.log(farmerValues);
-    // console.log(parameterValues);
+    // let S_obj = yield_target.find((e) => {
+    //   e.CROP_SEASON === "SEASONAL";
+    // });
+    // if (A_obj) {
+    //   // let A_yt = A_obj.TARGET_YIELD;
+    //   console.log(A_obj);
+    // }
 
-    // response.obj = {
-    //   values: values,
-    //   paramValues: paramValues,
-    //   suggestions: suggestions,
-    // };
-    // console.log()
     return;
     const connection = await dbConnection;
     const tran_head = await connection.execute(
@@ -625,6 +626,7 @@ app.get("/getValues", async (req, res) => {
     suggestions: suggestions_all,
   };
   report_values = values_all;
+  const { yield_target } = await get_yields();
   const cdtonames = await codeToName();
   const { combination_cd, product_cd, time_apply_cd, crop_season_cd } =
     await combination_cds();
@@ -635,7 +637,7 @@ app.get("/getValues", async (req, res) => {
     all_local,
     cdtonames,
     remarks,
-    yield_targets,
+    yield_target,
     combination_cd,
     product_cd,
     time_apply_cd,
@@ -649,9 +651,28 @@ app.post("/yield_target", async (req, res) => {
     `SELECT * FROM GSMAGRI.CROP_NAME_YT`
   );
   const yield_target = yield_target_all.rows;
-  yield_targets = yield_target;
+  console.log(yield_target);
 });
-
+app.post("/npk", async (req, res) => {
+  try {
+    const res_obj = {
+      nitrogen: parameterValues[15],
+      phosphorus: parameterValues[16],
+      potash: parameterValues[17],
+    };
+    res.json(res_obj);
+  } catch (e) {
+    console.log(e);
+  }
+});
+const get_yields = async () => {
+  const connection = await dbConnection;
+  const yield_target_all = await connection.execute(
+    `SELECT * FROM GSMAGRI.CROP_NAME_YT`
+  );
+  const yield_target = yield_target_all.rows;
+  return { yield_target };
+};
 const combination_cds = async () => {
   const connection = await dbConnection;
   const combination_cd_all = await connection.execute(

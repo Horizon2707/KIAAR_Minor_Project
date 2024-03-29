@@ -56,7 +56,17 @@ function ResultEntry() {
   };
   let postData = () => {
     console.log(local.farmInfo);
-
+    // try {
+    //   fetch("http://localhost:5000/getValues")
+    //     .then((response) => {
+    //       response.json();
+    //     })
+    //     .then((data) => {
+    //       console.log(data);
+    //     });
+    // } catch (error) {
+    //   console.log(error);
+    // }
     let com = {
       finalRemarks: finalRemarks,
       farmerInfo: local.farmInfo,

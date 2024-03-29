@@ -147,7 +147,9 @@ Content-Type: application/json
 POST http://localhost:5000/combination_cds
 Content-Type: application/json
 
-
+###b NPK
+POST http://localhost:5000/npk
+Content-Type: application/json
 ### Login 
 POST http://localhost:5000/login
 Content-Type: application/json
