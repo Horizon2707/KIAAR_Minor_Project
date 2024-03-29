@@ -95,6 +95,47 @@ combination_list_fetch()
 
     // console.log(nitrogen, phosphorus, potash, yt_A, yt_P, yt_S);
     const comb_values = transformedObject;
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+    
+    //DB connection for fetching NPK values
     let comb_formulae = null;
     console.log(npk);
 
@@ -106,6 +147,43 @@ combination_list_fetch()
       yt_P,
       yt_S
     );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // const comb_formulae = calculations(8.33, 203, 117.9, yt_A, yt_P, yt_S);
     // console.log(JSON.stringify(comb_formulae, null, 2));
