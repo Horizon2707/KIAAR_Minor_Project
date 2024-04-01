@@ -19,6 +19,7 @@ import {
   AlertIcon,
   AlertTitle,
   CloseButton,
+  Select, // Import Select component from Chakra UI
 } from "@chakra-ui/react";
 import { FaUserAlt, FaLock } from "react-icons/fa";
 const CFaUserAlt = chakra(FaUserAlt);
@@ -33,28 +34,48 @@ const Login = () => {
   const [emailError, setEmailError] = useState("");
   const [showErrorAlert, setShowErrorAlert] = useState(false);
   const [greetingName, setGreetingName] = useState("");
+  const [selectedSeason, setSelectedSeason] = useState(""); 
+
+  const [Seasons, setSeasons] = useState([]); 
 
   const validateEmail = (email) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(email);
   };
 
-  const handleLogin = async (event) => {
-    event.preventDefault(); // Prevent form submission
 
-    // Check if email and password are not empty
+  const fetchSeasons = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/seasons");
+      if (response.ok) {
+        const data = await response.json();
+        setSeasons(data);
+        
+      }
+    } catch (error) {
+      console.error("Error fetching seasons:", error);
+    }
+  };
+  useEffect(() => { 
+ if (Seasons){
+    return;
+} else {
+  fetchSeasons();
+}
+  }, [email]);
+  const handleLogin = async (event) => {
+    event.preventDefault(); 
     if (!email.trim() || !password.trim()) {
       setEmailError("Email and password cannot be empty");
       setPasswordError("Email and password cannot be empty");
-      return; // Prevent further execution
+      return; 
     }
 
     try {
-      // Reset error messages
+      
       setEmailError("");
       setPasswordError("");
 
-      // Other validation checks...
       if (!validateEmail(email.trim())) {
         setEmailError("Email is not valid");
         return;
@@ -151,7 +172,7 @@ const Login = () => {
                     value={email}
                     onChange={(e) => {
                       setEmail(e.target.value);
-                      setEmailError(""); // Clear error message when typing
+                      setEmailError(""); 
                     }}
                   />
                 </InputGroup>
@@ -172,7 +193,7 @@ const Login = () => {
                     value={password}
                     onChange={(e) => {
                       setPassword(e.target.value);
-                      setPasswordError(""); // Clear error message when typing
+                      setPasswordError(""); 
                     }}
                   />
                   <InputRightElement width="4.5rem">
@@ -186,6 +207,19 @@ const Login = () => {
                     {passwordError}
                   </FormHelperText>
                 )}
+              </FormControl>
+              <FormControl>
+                <Select
+                  placeholder="Select season"
+                  value={selectedSeason}
+                  onChange={(e) => setSelectedSeason(e.target.value)}
+                >
+                  {Seasons.map((season) => (
+                    <option key={season} value={season}>
+                      {season}
+                    </option>
+                  ))}
+                </Select>
               </FormControl>
               <Button
                 borderRadius={0}
