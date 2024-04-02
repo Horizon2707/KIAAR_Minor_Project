@@ -5,11 +5,13 @@ const cors = require("cors");
 const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
 const oracledb = require("oracledb");
-const { calculations } = require("./calculations.js");
+const { final_calc } = require("./calc.js");
 const dbConnection = require("./dbconnect.js");
 const { reportGen } = require("./excel_gen.js");
 const fs = require("fs");
+
 oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;
+
 const jsonFilePath = "../Node/assests/data.json";
 
 const app = express();
@@ -500,7 +502,11 @@ app.post("/values", async (req, res) => {
       (suggestion) => suggestion.selected === true
     );
     suggestions_all = selectedSuggestions;
+    // console.log(parameterValues);
     remarks = finalRemarks;
+    const tranNo = farmerValues.labNo[0].LAB_TRAN;
+    const farmerId = farmerValues.farmerId;
+    // console.log(tranNo, farmerId);
     // console.log(parameterValues[15], parameterValues[16], parameterValues[17]);
     // let A_obj = yield_target.find((e) => {
     //   e.CROP_SEASON === "ADASALI";
@@ -517,7 +523,6 @@ app.post("/values", async (req, res) => {
     //   console.log(A_obj);
     // }
 
-    return;
     const connection = await dbConnection;
     const tran_head = await connection.execute(
       `INSERT INTO GSMAGRI.SW_TRAN_HEAD (
@@ -562,7 +567,7 @@ app.post("/values", async (req, res) => {
       VALUES (
         1,
         21,
-        '20-03-24',
+        SYSDATE,
         :tranNo,
         :farmerId,
         :surveyNo,
@@ -577,11 +582,11 @@ app.post("/values", async (req, res) => {
         'SUNFLOWER',
         NULL,       
         290,
-        '20-03-24',
+        '20-MAR-2024',
         NULL,       
         NULL,       
-        '20-03-24', 
-        '20-03-24', 
+        '20-MAR-2024', 
+        '20-MAR-2024', 
         :testCd,
         :pltArea,
         :gunta,
@@ -631,6 +636,242 @@ app.post("/values", async (req, res) => {
       })
     );
     console.log(tran_head);
+    let suggestion_tail;
+    suggestions_all.map(async (suggestion) => {
+      suggestion_tail = await connection.execute(
+        `INSERT INTO gsmagri.sw_suggestion_tail (
+        lab_tran_no,
+        suggestion_id,
+        suggestion_name_value,
+        type_of_suggestion,
+        test_cd
+    ) VALUES (
+        :v0,
+        :v1,
+        :v2,
+        :v3,
+        :v4
+    )`,
+        [
+          tranNo,
+          suggestion.SUGGESTION_ID,
+          suggestion.SUGGESTION_NAME,
+          "NORMAL",
+          parseInt(farmerValues.test),
+        ]
+      );
+    });
+    let tran_tail;
+    const parameterValuesArray = Object.keys(parameterValues);
+    parameterValuesArray.map(async (key) => {
+      tran_tail = await connection.execute(
+        `INSERT INTO gsmagri.sw_tran_tail (
+          lab_tran_no,
+          parameter_id,
+          test_method,
+          result_value,
+          parameter_id_slno,
+          print_flag,
+          test_cd
+      ) VALUES (
+          :v0,
+          :v1,
+          'NONE',
+          :v3,
+          NULL,
+          :v5,
+          :v6
+      )`,
+        [
+          tranNo,
+          parseInt(key),
+          parseInt(parameterValues[key]),
+          "Y",
+          parseInt(farmerValues.test),
+        ]
+      );
+    });
+    let recommendation_tran;
+    // let value = null;
+    // const comb_cd = Object.keys(final_calc);
+    // comb_cd.map(async (comb) => {
+    //   const season_cd = Object.keys(final_calc[comb]);
+    //   season_cd.map(async (season) => {
+    //     const product_cd = Object.keys(final_calc[comb][season]);
+    //     product_cd.map(async (product) => {
+    //       const group_cd_all = await connection.execute(
+    //         `SELECT DISTINCT GROUP_CD FROM GSMAGRI.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
+    //         [product]
+    //       );
+    //       const unit_id_all = await connection.execute(
+    //         `SELECT DISTINCT UNIT_NAME FROM GSMAGRI.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
+    //         [product]
+    //       );
+    //       const unit_value_all = await connection.execute(
+    //         `SELECT DISTINCT UNIT_VALUE FROM GSMAGRI.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
+    //         [product]
+    //       );
+    //       const group_cd = group_cd_all.rows;
+    //       const unit_id = unit_id_all.rows;
+    //       const unit_value = unit_value_all.rows;
+
+    //       const ta_cd = Object.keys(final_calc[comb][season][product]);
+
+    //       ta_cd.map(async (ta) => {
+    //         value = parseInt(final_calc[comb][season][product][ta]);
+    //         // console.log(group_cd, unit_id, unit_value, product, comb, value);
+    //         recommendation_tran = await connection.execute(
+    //           `INSERT INTO gsmagri.sw_recommendation_tran (
+    //           lab_tran_no,
+    //           tran_date,
+    //           sw_group_cd,
+    //           sw_product_cd,
+    //           combine_cd,
+    //           product_value,
+    //           option_value,
+    //           ref_sw_product_cd,
+    //           unit_value,
+    //           unit_id,
+    //           value_in_bags,
+    //           convert_unit_name,
+    //           test_cd
+    //       ) VALUES (
+    //           :v0,
+    //           SYSDATE,
+    //           :v2,
+    //           :v3,
+    //           :v4,
+    //           :v5,
+    //           NULL,
+    //           NULL,
+    //           NULL,
+    //           1,
+    //           NULL,
+    //           NULL,
+    //           :v12
+    //       )`,
+    //           [
+    //             tranNo,
+    //             parseInt(group_cd[0].GROUP_CD),
+    //             parseInt(product),
+    //             parseInt(comb),
+    //             parseInt(value),
+    //             // parseInt(unit_value[0].UNIT_VALUE),
+    //             parseInt(farmerValues.test),
+    //           ]
+    //         );
+    //       });
+    //     });
+    //   });
+    // });
+    // console.log(recommendation_tran);
+    // Define an array to store all the promises
+    const promises = [];
+
+    const comb_cd = Object.keys(final_calc);
+    comb_cd.forEach((comb) => {
+      const season_cd = Object.keys(final_calc[comb]);
+      season_cd.forEach((season) => {
+        const product_cd = Object.keys(final_calc[comb][season]);
+        product_cd.forEach((product) => {
+          const ta_cd = Object.keys(final_calc[comb][season][product]);
+          let value;
+          if (comb == 12) {
+            value = parseInt(final_calc[comb][season][product][1]);
+          } else {
+            value = parseInt(final_calc[comb][season][product][0]);
+          }
+
+          const group_cd_all = connection.execute(
+            `SELECT DISTINCT GROUP_CD FROM GSMAGRI.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
+            [product]
+          );
+          const unit_id_all = connection.execute(
+            `SELECT DISTINCT UNIT_NAME FROM GSMAGRI.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
+            [product]
+          );
+          const unit_value_all = connection.execute(
+            `SELECT DISTINCT UNIT_VALUE FROM GSMAGRI.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
+            [product]
+          );
+
+          // Push each promise to the promises array
+          promises.push(
+            Promise.all([group_cd_all, unit_id_all, unit_value_all]).then(
+              ([
+                group_cd_all_result,
+                unit_id_all_result,
+                unit_value_all_result,
+              ]) => {
+                const group_cd = group_cd_all_result.rows;
+                const unit_id = unit_id_all_result.rows;
+                const unit_value = unit_value_all_result.rows;
+
+                return connection.execute(
+                  `INSERT INTO gsmagri.sw_recommendation_tran (
+                  lab_tran_no,
+                  tran_date,
+                  sw_group_cd,
+                  sw_product_cd,
+                  combine_cd,
+                  product_value,
+                  option_value,
+                  ref_sw_product_cd,
+                  unit_value,
+                  unit_id,
+                  value_in_bags,
+                  convert_unit_name,
+                  test_cd
+              ) VALUES (
+                  :v0,
+                  SYSDATE,
+                  :v2,
+                  :v3,
+                  :v4,
+                  :v5,
+                  NULL,
+                  :v7,
+                  NULL,
+                  1,
+                  NULL,
+                  NULL,
+                  :v12
+              )`,
+                  [
+                    tranNo,
+                    parseInt(group_cd[0].GROUP_CD),
+                    parseInt(product),
+                    parseInt(comb),
+                    parseInt(value),
+                    (unit_value[0] && parseInt(unit_value[0].UNIT_VALUE)) ||
+                      null,
+                    parseInt(farmerValues.test),
+                  ]
+                );
+              }
+            )
+          );
+        });
+      });
+    });
+
+    // Wait for all promises to resolve
+    Promise.all(promises)
+      .then(async (recommendation_tran_results) => {
+        // console.log(recommendation_tran_results);
+        await connection.execute("COMMIT");
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+
+    // // res.sendFile("output.xlsx", { root: __dirname }, (err) => {
+    // //   if (err) {
+    // //     console.error("Error sending Excel file:", err);
+    // //     res.status(500).send("Error sending Excel file");
+    // //     return;
+    // //   }
+    // // });
   } catch (error) {
     console.log(error);
   }
@@ -849,22 +1090,6 @@ app.post("/signUp", async (req, res) => {
     console.error("Error creating user:", error);
     res.sendStatus(500); // Internal Server Error
   }
-});
-
-app.post("/calc", (req, res) => {
-  const { parameters } = req.body;
-
-  const nitr = parameters.nitr;
-  const phos = parameters.phos;
-  const pota = parameters.pota;
-  console.log(nitr);
-  const SYT_A = 70;
-  const SYT_P = 50;
-  const SYT_S = 40;
-
-  // const recomm_obj = calculations(8.33,203.04,117.9,40,50,70)
-  const recomm_obj = calculations(phos, pota, nitr, SYT_S, SYT_P, SYT_A);
-  res.json(recomm_obj);
 });
 
 app.listen(5000, () => {

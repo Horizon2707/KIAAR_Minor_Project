@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import "../Styles/ResultEntry.css";
 import { Button } from "@chakra-ui/react";
 import { Checkbox } from "@chakra-ui/react";
@@ -74,20 +74,8 @@ function ResultEntry() {
         },
         body: JSON.stringify(com),
       })
-        // .then((response) => response.json())
-        .then(() => {
-          try {
-            fetch("http://localhost:5000/getValues")
-              .then((response) => {
-                response.json();
-              })
-              .then((data) => {
-                console.log(data);
-              });
-          } catch (error) {
-            console.log(error);
-          }
-        });
+        .then((response) => response.json())
+        .then(() => {});
     } catch (error) {
       console.log(error);
     }
@@ -113,6 +101,17 @@ function ResultEntry() {
       .catch((error) => {
         console.error("There was a problem with the fetch operation:", error);
       });
+    try {
+      fetch("http://localhost:5000/getValues")
+        .then((response) => {
+          response.json();
+        })
+        .then((data) => {
+          console.log(data);
+        });
+    } catch (error) {
+      console.log(error);
+    }
   };
   const setin = sessionStorage.getItem("paramValues");
   useEffect(() => {
@@ -457,7 +456,7 @@ function ResultEntry() {
                       <Textarea
                         placeholder="Add final remarks here"
                         resize="none"
-                        rows={7} // Set the number of rows to 7
+                        rows={2} // Set the number of rows to 7
                         variant="filled"
                         onChange={(e) => {
                           setFinalRemarks(e.target.value);

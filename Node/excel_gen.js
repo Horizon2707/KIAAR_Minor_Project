@@ -58,7 +58,7 @@ function reportGen(
   // console.log(getProductName(22));
   // console.log(getSeasonName(1));
   // console.log(getTimeApply(1));
-  console.log(JSON.stringify(final_calc, null, 2));
+  // console.log(JSON.stringify(final_calc, null, 2));
   const headingText = "K.J. Somaiya Institute of Applied Agricultural Research";
   const document_width = 121.8;
   const th = {
@@ -639,7 +639,7 @@ function reportGen(
         console.error(err);
       } else {
         console.log("Excel file created successfully!");
-        convertToPdf();
+        // convertToPdf();
       }
     });
   }

@@ -34,15 +34,14 @@ const Login = () => {
   const [emailError, setEmailError] = useState("");
   const [showErrorAlert, setShowErrorAlert] = useState(false);
   const [greetingName, setGreetingName] = useState("");
-  const [selectedSeason, setSelectedSeason] = useState(""); 
+  const [selectedSeason, setSelectedSeason] = useState("");
 
-  const [Seasons, setSeasons] = useState([]); 
+  const [Seasons, setSeasons] = useState([]);
 
   const validateEmail = (email) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(email);
   };
-
 
   const fetchSeasons = async () => {
     try {
@@ -50,29 +49,27 @@ const Login = () => {
       if (response.ok) {
         const data = await response.json();
         setSeasons(data);
-        
       }
     } catch (error) {
       console.error("Error fetching seasons:", error);
     }
   };
-  useEffect(() => { 
- if (Seasons){
-    return;
-} else {
-  fetchSeasons();
-}
-  }, [email]);
+  //   useEffect(() => {
+  //  if (Seasons){
+  //     return;
+  // } else {
+  //   fetchSeasons();
+  // }
+  //   }, [email]);
   const handleLogin = async (event) => {
-    event.preventDefault(); 
+    event.preventDefault();
     if (!email.trim() || !password.trim()) {
       setEmailError("Email and password cannot be empty");
       setPasswordError("Email and password cannot be empty");
-      return; 
+      return;
     }
 
     try {
-      
       setEmailError("");
       setPasswordError("");
 
@@ -172,7 +169,7 @@ const Login = () => {
                     value={email}
                     onChange={(e) => {
                       setEmail(e.target.value);
-                      setEmailError(""); 
+                      setEmailError("");
                     }}
                   />
                 </InputGroup>
@@ -193,7 +190,7 @@ const Login = () => {
                     value={password}
                     onChange={(e) => {
                       setPassword(e.target.value);
-                      setPasswordError(""); 
+                      setPasswordError("");
                     }}
                   />
                   <InputRightElement width="4.5rem">

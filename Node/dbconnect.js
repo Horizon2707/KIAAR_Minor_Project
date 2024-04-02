@@ -14,5 +14,5 @@ async function connectToDatabase() {
     throw error;
   }
 }
-
+connectToDatabase();
 module.exports = connectToDatabase();

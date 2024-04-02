@@ -42,7 +42,13 @@ function App() {
           <Route path="*" element={<NotDefined />} />
           <Route
             path="/pdfviewer"
-            element={<PdfViewerComponent document={"output.xlsx"} />}
+            element={
+              user ? (
+                <PdfViewerComponent document={"output.xlsx"} />
+              ) : (
+                <Navigate to="/" replace />
+              )
+            }
           />
         </Routes>
       </Router>

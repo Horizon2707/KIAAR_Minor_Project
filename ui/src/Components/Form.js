@@ -685,7 +685,7 @@ function Form() {
                   return <option value={item}>{item}</option>;
                 })} */}
               <option value="GOOD">Good</option>
-              <option value="BAD">Bad</option>
+              <option value="POOR">POOR</option>
               <option value="NONE">None</option>
             </Select>
             {newErrors.drainage && (
