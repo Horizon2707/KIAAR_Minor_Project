@@ -489,6 +489,7 @@ app.post("/values", async (req, res) => {
       potassium: parameterValues[17],
     };
     const npkObj = JSON.stringify(npk);
+    //Edit NPK
     fs.writeFileSync(jsonFilePath, npkObj, "utf8", (err) => {
       if (err) {
         console.error("Error writing JSON file:", err);
@@ -504,8 +505,15 @@ app.post("/values", async (req, res) => {
     suggestions_all = selectedSuggestions;
     // console.log(parameterValues);
     remarks = finalRemarks;
-    const tranNo = farmerValues.labNo[0].LAB_TRAN;
+    const tranNo = farmerValues.labNo;
+    // const tranNo = farmerValues.labNo[0].LAB_TRAN || farmerValues.labNo;
     const farmerId = farmerValues.farmerId;
+    const connection = await dbConnection;
+    const lab_tran_all = await connection.execute(
+      `SELECT DISTINCT LAB_TRAN_NO FROM GSMAGRI.SW_RECOMMENDATION_TRAN WHERE LAB_TRAN_NO = :labNo`,
+      [tranNo]
+    );
+
     // console.log(tranNo, farmerId);
     // console.log(parameterValues[15], parameterValues[16], parameterValues[17]);
     // let A_obj = yield_target.find((e) => {
@@ -522,293 +530,219 @@ app.post("/values", async (req, res) => {
     //   // let A_yt = A_obj.TARGET_YIELD;
     //   console.log(A_obj);
     // }
-
-    const connection = await dbConnection;
-    const tran_head = await connection.execute(
-      `INSERT INTO GSMAGRI.SW_TRAN_HEAD (
-        COMPANY_CD,
-        SEASON_CD,
-        TRAN_DATE,
-        LAB_TRAN_NO,
-        FARMER_ID,
-        SY_NO,
-        CLUSTER_CD,
-        VILLAGE_CD,
-        PLOT_NO,
-        IRRIGATION_CD,
-        SOIL_TYPE_CD,
-        TYPE_OF_CULTIVATION,
-        DRAINAGE,
-        PREVIOUS_CROP,
-        CROPS_TO_BE_GROWN,
-        REMARKS,
-        ADD_BY,
-        ADD_DATE,
-        RECOMMENTATION_REMARKS,
-        SUGESSTION_REMARKS,
-        DATE_OF_SAMPLING,
-        DATE_OF_SAMPLE_RECEIPT,
-        TEST_CD,
-        PLOT_AREA,
-        PLOT_AREA_IN_GUNTA,
-        TEMPLATE_NO,
-        LATTITUDE,
-        LONGITUDE,
-        GEO_CODE,
-        GBL_KHATE_ID,
-        GBL_PLOT_ID,
-        SF_SOIL_ID,
-        SMS_SENT_FLAG,
-        HEWF_ORDER_NO,
-        SYNC_STATUS,
-        SYNC_REMARKS,
-        WATER_TYPE_CD
-      )
-      VALUES (
-        1,
-        21,
-        SYSDATE,
-        :tranNo,
-        :farmerId,
-        :surveyNo,
-        :clusterCd,
-        :villageCd,
-        :plotNo,
-        :irrigationCd,
-        :soiltype,
-        :culType,
-        :drainage,
-        :prevCrop,
-        'SUNFLOWER',
-        NULL,       
-        290,
-        '20-MAR-2024',
-        NULL,       
-        NULL,       
-        '20-MAR-2024', 
-        '20-MAR-2024', 
-        :testCd,
-        :pltArea,
-        :gunta,
-        2,
-        NULL,       
-        NULL,       
-        NULL,       
-        10,
-        51,
-        NULL,       
-        'N',
-        NULL,       
-        'N',
-        NULL,
-        17
-      )
-      `,
-      [
-        //convertDateFormat(new Date().toISOString().split("T")[0]),
-        parseInt(tranNo),
-        parseInt(farmerId),
-        farmerValues.surveyNo,
-        parseInt(farmerValues.cluster),
-        parseInt(farmerValues.village),
-        parseInt(farmerValues.plotNo),
-        parseInt(farmerValues.irrigationSource),
-        parseInt(farmerValues.soilType),
-        farmerValues.cultivationType,
-        farmerValues.drainage,
-        farmerValues.previousCrop,
-        //farmerValues.cropsToBeGrown,
-        //convertDateFormat(new Date().toISOString().split("T")[0]),
-        //convertDateFormat(farmerValues.dtOfSampling),
-        //convertDateFormat(farmerValues.dtOfSamplingReceipt),
-        parseInt(farmerValues.test),
-        parseInt(farmerValues.area),
-        parseInt(farmerValues.area),
-        //parseInt(tempNo),
-      ].map((value, index) => {
-        if (isNaN(value) && typeof value !== "string") {
-          throw new Error(
-            `Invalid value "${value}" at index ${index + 1}. Expected a number.`
-          );
-        }
-        return value;
-        // excelColor(values)
-      })
-    );
-    console.log(tran_head);
-    let suggestion_tail;
-    suggestions_all.map(async (suggestion) => {
-      suggestion_tail = await connection.execute(
-        `INSERT INTO gsmagri.sw_suggestion_tail (
-        lab_tran_no,
-        suggestion_id,
-        suggestion_name_value,
-        type_of_suggestion,
-        test_cd
-    ) VALUES (
-        :v0,
-        :v1,
-        :v2,
-        :v3,
-        :v4
-    )`,
+    const updateTables = async () => {
+      const tran_head = await connection.execute(
+        `INSERT INTO GSMAGRI.SW_TRAN_HEAD (
+          COMPANY_CD,
+          SEASON_CD,
+          TRAN_DATE,
+          LAB_TRAN_NO,
+          FARMER_ID,
+          SY_NO,
+          CLUSTER_CD,
+          VILLAGE_CD,
+          PLOT_NO,
+          IRRIGATION_CD,
+          SOIL_TYPE_CD,
+          TYPE_OF_CULTIVATION,
+          DRAINAGE,
+          PREVIOUS_CROP,
+          CROPS_TO_BE_GROWN,
+          REMARKS,
+          ADD_BY,
+          ADD_DATE,
+          RECOMMENTATION_REMARKS,
+          SUGESSTION_REMARKS,
+          DATE_OF_SAMPLING,
+          DATE_OF_SAMPLE_RECEIPT,
+          TEST_CD,
+          PLOT_AREA,
+          PLOT_AREA_IN_GUNTA,
+          TEMPLATE_NO,
+          LATTITUDE,
+          LONGITUDE,
+          GEO_CODE,
+          GBL_KHATE_ID,
+          GBL_PLOT_ID,
+          SF_SOIL_ID,
+          SMS_SENT_FLAG,
+          HEWF_ORDER_NO,
+          SYNC_STATUS,
+          SYNC_REMARKS,
+          WATER_TYPE_CD
+        )
+        VALUES (
+          1,
+          21,
+          SYSDATE,
+          :tranNo,
+          :farmerId,
+          :surveyNo,
+          :clusterCd,
+          :villageCd,
+          :plotNo,
+          :irrigationCd,
+          :soiltype,
+          :culType,
+          :drainage,
+          :prevCrop,
+          'SUNFLOWER',
+          NULL,       
+          290,
+          '20-MAR-2024',
+          NULL,       
+          NULL,       
+          '20-MAR-2024', 
+          '20-MAR-2024', 
+          :testCd,
+          :pltArea,
+          :gunta,
+          2,
+          NULL,       
+          NULL,       
+          NULL,       
+          10,
+          51,
+          NULL,       
+          'N',
+          NULL,       
+          'N',
+          NULL,
+          17
+        )
+        `,
         [
-          tranNo,
-          suggestion.SUGGESTION_ID,
-          suggestion.SUGGESTION_NAME,
-          "NORMAL",
+          //convertDateFormat(new Date().toISOString().split("T")[0]),
+          parseInt(tranNo),
+          parseInt(farmerId),
+          farmerValues.surveyNo,
+          parseInt(farmerValues.cluster),
+          parseInt(farmerValues.village),
+          parseInt(farmerValues.plotNo),
+          parseInt(farmerValues.irrigationSource),
+          parseInt(farmerValues.soilType),
+          farmerValues.cultivationType,
+          farmerValues.drainage,
+          farmerValues.previousCrop,
+          //farmerValues.cropsToBeGrown,
+          //convertDateFormat(new Date().toISOString().split("T")[0]),
+          //convertDateFormat(farmerValues.dtOfSampling),
+          //convertDateFormat(farmerValues.dtOfSamplingReceipt),
           parseInt(farmerValues.test),
-        ]
+          parseInt(farmerValues.area),
+          parseInt(farmerValues.area),
+          //parseInt(tempNo),
+        ].map((value, index) => {
+          if (isNaN(value) && typeof value !== "string") {
+            throw new Error(
+              `Invalid value "${value}" at index ${
+                index + 1
+              }. Expected a number.`
+            );
+          }
+          return value;
+          // excelColor(values)
+        })
       );
-    });
-    let tran_tail;
-    const parameterValuesArray = Object.keys(parameterValues);
-    parameterValuesArray.map(async (key) => {
-      tran_tail = await connection.execute(
-        `INSERT INTO gsmagri.sw_tran_tail (
+
+      let suggestion_tail;
+      suggestions_all.map(async (suggestion) => {
+        suggestion_tail = await connection.execute(
+          `INSERT INTO gsmagri.sw_suggestion_tail (
           lab_tran_no,
-          parameter_id,
-          test_method,
-          result_value,
-          parameter_id_slno,
-          print_flag,
+          suggestion_id,
+          suggestion_name_value,
+          type_of_suggestion,
           test_cd
       ) VALUES (
           :v0,
           :v1,
-          'NONE',
+          :v2,
           :v3,
-          NULL,
-          :v5,
-          :v6
+          :v4
       )`,
-        [
-          tranNo,
-          parseInt(key),
-          parseInt(parameterValues[key]),
-          "Y",
-          parseInt(farmerValues.test),
-        ]
-      );
-    });
-    let recommendation_tran;
-    // let value = null;
-    // const comb_cd = Object.keys(final_calc);
-    // comb_cd.map(async (comb) => {
-    //   const season_cd = Object.keys(final_calc[comb]);
-    //   season_cd.map(async (season) => {
-    //     const product_cd = Object.keys(final_calc[comb][season]);
-    //     product_cd.map(async (product) => {
-    //       const group_cd_all = await connection.execute(
-    //         `SELECT DISTINCT GROUP_CD FROM GSMAGRI.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
-    //         [product]
-    //       );
-    //       const unit_id_all = await connection.execute(
-    //         `SELECT DISTINCT UNIT_NAME FROM GSMAGRI.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
-    //         [product]
-    //       );
-    //       const unit_value_all = await connection.execute(
-    //         `SELECT DISTINCT UNIT_VALUE FROM GSMAGRI.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
-    //         [product]
-    //       );
-    //       const group_cd = group_cd_all.rows;
-    //       const unit_id = unit_id_all.rows;
-    //       const unit_value = unit_value_all.rows;
+          [
+            tranNo,
+            suggestion.SUGGESTION_ID,
+            suggestion.SUGGESTION_NAME,
+            "NORMAL",
+            parseInt(farmerValues.test),
+          ]
+        );
+      });
+      let tran_tail;
+      const parameterValuesArray = Object.keys(parameterValues);
+      parameterValuesArray.map(async (key) => {
+        tran_tail = await connection.execute(
+          `INSERT INTO gsmagri.sw_tran_tail (
+            lab_tran_no,
+            parameter_id,
+            test_method,
+            result_value,
+            parameter_id_slno,
+            print_flag,
+            test_cd
+        ) VALUES (
+            :v0,
+            :v1,
+            'NONE',
+            :v3,
+            NULL,
+            :v5,
+            :v6
+        )`,
+          [
+            tranNo,
+            parseInt(key),
+            parseInt(parameterValues[key]),
+            "Y",
+            parseInt(farmerValues.test),
+          ]
+        );
+      });
+      const promises = [];
 
-    //       const ta_cd = Object.keys(final_calc[comb][season][product]);
+      const comb_cd = Object.keys(final_calc);
+      comb_cd.forEach((comb) => {
+        const season_cd = Object.keys(final_calc[comb]);
+        season_cd.forEach((season) => {
+          const product_cd = Object.keys(final_calc[comb][season]);
+          product_cd.forEach((product) => {
+            const ta_cd = Object.keys(final_calc[comb][season][product]);
+            let value;
+            if (comb == 12) {
+              value = parseInt(final_calc[comb][season][product][1]);
+            } else {
+              value = parseInt(final_calc[comb][season][product][0]);
+            }
 
-    //       ta_cd.map(async (ta) => {
-    //         value = parseInt(final_calc[comb][season][product][ta]);
-    //         // console.log(group_cd, unit_id, unit_value, product, comb, value);
-    //         recommendation_tran = await connection.execute(
-    //           `INSERT INTO gsmagri.sw_recommendation_tran (
-    //           lab_tran_no,
-    //           tran_date,
-    //           sw_group_cd,
-    //           sw_product_cd,
-    //           combine_cd,
-    //           product_value,
-    //           option_value,
-    //           ref_sw_product_cd,
-    //           unit_value,
-    //           unit_id,
-    //           value_in_bags,
-    //           convert_unit_name,
-    //           test_cd
-    //       ) VALUES (
-    //           :v0,
-    //           SYSDATE,
-    //           :v2,
-    //           :v3,
-    //           :v4,
-    //           :v5,
-    //           NULL,
-    //           NULL,
-    //           NULL,
-    //           1,
-    //           NULL,
-    //           NULL,
-    //           :v12
-    //       )`,
-    //           [
-    //             tranNo,
-    //             parseInt(group_cd[0].GROUP_CD),
-    //             parseInt(product),
-    //             parseInt(comb),
-    //             parseInt(value),
-    //             // parseInt(unit_value[0].UNIT_VALUE),
-    //             parseInt(farmerValues.test),
-    //           ]
-    //         );
-    //       });
-    //     });
-    //   });
-    // });
-    // console.log(recommendation_tran);
-    // Define an array to store all the promises
-    const promises = [];
+            const group_cd_all = connection.execute(
+              `SELECT DISTINCT GROUP_CD FROM GSMAGRI.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
+              [product]
+            );
+            const unit_id_all = connection.execute(
+              `SELECT DISTINCT UNIT_NAME FROM GSMAGRI.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
+              [product]
+            );
+            const unit_value_all = connection.execute(
+              `SELECT DISTINCT UNIT_VALUE FROM GSMAGRI.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
+              [product]
+            );
 
-    const comb_cd = Object.keys(final_calc);
-    comb_cd.forEach((comb) => {
-      const season_cd = Object.keys(final_calc[comb]);
-      season_cd.forEach((season) => {
-        const product_cd = Object.keys(final_calc[comb][season]);
-        product_cd.forEach((product) => {
-          const ta_cd = Object.keys(final_calc[comb][season][product]);
-          let value;
-          if (comb == 12) {
-            value = parseInt(final_calc[comb][season][product][1]);
-          } else {
-            value = parseInt(final_calc[comb][season][product][0]);
-          }
+            // Push each promise to the promises array
+            promises.push(
+              Promise.all([group_cd_all, unit_id_all, unit_value_all]).then(
+                ([
+                  group_cd_all_result,
+                  unit_id_all_result,
+                  unit_value_all_result,
+                ]) => {
+                  const group_cd = group_cd_all_result.rows;
+                  const unit_id = unit_id_all_result.rows;
+                  const unit_value = unit_value_all_result.rows;
 
-          const group_cd_all = connection.execute(
-            `SELECT DISTINCT GROUP_CD FROM GSMAGRI.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
-            [product]
-          );
-          const unit_id_all = connection.execute(
-            `SELECT DISTINCT UNIT_NAME FROM GSMAGRI.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
-            [product]
-          );
-          const unit_value_all = connection.execute(
-            `SELECT DISTINCT UNIT_VALUE FROM GSMAGRI.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
-            [product]
-          );
-
-          // Push each promise to the promises array
-          promises.push(
-            Promise.all([group_cd_all, unit_id_all, unit_value_all]).then(
-              ([
-                group_cd_all_result,
-                unit_id_all_result,
-                unit_value_all_result,
-              ]) => {
-                const group_cd = group_cd_all_result.rows;
-                const unit_id = unit_id_all_result.rows;
-                const unit_value = unit_value_all_result.rows;
-
-                return connection.execute(
-                  `INSERT INTO gsmagri.sw_recommendation_tran (
+                  return connection.execute(
+                    `INSERT INTO gsmagri.sw_recommendation_tran (
                   lab_tran_no,
                   tran_date,
                   sw_group_cd,
@@ -837,33 +771,36 @@ app.post("/values", async (req, res) => {
                   NULL,
                   :v12
               )`,
-                  [
-                    tranNo,
-                    parseInt(group_cd[0].GROUP_CD),
-                    parseInt(product),
-                    parseInt(comb),
-                    parseInt(value),
-                    (unit_value[0] && parseInt(unit_value[0].UNIT_VALUE)) ||
-                      null,
-                    parseInt(farmerValues.test),
-                  ]
-                );
-              }
-            )
-          );
+                    [
+                      tranNo,
+                      parseInt(group_cd[0].GROUP_CD),
+                      parseInt(product),
+                      parseInt(comb),
+                      parseInt(value),
+                      (unit_value[0] && parseInt(unit_value[0].UNIT_VALUE)) ||
+                        null,
+                      parseInt(farmerValues.test),
+                    ]
+                  );
+                }
+              )
+            );
+          });
         });
       });
-    });
 
-    // Wait for all promises to resolve
-    Promise.all(promises)
-      .then(async (recommendation_tran_results) => {
-        // console.log(recommendation_tran_results);
-        await connection.execute("COMMIT");
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+      // Wait for all promises to resolve
+      Promise.all(promises)
+        .then(async (recommendation_tran_results) => {
+          // console.log(recommendation_tran_results);
+          await connection.execute("COMMIT");
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    };
+
+    let recommendation_tran;
 
     // // res.sendFile("output.xlsx", { root: __dirname }, (err) => {
     // //   if (err) {
@@ -872,6 +809,29 @@ app.post("/values", async (req, res) => {
     // //     return;
     // //   }
     // // });
+    if (lab_tran_all.rows.length > 0) {
+      const tran_head_del = await connection.execute(
+        `DELETE FROM GSMAGRI.SW_TRAN_HEAD WHERE LAB_TRAN_NO = :labNo`,
+        [tranNo]
+      );
+      const tran_tail_del = await connection.execute(
+        `DELETE FROM GSMAGRI.SW_TRAN_TAIL WHERE LAB_TRAN_NO = :labNo`,
+        [tranNo]
+      );
+      const suggetion_tail_del = await connection.execute(
+        `DELETE FROM GSMAGRI.SW_SUGGESTION_TAIL WHERE LAB_TRAN_NO = :labNo`,
+        [tranNo]
+      );
+      const recomm_tail_del = await connection.execute(
+        `DELETE FROM GSMAGRI.SW_RECOMMENDATION_TRAN WHERE LAB_TRAN_NO= :labNo`,
+        [tranNo]
+      );
+      console.log(tran_head_del);
+      updateTables();
+    } else {
+      updateTables();
+    }
+    res.json({ status: "success" });
   } catch (error) {
     console.log(error);
   }
@@ -923,6 +883,17 @@ app.post("/npk", async (req, res) => {
   }
 });
 
+app.post("/checkLabTran", async (req, res) => {
+  const { labNo } = req.body;
+  const connection = await dbConnection;
+
+  const lab_tran_all = await connection.execute(
+    `SELECT DISTINCT LAB_TRAN_NO FROM GSMAGRI.SW_RECOMMENDATION_TRAN WHERE LAB_TRAN_NO = :labNo`,
+    [labNo]
+  );
+  console.log(lab_tran_all.rows);
+  res.json(lab_tran_all.rows).status(200);
+});
 const get_yields = async () => {
   const connection = await dbConnection;
   const yield_target_all = await connection.execute(

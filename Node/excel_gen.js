@@ -245,7 +245,7 @@ function reportGen(
 
   //labNo and date of report
   ws.cell(9, 1, 9, 2, true).string("Lab No.").style(h2);
-  ws.cell(9, 3, 9, 5, true).number(values.values.labNo[0].LAB_TRAN).style(text);
+  ws.cell(9, 3, 9, 5, true).number(values.values.labNo).style(text);
   ws.cell(9, 6, 9, 8, true).string("Date Of Report").style(h2);
   const today = new Date();
   const year = today.getFullYear();
@@ -644,6 +644,7 @@ function reportGen(
     });
   }
   writeBack();
+  return true;
 }
 
 module.exports = { reportGen };

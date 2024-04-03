@@ -4,6 +4,16 @@ import { useNavigate } from "react-router-dom";
 import { EditIcon } from "@chakra-ui/icons";
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { useDisclosure } from "@chakra-ui/react";
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+} from "@chakra-ui/react";
 function Form() {
   const location = useLocation();
   const [newErrors, setErrors] = useState({});
@@ -48,6 +58,9 @@ function Form() {
     village: "",
     labNo: "",
   });
+  const [testEx, setestEx] = useState(false);
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const localDataPush = () => {
     const locals = {
       values: values,
@@ -94,6 +107,7 @@ function Form() {
           setSurveyNo(parsedData.surveyNo);
           setwatVar(parsedData.watVar);
           setSoilVar(parsedData.soilVar);
+          console.log(parsedData);
           // fetchInit();
           // fetchFarmerInfo(parsedData.values.farmerId);
           // fetchClusterInfo(parsedData.values.farmerId);
@@ -171,6 +185,14 @@ function Form() {
       });
   };
 
+  useEffect(() => {
+    if (sessionStorage.getItem("editLabTran") !== null) {
+      const labNo = JSON.parse(sessionStorage.getItem("editLabTran"));
+      setforUpd(labNo);
+      // setValues({ ...values, labNo: labNo });
+      // showingData();
+    }
+  }, []);
   const fetchInit = () => {
     try {
       fetch("http://localhost:5000/init", {
@@ -211,8 +233,12 @@ function Form() {
         setIrrigationSources(data.irrigation_types);
         setSoilTypes(data.soil_types);
         setPreviousCrop(data.previous_crop);
-        setLabTran(data.tran_nos);
-        setValues({ ...values, labNo: data.tran_nos });
+        setLabTran(data.tran_nos[0].LAB_TRAN);
+        if (forUpd) {
+          setValues({ ...values, labNo: forUpd });
+        } else {
+          setValues({ ...values, labNo: data.tran_nos[0].LAB_TRAN });
+        }
         console.log(data);
       });
   };
@@ -235,7 +261,6 @@ function Form() {
       console.error(e);
     }
   };
-
   const fetchVillageInfo = (farmerId, clusterCd) => {
     try {
       fetch("http://localhost:5000/villageInfo", {
@@ -279,7 +304,7 @@ function Form() {
       console.error(e);
     }
   };
-
+  let [forUpd, setforUpd] = useState("");
   const navigate = useNavigate();
   const o = {
     marginTop: "2vh",
@@ -474,11 +499,87 @@ function Form() {
             </Select>
           </div>
           <div className="item litspace">
-            <label className="mLabel" htmlFor="labNo">
-              Lab No:{labTran && labTran.map((item) => item.LAB_TRAN)}
-            </label>
-            {newErrors.labNo && <div className="error">{newErrors.labNo}</div>}
+            <Modal isOpen={isOpen} onClose={onClose}>
+              <ModalOverlay />
+              <ModalContent>
+                <ModalHeader>Update</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                  <label className="mLabel" htmlFor="labNo">
+                    Lab No:
+                  </label>
+                  <Input
+                    onChange={(e) => {
+                      const labNo = e.target.value;
+                      setforUpd(labNo);
+                    }}
+                    value={forUpd}
+                    type="number"
+                    id="labNo"
+                    size="sm"
+                    style={{ width: "10vh" }}
+                  ></Input>
+                </ModalBody>
+                <ModalFooter>
+                  {!testEx && (
+                    <Button
+                      colorScheme="blue"
+                      mr={3}
+                      onClick={() => {
+                        console.log("Test Clicked");
+                        fetch("http://localhost:5000/checkLabTran", {
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
+                          body: JSON.stringify({ labNo: forUpd }),
+                        })
+                          .then((res) => {
+                            if (res.status !== 200) {
+                              alert("No such lab number found");
+                            } else if (res.status === 200) {
+                              alert("Lab number found");
+                              sessionStorage.setItem(
+                                "editLabTran",
+                                JSON.stringify(parseInt(forUpd))
+                              );
+                              setestEx(true);
+                              sessionStorage.removeItem("values");
+                              sessionStorage.removeItem("forParams");
+                              sessionStorage.removeItem("result");
+                              // sessionStorage.removeItem("local");
+                              sessionStorage.removeItem("reset");
+                              sessionStorage.removeItem("sandr");
+                              sessionStorage.removeItem("combined");
+                              sessionStorage.removeItem("paramValues");
+                              window.location.reload();
+                              onClose();
+                            }
+                          })
+                          .then((data) => {});
+                      }}
+                    >
+                      Test
+                    </Button>
+                  )}
+                </ModalFooter>
+              </ModalContent>
+            </Modal>
+            {forUpd ? (
+              <>
+                <label className="mLabel" htmlFor="labNo">
+                  Lab No:{forUpd}
+                </label>
+              </>
+            ) : (
+              <>
+                <label className="mLabel" htmlFor="labNo">
+                  Lab No:{labTran}
+                </label>
+              </>
+            )}
           </div>
+
           <div className="item litspace">
             <label className="mLabel" htmlFor="HEWFno">
               HEWF no.
@@ -494,6 +595,29 @@ function Form() {
               size="sm"
               style={{ width: "10vh" }}
             ></Input>
+            <Button
+              color="CCE5FF"
+              background="#ffffff"
+              size="sm"
+              onClick={() => {
+                if (forUpd) {
+                  sessionStorage.removeItem("editLabTran");
+                  sessionStorage.removeItem("values");
+                  sessionStorage.removeItem("forParams");
+                  sessionStorage.removeItem("result");
+                  sessionStorage.removeItem("local");
+                  sessionStorage.removeItem("reset");
+                  sessionStorage.removeItem("sandr");
+                  sessionStorage.removeItem("combined");
+                  sessionStorage.removeItem("paramValues");
+                  window.location.reload();
+                } else {
+                  onOpen();
+                }
+              }}
+            >
+              {forUpd ? "Create New" : "Update Existing"}
+            </Button>
           </div>
         </div>
         <div className="common">
@@ -883,6 +1007,10 @@ function Form() {
           onClick={() => {
             const obj = newErrors;
             console.log(obj);
+
+            // if (forUpd) {
+            //   setValues({ ...values, labNo: forUpd });
+            // }
             if (validate()) {
               navigate("/resultentry");
               sessionPush();
@@ -909,6 +1037,7 @@ function Form() {
                 sessionStorage.removeItem("sandr");
                 sessionStorage.removeItem("combined");
                 sessionStorage.removeItem("paramValues");
+                sessionStorage.removeItem("editLabTran");
                 window.location.reload();
               }
             }}

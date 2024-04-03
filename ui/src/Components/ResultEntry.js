@@ -75,43 +75,44 @@ function ResultEntry() {
         body: JSON.stringify(com),
       })
         .then((response) => response.json())
-        .then(() => {});
-    } catch (error) {
-      console.log(error);
-    }
-
-    fetch("http://localhost:5000/combined", {
-      method: "GET",
-      headers: {
-        Accept: "application/pdf",
-      },
-      responseType: "arraybuffer",
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.arrayBuffer();
-      })
-      .then((arrayBuffer) => {
-        const blob = new Blob([arrayBuffer], { type: "application/pdf" });
-        const blobUrl = URL.createObjectURL(blob);
-        setPdf(blobUrl);
-      })
-      .catch((error) => {
-        console.error("There was a problem with the fetch operation:", error);
-      });
-    try {
-      fetch("http://localhost:5000/getValues")
-        .then((response) => {
-          response.json();
-        })
-        .then((data) => {
-          console.log(data);
+        .then(() => {
+          try {
+            fetch("http://localhost:5000/getValues")
+              .then((response) => {
+                response.json();
+              })
+              .then((data) => {
+                console.log(data);
+              });
+          } catch (error) {
+            console.log(error);
+          }
         });
     } catch (error) {
       console.log(error);
     }
+
+    // fetch("http://localhost:5000/combined", {
+    //   method: "GET",
+    //   headers: {
+    //     Accept: "application/pdf",
+    //   },
+    //   responseType: "arraybuffer",
+    // })
+    //   .then((response) => {
+    //     if (!response.ok) {
+    //       throw new Error("Network response was not ok");
+    //     }
+    //     return response.arrayBuffer();
+    //   })
+    //   .then((arrayBuffer) => {
+    //     const blob = new Blob([arrayBuffer], { type: "application/pdf" });
+    //     const blobUrl = URL.createObjectURL(blob);
+    //     setPdf(blobUrl);
+    //   })
+    //   .catch((error) => {
+    //     console.error("There was a problem with the fetch operation:", error);
+    //   });
   };
   const setin = sessionStorage.getItem("paramValues");
   useEffect(() => {

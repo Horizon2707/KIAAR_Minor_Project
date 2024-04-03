@@ -150,6 +150,13 @@ Content-Type: application/json
 ###b NPK
 POST http://localhost:5000/npk
 Content-Type: application/json
+### Lab tran edit
+POST http://localhost:5000/checkLabTran
+Content-Type: application/json
+
+{   
+   "labNo": 12407
+}
 ### Login 
 POST http://localhost:5000/login
 Content-Type: application/json
