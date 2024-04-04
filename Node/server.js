@@ -862,7 +862,7 @@ app.get("/getValues", async (req, res) => {
     crop_season_cd
   );
   if (excelBuffer) {
-    console.log("buffer generated");
+    // console.log("buffer generated");
 
     res.send(excelBuffer);
   } else {

@@ -633,18 +633,20 @@ async function reportGen(
   //   fs.writeFileSync("converted.pdf", Buffer.from(buffer));
   //   await instance.close();
   // };
-  console.log("before write back");
+  final_calc[12] = nutrients;
+  // console.log("before write back");
   const buffer = await wb.writeToBuffer();
 
-  wb.write("output.xlsx", (err, stats) => {
-    if (err) {
-      console.error(err);
-    } else {
-      console.log("Excel file created successfully!");
-      return true;
-      // convertToPdf();
-    }
-  });
+  // wb.write("output.xlsx", (err, stats) => {
+  //   if (err) {
+  //     console.error(err);
+  //   } else {
+  //     console.log("Excel file created successfully!");
+  //     return true;
+  //     // convertToPdf();
+  //   }
+  // });
+
   return buffer;
 }
 
