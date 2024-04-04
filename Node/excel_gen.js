@@ -12,7 +12,7 @@ const ExcelJS = require("exceljs");
 const PDFDocument = require("pdfkit");
 // 😊
 // Add data to cell A1
-function reportGen(
+async function reportGen(
   values,
   parameter_names,
   farmerInformation,
@@ -424,7 +424,7 @@ function reportGen(
       x = x + 3;
     });
     i++;
-    console.log(`Values for code ${code}:`, valuesForCode);
+    // console.log(`Values for code ${code}:`, valuesForCode);
   });
   ws.cell(i, 1, i, 12, true)
     .string("Recommended dose of straight and complext fertilizers (kg/acre)")
@@ -633,18 +633,19 @@ function reportGen(
   //   fs.writeFileSync("converted.pdf", Buffer.from(buffer));
   //   await instance.close();
   // };
-  function writeBack() {
-    wb.write("output.xlsx", (err, stats) => {
-      if (err) {
-        console.error(err);
-      } else {
-        console.log("Excel file created successfully!");
-        // convertToPdf();
-      }
-    });
-  }
-  writeBack();
-  return true;
+  console.log("before write back");
+  const buffer = await wb.writeToBuffer();
+
+  wb.write("output.xlsx", (err, stats) => {
+    if (err) {
+      console.error(err);
+    } else {
+      console.log("Excel file created successfully!");
+      return true;
+      // convertToPdf();
+    }
+  });
+  return buffer;
 }
 
 module.exports = { reportGen };

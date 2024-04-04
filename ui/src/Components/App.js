@@ -40,7 +40,7 @@ function App() {
             element={user ? <ResultEntry /> : <Navigate to="/" replace />}
           />
           <Route path="*" element={<NotDefined />} />
-          <Route
+          {/* <Route
             path="/pdfviewer"
             element={
               user ? (
@@ -49,7 +49,7 @@ function App() {
                 <Navigate to="/" replace />
               )
             }
-          />
+          /> */}
         </Routes>
       </Router>
     </div>

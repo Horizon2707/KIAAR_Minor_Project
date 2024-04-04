@@ -4,10 +4,8 @@ import "../Styles/ResultEntry.css";
 import { Button } from "@chakra-ui/react";
 import { Checkbox } from "@chakra-ui/react";
 import { Textarea } from "@chakra-ui/react";
-// import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";
-// import { Viewer } from "@react-pdf-viewer/core";
-// import { Worker } from "@react-pdf-viewer/core";
+
 import {
   Tabs,
   TabList,
@@ -29,6 +27,7 @@ import {
   TableContainer,
 } from "@chakra-ui/react";
 import { useRef } from "react";
+import PdfViewerComponent from "./PdfViewerComponent";
 function ResultEntry() {
   const alertRef = useRef(null);
   const [pdf, setPdf] = useState();
@@ -45,10 +44,10 @@ function ResultEntry() {
   const [finalRemarks, setFinalRemarks] = useState("");
   let values = sessionStorage.getItem("values");
   let local = sessionStorage.getItem("local");
+
   values = JSON.parse(values);
   local = JSON.parse(local);
   const [missing, setMissing] = useState(false);
-  // const defaultLayoutPluginInstance = defaultLayoutPlugin();
   const scrollToAlert = () => {
     if (alertRef.current) {
       alertRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -77,12 +76,37 @@ function ResultEntry() {
         .then((response) => response.json())
         .then(() => {
           try {
-            fetch("http://localhost:5000/getValues")
+            // fetch("http://localhost:5000/getValues")
+            //   .then((response) => {
+            //     return response.arrayBuffer();
+            //   })
+            //   .then((buffer) => {
+            //     console.log(buffer);
+            //     // navigate("/pdfviewer", { state: { excel: buffer } });
+            //   });
+            fetch("http://localhost:5000/getValues", {
+              method: "GET",
+              responseType: "arraybuffer",
+            })
               .then((response) => {
-                response.json();
+                if (!response.ok) {
+                  throw new Error("Network response was not ok");
+                }
+                return response.arrayBuffer();
               })
-              .then((data) => {
-                console.log(data);
+              .then((arrayBuffer) => {
+                const blob = new Blob([arrayBuffer], {
+                  type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                });
+                // navigate("/pdfviewer", { state: { excel: blob } });
+                const blobUrl = URL.createObjectURL(blob);
+                setPdf(blobUrl);
+              })
+              .catch((error) => {
+                console.error(
+                  "There was a problem with the fetch operation:",
+                  error
+                );
               });
           } catch (error) {
             console.log(error);
@@ -91,28 +115,6 @@ function ResultEntry() {
     } catch (error) {
       console.log(error);
     }
-
-    // fetch("http://localhost:5000/combined", {
-    //   method: "GET",
-    //   headers: {
-    //     Accept: "application/pdf",
-    //   },
-    //   responseType: "arraybuffer",
-    // })
-    //   .then((response) => {
-    //     if (!response.ok) {
-    //       throw new Error("Network response was not ok");
-    //     }
-    //     return response.arrayBuffer();
-    //   })
-    //   .then((arrayBuffer) => {
-    //     const blob = new Blob([arrayBuffer], { type: "application/pdf" });
-    //     const blobUrl = URL.createObjectURL(blob);
-    //     setPdf(blobUrl);
-    //   })
-    //   .catch((error) => {
-    //     console.error("There was a problem with the fetch operation:", error);
-    //   });
   };
   const setin = sessionStorage.getItem("paramValues");
   useEffect(() => {
@@ -210,15 +212,7 @@ function ResultEntry() {
             <AlertIcon />
             Data uploaded to the server.
           </Alert>
-          {pdf && (
-            // <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-            //   <Viewer
-            //     plugins={[defaultLayoutPluginInstance]}
-            //     fileUrl={pdf}
-            //   ></Viewer>
-            // </Worker>
-            <></>
-          )}
+          <PdfViewerComponent document={pdf} />
         </>
       )}
       {!toggle && (
@@ -274,9 +268,6 @@ function ResultEntry() {
                   <TableContainer>
                     <Table size="sm" variant="simple">
                       <Thead>
-                        {/* <Tr>
-                          <Th>Parameters</Th>
-                        </Tr> */}
                         <Tr>
                           <Th>Test Result</Th>
                           <Th>Input</Th>
@@ -482,7 +473,6 @@ function ResultEntry() {
                   setalertTog(true);
                   setMissing(false);
                   postData();
-                  navigate("/pdfviewer");
                 } else {
                   setMissing(true);
                   scrollToAlert();

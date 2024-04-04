@@ -3,9 +3,9 @@ oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;
 async function connectToDatabase() {
   try {
     const connection = await oracledb.getConnection({
-      user: "geoapp",
-      password: "geoapp111",
-      connectString: "192.168.5.20/gsmkk",
+      user: "GSMAGRI",
+      password: "gsmagri",
+      connectString: "localhost/kiaarpdb",
     });
     console.log("Connected to Oracle Database");
     return connection;

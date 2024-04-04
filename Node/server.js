@@ -847,7 +847,8 @@ app.get("/getValues", async (req, res) => {
   const cdtonames = await codeToName();
   const { combination_cd, product_cd, time_apply_cd, crop_season_cd } =
     await combination_cds();
-  reportGen(
+  console.log("This is before");
+  const excelBuffer = await reportGen(
     values_all,
     parameter_names,
     farmerInformation,
@@ -860,6 +861,15 @@ app.get("/getValues", async (req, res) => {
     time_apply_cd,
     crop_season_cd
   );
+  if (excelBuffer) {
+    console.log("buffer generated");
+
+    res.send(excelBuffer);
+  } else {
+    console.log("buffer not generated");
+  }
+  // console.log("This is After", status);
+
   // res.json(response_obj);
 });
 app.post("/yield_target", async (req, res) => {
