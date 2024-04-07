@@ -2,7 +2,7 @@ import "../Styles/Form.css";
 import { Select, Input, Button } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { EditIcon } from "@chakra-ui/icons";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { useDisclosure } from "@chakra-ui/react";
 import {
@@ -15,6 +15,7 @@ import {
   ModalCloseButton,
 } from "@chakra-ui/react";
 function Form() {
+  let ref = useRef();
   const location = useLocation();
   const [newErrors, setErrors] = useState({});
   const [wild, setWild] = useState([]);
@@ -49,7 +50,7 @@ function Form() {
     dtOfSamplingReceipt: new Date().toISOString().split("T")[0],
     templateNo: [],
     HEWFno: "",
-    area: 0,
+    area: "",
   });
   const [farmInfo, setfarmInfo] = useState({
     name: "",
@@ -144,9 +145,11 @@ function Form() {
   const [watVar, setwatVar] = useState(true);
   const [soilVar, setSoilVar] = useState(true);
 
-  let sessionPush = () => {
-    setValues({ ...values, area: plotArea });
-    sessionStorage.setItem("values", JSON.stringify(values));
+  let sessionPush = async () => {
+    await new Promise((resolve) => {
+      sessionStorage.setItem("values", JSON.stringify(values));
+      resolve();
+    });
     console.log(values);
   };
   const fetchPlotarea = (plotNo, farmerId, villageCd) => {
@@ -164,6 +167,9 @@ function Form() {
       .then((res) => res.json())
       .then((data) => {
         setPlotArea(data);
+      })
+      .then(() => {
+        ref.current.value = plotArea;
       });
   };
 
@@ -547,7 +553,6 @@ function Form() {
                               sessionStorage.removeItem("values");
                               sessionStorage.removeItem("forParams");
                               sessionStorage.removeItem("result");
-                              // sessionStorage.removeItem("local");
                               sessionStorage.removeItem("reset");
                               sessionStorage.removeItem("sandr");
                               sessionStorage.removeItem("combined");
@@ -776,6 +781,7 @@ function Form() {
               htmlSize={3}
               variant="filled"
               id="area"
+              ref={ref}
               value={plotArea}
               disabled={isDisabled}
               onChange={(e) => {
@@ -1007,10 +1013,6 @@ function Form() {
           onClick={() => {
             const obj = newErrors;
             console.log(obj);
-
-            // if (forUpd) {
-            //   setValues({ ...values, labNo: forUpd });
-            // }
             if (validate()) {
               navigate("/resultentry");
               sessionPush();

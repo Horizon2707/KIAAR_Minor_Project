@@ -27,39 +27,23 @@ const CFaLock = chakra(FaLock);
 function Sign() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [nameError, setNameError] = useState("");
-  const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [successAlert, setSuccessAlert] = useState(false);
-
-  const validateEmail = (email) => {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email);
-  };
 
   const handleSignup = async (event) => {
     event.preventDefault();
     try {
       // Reset previous errors
       setNameError("");
-      setEmailError("");
       setPasswordError("");
 
       // Validation
-      if (!fullName.trim()) {
-        setNameError("Full name cannot be empty");
-        return;
-      }
-
-      if (!email.trim()) {
-        setEmailError("Email cannot be empty");
-        return;
-      } else if (!validateEmail(email.trim())) {
-        setEmailError("Email is not valid");
+      if (!username.trim()) {
+        setNameError("Username cannot be empty");
         return;
       }
 
@@ -80,7 +64,7 @@ function Sign() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ fullName, email, password }),
+        body: JSON.stringify({ username, password }),
       });
 
       if (!response.ok) {
@@ -136,38 +120,16 @@ function Sign() {
                     />
                     <Input
                       type="text"
-                      placeholder="Full Name"
-                      value={fullName}
+                      placeholder="Username"
+                      value={username}
                       onChange={(e) => {
-                        setFullName(e.target.value);
+                        setUsername(e.target.value);
                         setNameError("");
                       }}
                     />
                   </InputGroup>
                   {nameError && (
                     <FormHelperText color="red.500">{nameError}</FormHelperText>
-                  )}
-                </FormControl>
-                <FormControl>
-                  <InputGroup>
-                    <InputLeftElement
-                      pointerEvents="none"
-                      children={<CFaUserAlt color="gray.300" />}
-                    />
-                    <Input
-                      type="email"
-                      placeholder="Email"
-                      value={email}
-                      onChange={(e) => {
-                        setEmail(e.target.value);
-                        setEmailError("");
-                      }}
-                    />
-                  </InputGroup>
-                  {emailError && (
-                    <FormHelperText color="red.500">
-                      {emailError}
-                    </FormHelperText>
                   )}
                 </FormControl>
                 <FormControl>

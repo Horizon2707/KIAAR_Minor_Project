@@ -9,6 +9,7 @@ const { final_calc } = require("./calc.js");
 const dbConnection = require("./dbconnect.js");
 const { reportGen } = require("./excel_gen.js");
 const fs = require("fs");
+const { formatWithOptions } = require("util");
 
 oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;
 
@@ -64,7 +65,37 @@ function convertDateFormat(dateStr) {
 
   console.log(formattedDate);
 }
+function formatDate(date) {
+  const months = [
+    "JAN",
+    "FEB",
+    "MAR",
+    "APR",
+    "MAY",
+    "JUN",
+    "JUL",
+    "AUG",
+    "SEP",
+    "OCT",
+    "NOV",
+    "DEC",
+  ];
+  const day = date.getDate();
+  const month = months[date.getMonth()];
+  const year = date.getFullYear();
+  return `${day}-${month}-${year}`;
+}
+function formatDateAlt(originalDate) {
+  const dateParts = originalDate.split("-");
+  const year = dateParts[0];
+  const month = new Date(originalDate)
+    .toLocaleString("default", { month: "short" })
+    .toUpperCase();
+  const day = dateParts[2];
 
+  return `${day}-${month}-${year}`;
+}
+const today = new Date();
 // Example usage:
 
 let farmerValues;
@@ -530,6 +561,7 @@ app.post("/values", async (req, res) => {
     //   // let A_yt = A_obj.TARGET_YIELD;
     //   console.log(A_obj);
     // }
+
     const updateTables = async () => {
       const tran_head = await connection.execute(
         `INSERT INTO GSMAGRI.SW_TRAN_HEAD (
@@ -586,14 +618,14 @@ app.post("/values", async (req, res) => {
           :culType,
           :drainage,
           :prevCrop,
-          'SUNFLOWER',
+          :cropToBeGrown,
           NULL,       
           290,
-          '20-MAR-2024',
+          SYSDATE,
           NULL,       
           NULL,       
-          '20-MAR-2024', 
-          '20-MAR-2024', 
+          :sampling, 
+          :samplingreciept, 
           :testCd,
           :pltArea,
           :gunta,
@@ -624,13 +656,12 @@ app.post("/values", async (req, res) => {
           farmerValues.cultivationType,
           farmerValues.drainage,
           farmerValues.previousCrop,
-          //farmerValues.cropsToBeGrown,
-          //convertDateFormat(new Date().toISOString().split("T")[0]),
-          //convertDateFormat(farmerValues.dtOfSampling),
-          //convertDateFormat(farmerValues.dtOfSamplingReceipt),
+          farmerValues.cropToBeGrown,
+          formatDateAlt(farmerValues.dtOfSampling),
+          formatDateAlt(farmerValues.dtOfSamplingReceipt),
           parseInt(farmerValues.test),
-          parseInt(farmerValues.area),
-          parseInt(farmerValues.area),
+          parseInt(local.plotArea),
+          parseInt(local.plotArea),
           //parseInt(tempNo),
         ].map((value, index) => {
           if (isNaN(value) && typeof value !== "string") {
@@ -710,12 +741,6 @@ app.post("/values", async (req, res) => {
           product_cd.forEach((product) => {
             const ta_cd = Object.keys(final_calc[comb][season][product]);
             let value;
-            if (comb == 12) {
-              value = parseInt(final_calc[comb][season][product][1]);
-            } else {
-              value = parseInt(final_calc[comb][season][product][0]);
-            }
-
             const group_cd_all = connection.execute(
               `SELECT DISTINCT GROUP_CD FROM GSMAGRI.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
               [product]
@@ -728,63 +753,80 @@ app.post("/values", async (req, res) => {
               `SELECT DISTINCT UNIT_VALUE FROM GSMAGRI.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
               [product]
             );
+            function execute(ta) {
+              promises.push(
+                Promise.all([group_cd_all, unit_id_all, unit_value_all]).then(
+                  ([
+                    group_cd_all_result,
+                    unit_id_all_result,
+                    unit_value_all_result,
+                  ]) => {
+                    const group_cd = group_cd_all_result.rows;
+                    const unit_id = unit_id_all_result.rows;
+                    const unit_value = unit_value_all_result.rows;
+
+                    return connection.execute(
+                      `INSERT INTO gsmagri.sw_recommendation_tran_new (
+                    lab_tran_no,
+                    tran_date,
+                    sw_group_cd,
+                    sw_product_cd,
+                    combine_cd,
+                    product_value,
+                    option_value,
+                    ref_sw_product_cd,
+                    unit_value,
+                    unit_id,
+                    value_in_bags,
+                    convert_unit_name,
+                    test_cd,
+                    crop_season_cd,
+                    recom_apply_time_cd
+                ) VALUES (
+                    :v0,
+                    SYSDATE,
+                    :v2,
+                    :v3,
+                    :v4,
+                    :v5,
+                    NULL,
+                    :v7,
+                    NULL,
+                    1,
+                    NULL,
+                    NULL,
+                    :v12,
+                    :v13,
+                    :v14
+                )`,
+                      [
+                        tranNo,
+                        parseInt(group_cd[0].GROUP_CD),
+                        parseInt(product),
+                        parseInt(comb),
+                        parseInt(value),
+                        (unit_value[0] && parseInt(unit_value[0].UNIT_VALUE)) ||
+                          1,
+                        parseInt(farmerValues.test),
+                        parseInt(season),
+                        parseInt(ta),
+                      ]
+                    );
+                  }
+                )
+              );
+            }
+            if (comb == 12) {
+              value = parseInt(final_calc[comb][season][product][1]);
+              execute(1);
+            } else {
+              ta_cd.forEach((ta) => {
+                value = parseInt(final_calc[comb][season][product][ta]);
+                execute(ta);
+              });
+            }
 
             // Push each promise to the promises array
-            promises.push(
-              Promise.all([group_cd_all, unit_id_all, unit_value_all]).then(
-                ([
-                  group_cd_all_result,
-                  unit_id_all_result,
-                  unit_value_all_result,
-                ]) => {
-                  const group_cd = group_cd_all_result.rows;
-                  const unit_id = unit_id_all_result.rows;
-                  const unit_value = unit_value_all_result.rows;
-
-                  return connection.execute(
-                    `INSERT INTO gsmagri.sw_recommendation_tran (
-                  lab_tran_no,
-                  tran_date,
-                  sw_group_cd,
-                  sw_product_cd,
-                  combine_cd,
-                  product_value,
-                  option_value,
-                  ref_sw_product_cd,
-                  unit_value,
-                  unit_id,
-                  value_in_bags,
-                  convert_unit_name,
-                  test_cd
-              ) VALUES (
-                  :v0,
-                  SYSDATE,
-                  :v2,
-                  :v3,
-                  :v4,
-                  :v5,
-                  NULL,
-                  :v7,
-                  NULL,
-                  1,
-                  NULL,
-                  NULL,
-                  :v12
-              )`,
-                    [
-                      tranNo,
-                      parseInt(group_cd[0].GROUP_CD),
-                      parseInt(product),
-                      parseInt(comb),
-                      parseInt(value),
-                      (unit_value[0] && parseInt(unit_value[0].UNIT_VALUE)) ||
-                        null,
-                      parseInt(farmerValues.test),
-                    ]
-                  );
-                }
-              )
-            );
           });
         });
       });
@@ -836,6 +878,7 @@ app.post("/values", async (req, res) => {
     console.log(error);
   }
 });
+
 app.get("/getValues", async (req, res) => {
   const values_all = {
     values: farmerValues,
@@ -848,7 +891,7 @@ app.get("/getValues", async (req, res) => {
   const { combination_cd, product_cd, time_apply_cd, crop_season_cd } =
     await combination_cds();
   console.log("This is before");
-  const excelBuffer = await reportGen(
+  const pdfbuffer = await reportGen(
     values_all,
     parameter_names,
     farmerInformation,
@@ -861,10 +904,10 @@ app.get("/getValues", async (req, res) => {
     time_apply_cd,
     crop_season_cd
   );
-  if (excelBuffer) {
-    // console.log("buffer generated");
+  if (pdfbuffer) {
+    console.log("buffer generated");
 
-    res.send(excelBuffer);
+    res.send(pdfbuffer);
   } else {
     console.log("buffer not generated");
   }
@@ -903,6 +946,47 @@ app.post("/checkLabTran", async (req, res) => {
   );
   console.log(lab_tran_all.rows);
   res.json(lab_tran_all.rows).status(200);
+});
+
+app.get("/season", async (req, res) => {
+  const connection = await dbConnection;
+  const season_all = await connection.execute(
+    `SELECT DISTINCT SEASON_NAME,FROM_DATE,TO_DATE FROM GSMAGRI.SEASON_DIR`
+  );
+  const season = season_all.rows;
+  // console.log(season);
+  const currentDate = new Date();
+
+  // Find the season that matches the current date
+  const currentSeason = season.find(
+    (season) =>
+      currentDate >= new Date(season.FROM_DATE) &&
+      currentDate <= new Date(season.TO_DATE)
+  );
+
+  if (currentSeason) {
+    // Find the index of the current season in the array
+    const currentIndex = season.findIndex((season) => season === currentSeason);
+
+    // Initialize an array to hold the season names
+    const seasonNames = [];
+
+    // Push the name of the current season into the array
+
+    // Push the name of the previous season if it exists
+    if (currentIndex > 0) {
+      seasonNames.push(season[currentIndex - 1].SEASON_NAME);
+    }
+    seasonNames.push(currentSeason.SEASON_NAME);
+    // Push the name of the next season if it exists
+    if (currentIndex < season.length - 1) {
+      seasonNames.push(season[currentIndex + 1].SEASON_NAME);
+    }
+    console.log(seasonNames);
+    res.json(seasonNames);
+  } else {
+    console.log("Current date does not fall within any season.");
+  }
 });
 const get_yields = async () => {
   const connection = await dbConnection;
@@ -1007,26 +1091,29 @@ app.get("/session", isAuthenticated, (req, res) => {
 });
 
 app.post("/login", async (req, res) => {
-  const { email, password } = req.body;
+  const { username, password } = req.body;
   try {
     // db connection
     const connection = await dbConnection;
 
     const user_all = await connection.execute(
-      `SELECT USER_ID,EMAIL,PASSWORD,NAME FROM GSMAGRI.SW_USER_DATA WHERE EMAIL = :email`,
-      [email]
+      `SELECT LOGIN_CD,USER_NAME,PASSORD_ENC FROM GSMAGRI.U_LOGON_DATA WHERE USER_NAME = :username`,
+      [username]
     );
     const user = user_all.rows;
 
     if (user) {
-      const isPasswordValid = await bcrypt.compare(password, user[0].PASSWORD);
+      const isPasswordValid = await bcrypt.compare(
+        password,
+        user[0].PASSORD_ENC
+      );
       console.log(isPasswordValid);
       if (isPasswordValid) {
         req.session.user = req.body;
-        console.log(req.session.user.email);
+        console.log(req.session.user.username);
         return res.status(200).json({
-          email: req.session.user.email,
-          name: user[0].NAME,
+          email: req.session.user.username,
+          login_cd: user[0].LOGIN_CD,
         });
       } else {
         res.status(401).send("Incorrect password");
@@ -1042,25 +1129,83 @@ app.post("/login", async (req, res) => {
 
 app.post("/signUp", async (req, res) => {
   try {
-    const { fullName, email, password } = req.body;
+    const { fullName, username, password } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
-
+    // const max_user_id = await connection.execute(
+    //   `SELECT MAX(LOGIN_CD) FROM U_LOGON_DATA`
+    // );
+    // const max_id = max_user_id.rows;
     const connection = await dbConnection;
     const new_user = await connection.execute(
-      `INSERT INTO gsmagri.sw_user_data (
-      user_id,
-      email,
+      `
+    INSERT INTO gsmagri.u_logon_data (
+      login_cd,
+      user_name,
       password,
-      is_active,
-      name
+      valid_from_date,
+      valid_upto_date,
+      user_type,
+      user_group,
+      counter,
+      user_flag,
+      last_logon_on,
+      last_password1,
+      last_password_on1,
+      last_password2,
+      last_password_on2,
+      last_password3,
+      last_password_on3,
+      last_password4,
+      last_password_on4,
+      last_password5,
+      last_password_on5,
+      date_format,
+      decimal_notation,
+      canvas_color,
+      add_by,
+      add_date,
+      alert_position,
+      member_id,
+      position_cd,
+      user_tag,
+      emp_cd,
+      dept,
+      passord_enc
   ) VALUES (
-      (SELECT MAX(user_id) + 1 FROM gsmagri.sw_user_data),
-      :email,
-      :hashedPassword,
-      1,
-      :name
+    (SELECT MAX(LOGIN_CD) + 1 FROM U_LOGON_DATA),
+      :v1,
+      :v2,
+      :v3,
+      '31-MAR-99',
+      'P',
+      'U',
+      NULL,
+      0,
+      NULL,
+      NULL,
+      NULL,
+      NULL,
+      NULL,
+      NULL,
+      NULL,
+      NULL,
+      NULL,
+      NULL,
+      NULL,
+      'DD-MM-YYYY',
+      NULL,
+      NULL,
+      4,
+      SYSDATE,
+      NULL,
+      NULL,
+      10,
+      'EMPLOYEE',
+      NULL,
+      NULL,
+      :hashed
   )`,
-      [email, hashedPassword, fullName]
+      [username, password, formatDate(today), hashedPassword]
     );
     await connection.execute("COMMIT");
     if (new_user) {

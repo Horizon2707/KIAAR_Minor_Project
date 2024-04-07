@@ -1,15 +1,13 @@
 const excel = require("excel4node");
 const wb = new excel.Workbook();
 const ws = wb.addWorksheet("Report");
-const ws2 = wb.addWorksheet("WOW");
 const { final_calc } = require("./calc.js");
-const fs = require("fs");
-const { load } = require("@pspdfkit/nodejs");
-const path = require("path");
 const libre = require("libreoffice-convert");
+const xlsx = require("xlsx");
+const handlebars = require("handlebars");
+const puppeteer = require("puppeteer");
+const fs = require("fs");
 libre.convertAsync = require("util").promisify(libre.convert);
-const ExcelJS = require("exceljs");
-const PDFDocument = require("pdfkit");
 // 😊
 // Add data to cell A1
 async function reportGen(
@@ -446,49 +444,6 @@ async function reportGen(
   ];
   const season_keys = [1, 2, 3];
 
-  // for (const key in order) {
-  //   if (order.hasOwnProperty(key)) {
-  //     const elements = order[key];
-  //     rearrangedObj[key] = {};
-  //     elements.forEach((element) => {
-  //       rearrangedObj[key][element] = {};
-  //       for (const cKey in final_calc) {
-  //         if (final_calc.hasOwnProperty(cKey)) {
-  //           const cValue = final_calc[cKey];
-  //           if (cValue.hasOwnProperty(element)) {
-  //             rearrangedObj[key][element][cKey] = { ...cValue[element] };
-  //           }
-  //         }
-  //       }
-  //     });
-  //   }
-  // }
-
-  // for (const key in rearrangedObj) {
-  //   if (rearrangedObj.hasOwnProperty(key)) {
-  //     const innerObj = rearrangedObj[key];
-  //     for (const innerKey in innerObj) {
-  //       if (innerObj.hasOwnProperty(innerKey)) {
-  //         const products = innerObj[innerKey];
-  //         for (const product in products) {
-  //           if (products.hasOwnProperty(product)) {
-  //             if (
-  //               final_calc[innerKey] &&
-  //               final_calc[innerKey][product] &&
-  //               order[key]
-  //             ) {
-  //               const time = order[key][product];
-  //               rearrangedObj[key][innerKey][product]["time"] = time;
-  //             }
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
-
-  // console.log(rearrangedObj);
-
   const comb_values = () => {
     try {
       const comb_cd = Object.keys(final_calc);
@@ -581,6 +536,7 @@ async function reportGen(
   ws.cell(i, 10, i, 12, true).string("Quantitiy(kg/acre)").style(h2);
   i++;
   sr = 1;
+
   const micronutrients = (key) => !npk.includes(parseInt(key));
   Object.keys(nutrients[1]).forEach((key) => {
     if (micronutrients(key)) {
@@ -590,64 +546,201 @@ async function reportGen(
         .string(getProductName(parseInt(key)))
         .style(h2);
       ws.cell(i, 10, i, 12, true).number(values[1]).style(h2);
-
       i++;
       sr++;
     }
   });
+  let srNo = 1;
+  const comb_cd = Object.keys(final_calc);
+  const parameterData = parameter_names.map((e) => {
+    if (e.PARAMETER_TYPE === "HEADING") {
+      return {
+        PARAMETER_NAME: e.PARAMETER_NAME,
+        PARAMETER_TYPE: "HEADING",
+      };
+    } else {
+      const paramId = e.PARAMETER_ID.toString();
+      const paramValue =
+        values.paramValues[paramId] !== undefined
+          ? values.paramValues[paramId]
+          : "N/A";
+      const data = {
+        PARAMETER_NAME: e.PARAMETER_NAME.substring(2),
+        PARAMETER_MIN: e.PARAMETER_MIN,
+        PARAMETER_MID: e.PARAMETER_MID,
+        PARAMETER_MAX: e.PARAMETER_MAX,
+        PARAMETER_VALUE: paramValue,
+      };
+      data.srNo = srNo++; // Assign Sr No. and increment
+      return data;
+    }
+  });
 
-  // const convert = async () => {
-  //   const ext = "pdf";
-  //   const inputPath = path.join(__dirname, "/output.xlsx");
-  //   const outputPath = path.join(__dirname, `/report.${ext}`);
+  npk = [27, 28, 29];
+  let npkdata = [];
+  npk.forEach((code) => {
+    let valuesForCode = {};
+    Object.keys(nutrients).forEach((level) => {
+      valuesForCode[level] = nutrients[level][code]["1"];
+    });
+    npkdata.push({
+      npkName: getProductName(code),
+      npkvalues: valuesForCode,
+    });
+  });
 
-  //   const xlsxBuf = await fs.readFile(inputPath);
-  //   let pdfBuf = await libre.convertAsync(xlsxBuf, ext, undefined);
-  //   await fs.writeFile(outputPath, pdfBuf);
+  // const generateTableHeader = (comb_cd) => {
+  //   let entire_name = `<div class='grid-item'><div class='item'>${getCombinationName(
+  //     comb_cd
+  //   )}</div></div><div class='grid-item'><div class='item'>Time Of Application</div>`;
+  //   const season_cd = Object.keys(final_calc[comb_cd]);
+  //   season_cd.forEach((season) => {
+  //     const prod_cd = Object.keys(final_calc[comb_cd][season]);
+  //     prod_cd.forEach((product) => {
+  //       entire_name += `<div class='item'>${getProductName(
+  //         parseInt(product)
+  //       )}</div>`;
+  //     });
+  //   });
+  //   entire_name += `</div>`;
+  //   return new handlebars.SafeString(entire_name);
   // };
-  // const convertToPdf = async () => {
-  //   try {
-  //     const workbook = new ExcelJS.Workbook();
-  //     await workbook.xlsx.readFile("output.xlsx");
-  //     const worksheet = workbook.getWorksheet("Report");
-  //     const pdfDoc = new PDFDocument();
-  //     pdfDoc.pipe(fs.createWriteStream("converted.pdf"));
-  //     let colSpacing = 80;
-  //     worksheet.eachRow((row, rowIndex) => {
-  //       row.eachCell((cell, colIndex) => {
-  //         const xpos = colIndex * 40 + (colIndex - 1) * colSpacing;
-  //         const ypos = rowIndex * 40;
-  //         pdfDoc.text(cell.text, xpos, ypos);
+
+  // const generateTableBody = (comb_cd) => {
+  //   let bodyStart = ``;
+  //   let time_apply_cd = [];
+  //   const season_cd = Object.keys(final_calc[comb_cd]);
+  //   season_cd.forEach((season) => {
+  //     const prod_cd = Object.keys(final_calc[comb_cd][season]);
+  //     prod_cd.forEach((product) => {
+  //       time_apply_cd = Object.keys(final_calc[comb_cd][season][product]);
+  //     });
+  //   });
+  //   time_apply_cd.forEach((ta) => {
+  //     bodyStart += `<div class='grid-item'><div class='item'>${getTimeApply(
+  //       parseInt(ta)
+  //     )}</div>`;
+  //     season_cd.forEach((season) => {
+  //       const prod_cd = Object.keys(final_calc[comb_cd][season]);
+  //       prod_cd.forEach((product) => {
+  //         bodyStart += `<div class='item'>${final_calc[comb_cd][season][product][ta]}</div>`;
   //       });
   //     });
-  //     pdfDoc.end();
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
+  //     bodyStart += `</div>`;
+  //   });
+  //   return new handlebars.SafeString(bodyStart);
   // };
-  // const convertToPdf = async () => {
-  //   const docxFile = fs.readFileSync("output.xlsx");
-  //   const instance = await load({ document: docxFile });
-  //   const buffer = await instance.exportPDF();
+  const generateTableHeader = (comb_cd) => {
+    let entire_name = `<tr><th>${getCombinationName(
+      comb_cd
+    )}</th></tr><tr><th>Time Of Application</th>`;
+    const season_cd = Object.keys(final_calc[comb_cd]);
+    season_cd.forEach((season) => {
+      const prod_cd = Object.keys(final_calc[comb_cd][season]);
+      prod_cd.forEach((product) => {
+        entire_name += `<th>${getProductName(parseInt(product))}</th>`;
+      });
+    });
+    entire_name += `</tr>`;
+    return new handlebars.SafeString(entire_name);
+  };
 
-  //   fs.writeFileSync("converted.pdf", Buffer.from(buffer));
-  //   await instance.close();
-  // };
+  const generateTableBody = (comb_cd) => {
+    let bodyStart = ``;
+    let time_apply_cd = [];
+    const season_cd = Object.keys(final_calc[comb_cd]);
+    season_cd.forEach((season) => {
+      const prod_cd = Object.keys(final_calc[comb_cd][season]);
+      prod_cd.forEach((product) => {
+        time_apply_cd = Object.keys(final_calc[comb_cd][season][product]);
+      });
+    });
+    time_apply_cd.forEach((ta) => {
+      bodyStart += `<tr><td>${getTimeApply(parseInt(ta))}</td>`;
+      season_cd.forEach((season) => {
+        const prod_cd = Object.keys(final_calc[comb_cd][season]);
+        prod_cd.forEach((product) => {
+          bodyStart += `<td>${final_calc[comb_cd][season][product][ta]}</td>`;
+        });
+      });
+      bodyStart += `</tr>`;
+    });
+    return new handlebars.SafeString(bodyStart);
+  };
+
+  sr = 1;
+  const micro_data_func = () => {
+    let data = [];
+    Object.keys(nutrients[1]).forEach((key) => {
+      if (micronutrients(key)) {
+        const value = nutrients[1][key][1];
+        const micro_name = getProductName(parseInt(key));
+        const obj = {
+          micro_value: value,
+          micro_name: micro_name,
+        };
+        obj.srNo = sr++;
+        data.push(obj);
+      }
+    });
+    return data;
+  };
+
+  const micro_data = micro_data_func();
+  const data = {
+    parameterData: parameterData,
+    remarksPara: remarks,
+    npkdata: npkdata,
+    yield_targets: yield_targets,
+    comb_iter: comb_cd,
+    micro_data: micro_data,
+    values: values,
+    farmerInformation: farmerInformation,
+    local: local,
+    cdtonames: cdtonames,
+  };
+  handlebars.registerHelper("parseInt", function (value) {
+    // Use parseInt function to parse the value
+    return parseInt(value);
+  });
+  handlebars.registerHelper("generateTableBody", generateTableBody);
+  handlebars.registerHelper("generateTableHeader", generateTableHeader);
+  handlebars.registerHelper("ifEquals", function (arg1, arg2, options) {
+    return arg1 == arg2 ? options.fn(this) : options.inverse(this);
+  });
+
+  const templateHtml = fs.readFileSync("template.html", "utf8");
+  const template = handlebars.compile(templateHtml);
+  const html = template(data);
+
+  const generatePDF = async (html) => {
+    try {
+      const browser = await puppeteer.launch();
+      const page = await browser.newPage();
+      await page.setContent(html);
+      const pdfBuffer = await page.pdf({ format: "A3" });
+      fs.writeFileSync("output.pdf", pdfBuffer);
+      console.log("PDF generated successfully!");
+      await browser.close();
+      return pdfBuffer;
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+    }
+  };
+
   final_calc[12] = nutrients;
-  // console.log("before write back");
-  const buffer = await wb.writeToBuffer();
+  // const buffer = await wb.writeToBuffer(html);
+  const pdfbuffer = await generatePDF(html);
+  wb.write("output.xlsx", (err, stats) => {
+    if (err) {
+      console.error(err);
+    } else {
+      console.log("Excel file created successfully!");
 
-  // wb.write("output.xlsx", (err, stats) => {
-  //   if (err) {
-  //     console.error(err);
-  //   } else {
-  //     console.log("Excel file created successfully!");
-  //     return true;
-  //     // convertToPdf();
-  //   }
-  // });
-
-  return buffer;
+      return true;
+    }
+  });
+  return pdfbuffer;
 }
 
 module.exports = { reportGen };

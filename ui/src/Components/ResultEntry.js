@@ -4,7 +4,7 @@ import "../Styles/ResultEntry.css";
 import { Button } from "@chakra-ui/react";
 import { Checkbox } from "@chakra-ui/react";
 import { Textarea } from "@chakra-ui/react";
-import "@react-pdf-viewer/default-layout/lib/styles/index.css";
+// import "@react-pdf-viewer/default-layout/lib/styles/index.css";
 
 import {
   Tabs,
@@ -76,14 +76,6 @@ function ResultEntry() {
         .then((response) => response.json())
         .then(() => {
           try {
-            // fetch("http://localhost:5000/getValues")
-            //   .then((response) => {
-            //     return response.arrayBuffer();
-            //   })
-            //   .then((buffer) => {
-            //     console.log(buffer);
-            //     // navigate("/pdfviewer", { state: { excel: buffer } });
-            //   });
             fetch("http://localhost:5000/getValues", {
               method: "GET",
               responseType: "arraybuffer",
@@ -96,9 +88,8 @@ function ResultEntry() {
               })
               .then((arrayBuffer) => {
                 const blob = new Blob([arrayBuffer], {
-                  type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                  type: "application/pdf",
                 });
-                // navigate("/pdfviewer", { state: { excel: blob } });
                 const blobUrl = URL.createObjectURL(blob);
                 setPdf(blobUrl);
               })
@@ -208,11 +199,25 @@ function ResultEntry() {
     <>
       {alertTog && (
         <>
-          <Alert status="success">
-            <AlertIcon />
-            Data uploaded to the server.
-          </Alert>
-          <PdfViewerComponent document={pdf} />
+          {setTimeout(() => {
+            <Alert status="success">
+              <AlertIcon />
+              Data uploaded to the server.
+            </Alert>;
+          }, 300)}
+          {pdf && (
+            <iframe
+              src={pdf}
+              style={{
+                position: "fixed",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                border: "none",
+              }}
+            ></iframe>
+          )}
         </>
       )}
       {!toggle && (

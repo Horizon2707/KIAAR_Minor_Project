@@ -19,34 +19,30 @@ import {
   AlertIcon,
   AlertTitle,
   CloseButton,
-  Select, // Import Select component from Chakra UI
+  Select,
 } from "@chakra-ui/react";
+import { useEffect } from "react";
 import { FaUserAlt, FaLock } from "react-icons/fa";
 const CFaUserAlt = chakra(FaUserAlt);
 const CFaLock = chakra(FaLock);
 
 const Login = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [passwordError, setPasswordError] = useState("");
-  const [emailError, setEmailError] = useState("");
+  const [usernameError, setUsernameError] = useState("");
   const [showErrorAlert, setShowErrorAlert] = useState(false);
   const [greetingName, setGreetingName] = useState("");
   const [selectedSeason, setSelectedSeason] = useState("");
-
   const [Seasons, setSeasons] = useState([]);
-
-  const validateEmail = (email) => {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email);
-  };
 
   const fetchSeasons = async () => {
     try {
-      const response = await fetch("http://localhost:5000/seasons");
+      const response = await fetch("http://localhost:5000/season");
       if (response.ok) {
+        console.log("season received");
         const data = await response.json();
         setSeasons(data);
       }
@@ -54,57 +50,60 @@ const Login = () => {
       console.error("Error fetching seasons:", error);
     }
   };
-  //   useEffect(() => {
-  //  if (Seasons){
-  //     return;
-  // } else {
-  //   fetchSeasons();
-  // }
-  //   }, [email]);
+
+  useEffect(() => {
+    if (Seasons.length !== 0) {
+      return;
+    } else {
+      fetchSeasons();
+    }
+  }, []);
+
   const handleLogin = async (event) => {
     event.preventDefault();
-    if (!email.trim() || !password.trim()) {
-      setEmailError("Email and password cannot be empty");
-      setPasswordError("Email and password cannot be empty");
+    if (!username.trim() || !password.trim()) {
+      setUsernameError("Username and password cannot be empty");
+      setPasswordError("Username and password cannot be empty");
       return;
     }
 
     try {
-      setEmailError("");
+      setUsernameError("");
       setPasswordError("");
+      setShowErrorAlert(false); // Reset error alert
 
-      if (!validateEmail(email.trim())) {
-        setEmailError("Email is not valid");
-        return;
-      } else if (password.trim().length < 6) {
-        setPasswordError("Password must be at least 6 characters long");
-        return;
-      } else {
-        const response = await fetch("http://localhost:5000/login", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, password }),
-        });
-        if (!response.ok) {
-          if (response.status === 401) {
-            setShowErrorAlert(true);
-          } else {
-            const error = await response.json();
-            throw new Error(error.message);
-          }
+      // Validation passed, proceed with login
+      const response = await fetch("http://localhost:5000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: username,
+          password: password,
+          season: selectedSeason,
+        }),
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          setShowErrorAlert(true); // Display validation alert
+          return; // Exit function to prevent further execution
         } else {
-          const result = await response.json();
-          if (response.status === 200) {
-            const { name } = result;
-            setGreetingName(name);
-            setTimeout(() => {
-              navigate("/form");
-              sessionStorage.setItem("user", JSON.stringify(result));
-              window.location.reload();
-            }, 500);
-          }
+          const error = await response.json();
+          throw new Error(error.message);
+        }
+      } else {
+        let result = await response.json();
+        result = { ...result, season: selectedSeason };
+        if (response.status === 200) {
+          const { name } = result;
+          setGreetingName(name);
+          setTimeout(() => {
+            navigate("/form");
+            sessionStorage.setItem("user", JSON.stringify(result));
+            window.location.reload();
+          }, 400);
         }
       }
     } catch (error) {
@@ -140,9 +139,9 @@ const Login = () => {
               boxShadow="md"
             >
               {showErrorAlert && (
-                <Alert status="error">
+                <Alert status="error" borderRadius="md">
                   <AlertIcon />
-                  <AlertTitle mr={2}>Incorrect email or password</AlertTitle>
+                  <AlertTitle mr={2}>Invalid username or password</AlertTitle>
                   <CloseButton
                     onClick={() => setShowErrorAlert(false)}
                     position="absolute"
@@ -164,17 +163,19 @@ const Login = () => {
                     children={<CFaUserAlt color="gray.300" />}
                   />
                   <Input
-                    type="email"
-                    placeholder="email address"
-                    value={email}
+                    type="text"
+                    placeholder="Username"
+                    value={username}
                     onChange={(e) => {
-                      setEmail(e.target.value);
-                      setEmailError("");
+                      setUsername(e.target.value);
+                      setUsernameError("");
                     }}
                   />
                 </InputGroup>
-                {emailError && (
-                  <FormHelperText color="red.500">{emailError}</FormHelperText>
+                {usernameError && (
+                  <FormHelperText color="red.500">
+                    {usernameError}
+                  </FormHelperText>
                 )}
               </FormControl>
               <FormControl>

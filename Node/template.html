@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{title}}</title>
+    <style>
+      body {
+        font-family: "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica,
+          Arial, sans-serif;
+        margin-left: 10px;
+        margin-right: 10px;
+        padding: 0;
+      }
+
+      .grid-itemt {
+        display: flex;
+        justify-content: space-between;
+        background-color: #fff;
+        margin-bottom: 10px;
+      }
+
+      .items {
+        background-color: rgba(255, 255, 255, 0.8);
+        padding: 5px;
+        font-size: 10px;
+        text-align: center;
+      }
+
+      .grid-item {
+        display: flex;
+        flex-wrap: wrap;
+        background-color: #fff;
+        margin-bottom: 0px;
+        border-collapse: collapse;
+      }
+
+      .grid-item > div {
+        background-color: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(0, 0, 0, 0.8);
+        padding: 5px;
+        font-size: 10px;
+        text-align: center;
+        flex-grow: 1;
+        margin-right: 0px;
+      }
+      .grid-item > :first-child {
+        width: 150px; /* Adjust the width as needed */
+      }
+
+      .item:nth-child(odd) h2 {
+        font-weight: normal;
+      }
+
+      h1 {
+        text-align: center;
+      }
+
+      .flex {
+        display: flex;
+        justify-content: space-around;
+      }
+      .item {
+        border: 1px solid black;
+        padding: 10px;
+        flex-grow: 1;
+        text-align: center;
+      }
+      .heading{
+        font-size: 20px;
+        font-weight: bold;
+        text-align: center;
+      }
+      
+      hr {
+        border: 1px solid black;
+      }
+
+      h2 {
+        text-align: center;
+      }
+
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      } 
+
+      table th,
+      table td {
+        border: 1px solid rgba(0, 0, 0, 1);
+        padding: 8px;
+        text-align: center;
+        font-size: small;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>K.J. Somaiya Institute of Applied Agricultural Research</h1>
+      <div class="grid-itemt">
+        <div class="items">
+          <span><h2>Taluk: Rabakavi-Banahatti</h2></span>
+        </div>
+        <div class="items">
+          <span><h2>Sameerwadi-587 316</h2></span>
+        </div>
+        <div class="items">
+          <span><h2>Dt: Bagalkot</h2></span>
+        </div>
+      </div>
+      <table>
+        <tr>
+          <td>Farmer Name:</td>
+          <td colspan="3">{{farmerInformation.name}}</td>
+          <td>Cultivator Code No.</td>
+          <td>{{values.values.farmerId}}</td>
+        </tr>
+        <tr>
+          <td>Cluster/Village</td>
+          <td colspan="5">{{cdtonames.clusterName.[0].CLUSTER_NAME}}/{{cdtonames.villageName.[0].VILLAGE_NAME}}</td>
+        </tr>
+        <tr>
+          <td>Survey No.</td>
+          <td>{{values.values.surveyNo}}</td>
+          <td>Plot No.</td>
+          <td>{{values.values.plotNo}}</td>
+          <td>Area:</td>
+          <td>{{local.plotArea}}</td>
+        </tr>
+        <tr>
+          <td>Soil Type</td>
+          <td>{{cdtonames.soilName.[0].SOIL_TYPE_NAME}}</td>
+          <td>Next Crop</td>
+          <td>{{values.values.cropToBeGrown}}</td>
+          <td>Irrigation Source:</td>
+          <td>{{cdtonames.irrigationName.[0].IRRIGATION_NAME}}</td>
+        </tr>
+        <tr>
+          <td>Date of Sampling</td>
+          <td>{{values.values.dtOfSampling}}</td>
+          <td>Lab No.</td>
+          <td>{{values.values.labNo}}</td>
+          <td>Date of Report</td>
+          <td>{{values.values.dtOfSamplingReceipt}}</td>
+        </tr>
+      </table>
+      <p class="heading">Soil Test Results</p>
+      <div class="item row_8">
+        <table>
+          <thead>
+            <tr>
+              <th>Sr No.</th>
+              <th>Parameters</th>
+              <th>Test Result</th>
+              <th>Low</th>
+              <th>Medium</th>
+              <th>High</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each parameterData}} {{#ifEquals PARAMETER_TYPE "HEADING"}}
+            <tr>
+              <td>{{PARAMETER_NAME}}</td>
+            </tr>
+            {{else}}
+            <tr>
+              <td>{{@index}}</td>
+              <td>{{PARAMETER_NAME}}</td>
+              <td>{{PARAMETER_VALUE}}</td>
+              <td>{{PARAMETER_MIN}}</td>
+              <td>{{PARAMETER_MID}}</td>
+              <td>{{PARAMETER_MAX}}</td>
+            </tr>
+            {{/ifEquals}} {{/each}}
+          </tbody>
+        </table>
+      </div>
+      <p class="heading">Recommendations</p>
+      <br>
+      <p class="heading">Soil Reclamation</p>
+      <table>
+        <tr>
+          <td>1</td>
+          <td>Gypsum (tonne/acre)</td>
+          <td>0.0</td>
+          <td>-</td>
+          <td>-</td>
+          <td>-</td>
+        </tr>
+        <tr>
+          <th colspan="6">OR</th>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Sulphur (tonne/acre)</td>
+          <td>0.0</td>
+          <td>-</td>
+          <td>-</td>
+          <td>-</td>
+        </tr>
+      </table>
+      <div class="item row_10">
+        <table>
+          <thead>
+            <tr>
+              <th>Sr No</th>
+              <th>Biofertilizers</th>
+              <th>Quantity</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Azospirillum (N-Fixer) (kg/acre)</td>
+              <td>4.0</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Bacilus Megatarium (P-Solubilizer) (kg/acre)</td>
+              <td>4.0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="heading">Organic Manures</p>
+      <div class="item row_10">
+        <table>
+          <thead>
+            <tr>
+              <th>Sr No</th>
+              <th>Manure</th>
+              <th>Quantity</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Farm Yard Manure (FYM) (tonne/acre)</td>
+              <td>10.0</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Bhumilabh (tonne/acre)</td>
+              <td>2.0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="row_11">
+        <p>{{remarksPara}}</p>
+        <p class="heading">SOIL TEST BASED NUTRIENT RECOMMENDATIONS</p>
+        <table>
+          <thead>
+            <tr>
+              <th >Sugarcane Season</th>
+              <th >Adsali</th>
+              <th >Pre-seasonal</th>
+              <th >Seasonal</th>
+            </tr>
+            <tr>
+              <td>Sugarcane Yield Target (tonne/acre)</td>
+              {{#each yield_targets}}
+              <td>{{this.TARGET_YIELD}}</td>
+              {{/each}}
+            </tr>
+          </thead>
+        </table>
+        </div>
+        <p class="heading">
+          Nutrient (kg/acre)
+        </p>
+        <div class="row_13">
+          <table>
+            <tbody>
+              {{#each npkdata}}
+              <tr>
+                <td>{{npkname}}</td>
+                {{#each npkvalues}}
+                <td>{{this}}</td>
+                {{/each}}
+              </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+        <p class="heading">Recommended dose of straight and complex fertilizers (kg/acre)</p>
+        <table>
+          <tr>
+            <td colspan="1">Sugarcane Season</td>
+            <td colspan="3">Adsali</td>
+            <td colspan="3">Pre-seasonal</td>
+            <td colspan="3">Seasonal</td>
+          </tr>
+          {{#each comb_iter}}
+            {{generateTableHeader this}}
+            {{generateTableBody this}} 
+          {{/each}}
+        </table>        
+      <h2>Micronutrients</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Sr No</th>
+            <th>Fertilizers</th>
+            <th>Quantity (kg/acre)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each micro_data}}
+          <tr>
+            <td>{{@index}}</td>
+            <td>{{this.micro_name}}</td>
+            <td>{{this.micro_value}}</td>
+          </tr>
+          {{/each}}
+        </tbody>        
+      </table>
+      <table>
+        <tr><br></tr> 
+        <tr><br></tr> 
+        <tr><br></tr> 
+        <tr><br></tr> 
+        <tr>
+          <td rowspan="2" class="ram">Soil Scientist (KIAAR)</td>
+          <td rowspan="2" class="ram">Director (KIAAR)</td>
+        </tr>
+      </table>
+      
+    </div>
+  </body>
+</html>
