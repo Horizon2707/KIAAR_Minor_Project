@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import "../Styles/ResultEntry.css";
 import { Button } from "@chakra-ui/react";
 import { Checkbox } from "@chakra-ui/react";
 import { Textarea } from "@chakra-ui/react";
+// import "@react-pdf-viewer/default-layout/lib/styles/index.css";
+
 import {
   Tabs,
   TabList,
@@ -24,8 +26,11 @@ import {
   Td,
   TableContainer,
 } from "@chakra-ui/react";
-
+import { useRef } from "react";
+import PdfViewerComponent from "./PdfViewerComponent";
 function ResultEntry() {
+  const alertRef = useRef(null);
+  const [pdf, setPdf] = useState();
   var [addSug, setaddSug] = useState("");
   var [forParams, setForParams] = useState([]);
   var [bool, setBool] = useState();
@@ -38,12 +43,25 @@ function ResultEntry() {
   var [resValues, ressetValues] = useState([]);
   const [finalRemarks, setFinalRemarks] = useState("");
   let values = sessionStorage.getItem("values");
+  let local = sessionStorage.getItem("local");
+
   values = JSON.parse(values);
+  local = JSON.parse(local);
+  const [missing, setMissing] = useState(false);
+  const scrollToAlert = () => {
+    if (alertRef.current) {
+      alertRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
   let postData = () => {
+    console.log(local.farmInfo);
     let com = {
+      finalRemarks: finalRemarks,
+      farmerInfo: local.farmInfo,
       paramValues: resValues,
       values: values,
       suggestions: suggestion,
+      local: local,
     };
     const dataString = JSON.stringify(com);
     sessionStorage.setItem("combined", dataString);
@@ -56,9 +74,34 @@ function ResultEntry() {
         body: JSON.stringify(com),
       })
         .then((response) => response.json())
-        .then((data) => {
-          sessionStorage.setItem("calculations", JSON.stringify(data));
-          sessionStorage.setItem("paramValues", JSON.stringify(resValues));
+        .then(() => {
+          try {
+            fetch("http://localhost:5000/getValues", {
+              method: "GET",
+              responseType: "arraybuffer",
+            })
+              .then((response) => {
+                if (!response.ok) {
+                  throw new Error("Network response was not ok");
+                }
+                return response.arrayBuffer();
+              })
+              .then((arrayBuffer) => {
+                const blob = new Blob([arrayBuffer], {
+                  type: "application/pdf",
+                });
+                const blobUrl = URL.createObjectURL(blob);
+                setPdf(blobUrl);
+              })
+              .catch((error) => {
+                console.error(
+                  "There was a problem with the fetch operation:",
+                  error
+                );
+              });
+          } catch (error) {
+            console.log(error);
+          }
         });
     } catch (error) {
       console.log(error);
@@ -66,17 +109,22 @@ function ResultEntry() {
   };
   const setin = sessionStorage.getItem("paramValues");
   useEffect(() => {
-    if (values) {
-      alert("Please select a farmer detail form first");
-      setTimeout(() => {
-        navigate("/form");
-      }, 2000);
-    } else {
-      let sessData = sessionStorage.getItem("forParams");
-      if (sessData) {
-        setForParams(JSON.parse(sessData));
-      }
+    // if (values) {
+    //   alert("Please select a farmer detail form first");
+    //   setTimeout(() => {
+    //     navigate("/form");
+    //   }, 2000);
+    // } else {
+    let sessData = sessionStorage.getItem("forParams");
+    if (sessData) {
+      setForParams(JSON.parse(sessData));
     }
+    let suggestion = sessionStorage.getItem("sandr");
+    if (suggestion) {
+      const data = JSON.parse(suggestion);
+      setSuggestion(data);
+    }
+    // }
   }, [location.pathname]);
 
   useEffect(() => {
@@ -111,6 +159,7 @@ function ResultEntry() {
       .then((response) => response.json())
       .then((data) => {
         setSuggestion(data);
+        sessionStorage.setItem("sandr", JSON.stringify(data));
       });
   }, []);
 
@@ -121,39 +170,92 @@ function ResultEntry() {
   let validate = () => {
     const Errors = {};
     for (const element of forParams) {
-      if (
-        !resValues[element.PARAMETER_ID] &&
-        element.PARAMETER_TYPE !== "HEADING"
-      ) {
-        Errors[element.PARAMETER_ID] =
-          "Please enter a value for " + element.PARAMETER_NAME;
+      if (element.PARAMETER_TYPE !== "HEADING") {
+        if (!resValues[element.PARAMETER_ID]) {
+          Errors[element.PARAMETER_ID] =
+            "Please enter a value for " + element.PARAMETER_NAME;
+        } else {
+          const value = parseInt(resValues[element.PARAMETER_ID]);
+          if (isNaN(value)) {
+            Errors[element.PARAMETER_ID] =
+              "Please enter a valid number for " + element.PARAMETER_NAME;
+          } else if (value < 0 || value > 999) {
+            Errors[element.PARAMETER_ID] =
+              "Please enter a value between 0 and 999 for " +
+              element.PARAMETER_NAME;
+          }
+        }
       }
     }
     setErrors(Errors);
+    if (Errors.length !== 0) {
+      setMissing(true);
+    }
     console.log(Errors);
     return Object.keys(Errors).length === 0;
   };
+
   return (
     <>
       {alertTog && (
-        <Alert status="success">
-          <AlertIcon />
-          Data uploaded to the server.
-        </Alert>
+        <>
+          {setTimeout(() => {
+            <Alert status="success">
+              <AlertIcon />
+              Data uploaded to the server.
+            </Alert>;
+          }, 300)}
+          {pdf && (
+            <iframe
+              src={pdf}
+              style={{
+                position: "fixed",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                border: "none",
+              }}
+            ></iframe>
+          )}
+        </>
       )}
       {!toggle && (
         <>
-          <h1
-            style={{
-              fontSize: "x-large",
-              marginTop: "1.5vh",
-              color: "black",
-              textAlign: "left",
-              marginLeft: "5vh",
-            }}
-          >
-            Soil Water Test Entry Form
-          </h1>
+          {missing && (
+            <>
+              <div ref={alertRef} className="stickyAlert">
+                <Alert status="error">
+                  <AlertIcon />
+                  Please fill in all the fields.
+                </Alert>
+              </div>
+            </>
+          )}
+          <div className="navbar">
+            <h1
+              style={{
+                fontSize: "2.5vh",
+                color: "black",
+                textAlign: "left",
+              }}
+            >
+              Soil Water Test Entry Form
+            </h1>
+            <Button
+              onClick={() => {
+                if (window.confirm("Are you sure you want to log out?")) {
+                  sessionStorage.clear();
+                  window.location.reload();
+                }
+              }}
+              background="#CCE5FF"
+              color="#000000"
+              size="md"
+            >
+              Log Out
+            </Button>
+          </div>
           <div className="recom">
             <Tabs
               align="center"
@@ -171,9 +273,6 @@ function ResultEntry() {
                   <TableContainer>
                     <Table size="sm" variant="simple">
                       <Thead>
-                        {/* <Tr>
-                          <Th>Parameters</Th>
-                        </Tr> */}
                         <Tr>
                           <Th>Test Result</Th>
                           <Th>Input</Th>
@@ -208,21 +307,27 @@ function ResultEntry() {
                                       onChange={(e) => {
                                         ressetValues({
                                           ...resValues,
-                                          [element.PARAMETER_NAME]:
-                                            e.target.value,
+                                          // [element.PARAMETER_NAME]:
+                                          //   e.target.value,
                                           [element.PARAMETER_ID]:
                                             e.target.value,
-                                        } 
-                                        );
-                                        if (setin){
+                                        });
+                                        if (setin) {
                                           let data = JSON.parse(setin);
-                                          data[element.PARAMETER_ID] = e.target.value;
-                                          sessionStorage.setItem("paramValues", JSON.stringify(data));
-                                        }
-                                        else{
+                                          data[element.PARAMETER_ID] =
+                                            e.target.value;
+                                          sessionStorage.setItem(
+                                            "paramValues",
+                                            JSON.stringify(data)
+                                          );
+                                        } else {
                                           let data = {};
-                                          data[element.PARAMETER_ID] = e.target.value;
-                                          sessionStorage.setItem("paramValues", JSON.stringify(data));
+                                          data[element.PARAMETER_ID] =
+                                            e.target.value;
+                                          sessionStorage.setItem(
+                                            "paramValues",
+                                            JSON.stringify(data)
+                                          );
                                         }
                                       }}
                                     ></Input>
@@ -348,7 +453,7 @@ function ResultEntry() {
                       <Textarea
                         placeholder="Add final remarks here"
                         resize="none"
-                        rows={7} // Set the number of rows to 7
+                        rows={2} // Set the number of rows to 7
                         variant="filled"
                         onChange={(e) => {
                           setFinalRemarks(e.target.value);
@@ -367,15 +472,19 @@ function ResultEntry() {
               size="md"
               onClick={() => {
                 if (validate()) {
-                  postData();
                   const dataString = JSON.stringify(resValues);
                   sessionStorage.setItem("result", dataString);
                   setToggle(!toggle);
                   setalertTog(true);
+                  setMissing(false);
+                  postData();
+                } else {
+                  setMissing(true);
+                  scrollToAlert();
                 }
               }}
             >
-              Go
+              Go To Report Page
             </Button>
           </div>
           <br />

@@ -65,12 +65,7 @@ Content-Type: application/json
     "plotNo": 2
 }
 ### Parameter info 
-POST http://localhost:5000/parameters
-Content-Type: application/json
 
-{
-    "test" : "1"
-}
 ### Suggestion 
 POST http://localhost:5000/suggestions
 Content-Type: application/json
@@ -128,24 +123,61 @@ Content-Type: application/json
   "25": "4",
   "26": "33",
   "27": "3",
-  "2> Electrical Conductivity(ds/m)": "3",
-  "1> Organic Corbon (%)": "3",
-  "2> Nitrogen(Kg/Acre)-N": "3",
-  "3> Phosphorus(kg/Acre)-P": "3",
-  "4> Potash(kg.Acre)-K": "3",
-  "1> Calcium(Ca) %": "3",
-  "2> Magnesium(Mg) %": "3",
-  "3> Sulphur(S) PPM": "3",
-  "1> Copper(cu) PPM": "3",
-  "2> Manganese(Mn) PPM": "3",
-  "4> Zinc (Zn) PPM": "33",
-  "5> Sodium(Na) PPM": "3",
-  "3> Iron(Fe) PPM": "4",
-  "1> pH(2:5)": "2"
+  
+},
+    "suggestions" : [
+        
+    ]
+}
+### Parameters
+POST http://localhost:5000/parameters
+Content-Type: application/json
+
+{
+    "test" : "1"
+}
+### Get values
+GET http://localhost:5000/getValues
+
+###Yield Target
+POST http://localhost:5000/yield_target
+Content-Type: application/json
+
+### Codes
+POST http://localhost:5000/combination_cds
+Content-Type: application/json
+
+###b NPK
+POST http://localhost:5000/npk
+Content-Type: application/json
+### Lab tran edit
+POST http://localhost:5000/checkLabTran
+Content-Type: application/json
+
+{   
+   "labNo": 12407
+}
+### Season 
+POST http://localhost:5000/season
+Content-Type: application/json
+
+### Login 
+POST http://localhost:5000/login
+Content-Type: application/json
+
+{   
+   "username": "Kshitij",
+    "password": "123456"
 }
 
-}
+### Sign Up
+POST http://localhost:5000/signUp
+Content-Type: application/json
 
+{   
+   "username": "Kshitij",
+    "password": "123456"
+}
 ### Calc
 
 POST http://localhost:5000/calc

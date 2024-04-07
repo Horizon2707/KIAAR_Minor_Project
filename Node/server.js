@@ -1,15 +1,19 @@
 const express = require("express");
-
+const session = require("express-session");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
-
 const oracledb = require("oracledb");
-
-const calculations = require("./calculations.js");
+const { final_calc } = require("./calc.js");
 const dbConnection = require("./dbconnect.js");
+const { reportGen } = require("./excel_gen.js");
+const fs = require("fs");
+const { formatWithOptions } = require("util");
+
 oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;
+
+const jsonFilePath = "../Node/assests/data.json";
 
 const app = express();
 
@@ -22,7 +26,14 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
-
+app.use(
+  session({
+    key: "userId",
+    secret: "test",
+    resave: false,
+    saveUninitialized: true,
+  })
+);
 let fieldsToExtract = [
   "CLUSTER_CD",
   "VILLAGE_CD",
@@ -54,12 +65,49 @@ function convertDateFormat(dateStr) {
 
   console.log(formattedDate);
 }
+function formatDate(date) {
+  const months = [
+    "JAN",
+    "FEB",
+    "MAR",
+    "APR",
+    "MAY",
+    "JUN",
+    "JUL",
+    "AUG",
+    "SEP",
+    "OCT",
+    "NOV",
+    "DEC",
+  ];
+  const day = date.getDate();
+  const month = months[date.getMonth()];
+  const year = date.getFullYear();
+  return `${day}-${month}-${year}`;
+}
+function formatDateAlt(originalDate) {
+  const dateParts = originalDate.split("-");
+  const year = dateParts[0];
+  const month = new Date(originalDate)
+    .toLocaleString("default", { month: "short" })
+    .toUpperCase();
+  const day = dateParts[2];
 
+  return `${day}-${month}-${year}`;
+}
+const today = new Date();
 // Example usage:
 
 let farmerValues;
-let parameterValues;
-
+let parameterValues = {};
+let suggestions_all;
+let parameters;
+let report_values;
+let parameter_names;
+let farmerInformation;
+let all_local;
+let remarks;
+let formulae;
 app.post("/farmerId", async (req, res) => {
   const { farmerId } = req.body;
 
@@ -393,6 +441,7 @@ app.post("/parameters", async (req, res) => {
         PARAMETER_MID: paramMid ? paramMid.VALUE_NAME : null,
       };
     });
+    parameter_names = response_array;
     res.json(response_array);
   } catch (error) {
     console.error("Parameters not found");
@@ -447,154 +496,726 @@ app.post("/newSuggestion", async (req, res) => {
     console.error("New Suggestion not added", error);
   }
 });
+
 app.post("/values", async (req, res) => {
   try {
-    const { values, paramValues, suggestions } = req.body;
-    console.log(suggestions);
+    const {
+      values,
+      paramValues,
+      suggestions,
+      farmerInfo,
+      local,
+      finalRemarks,
+    } = req.body;
     farmerValues = values;
     parameterValues = {};
     for (const key in paramValues) {
       parameterValues[key] = parseInt(paramValues[key], 10);
     }
+    //      calculations(parameterValues.phos, parameterValues.pota, parameterValues.nitr, 40, 50, 70);
 
-    let tranNo = farmerValues.labNo[0].LAB_TRAN;
-    let farmerId = farmerValues.farmerId;
-    let tempNo = farmerValues.templateNo[0].TEMPLATE_NO;
-
-    convertDateFormat(farmerValues.dtOfSampling);
-    console.log(farmerValues);
-    console.log(parameterValues);
-
-    const connection = await dbConnection;
-    const tran_head = await connection.execute(
-      `INSERT INTO GSMAGRI.SW_TRAN_HEAD (
-        COMPANY_CD,
-        SEASON_CD,
-        TRAN_DATE,
-        LAB_TRAN_NO,
-        FARMER_ID,
-        SY_NO,
-        CLUSTER_CD,
-        VILLAGE_CD,
-        PLOT_NO,
-        IRRIGATION_CD,
-        SOIL_TYPE_CD,
-        TYPE_OF_CULTIVATION,
-        DRAINAGE,
-        PREVIOUS_CROP,
-        CROPS_TO_BE_GROWN,
-        REMARKS,
-        ADD_BY,
-        ADD_DATE,
-        RECOMMENTATION_REMARKS,
-        SUGESSTION_REMARKS,
-        DATE_OF_SAMPLING,
-        DATE_OF_SAMPLE_RECEIPT,
-        TEST_CD,
-        PLOT_AREA,
-        PLOT_AREA_IN_GUNTA,
-        TEMPLATE_NO,
-        LATTITUDE,
-        LONGITUDE,
-        GEO_CODE,
-        GBL_KHATE_ID,
-        GBL_PLOT_ID,
-        SF_SOIL_ID,
-        SMS_SENT_FLAG,
-        HEWF_ORDER_NO,
-        SYNC_STATUS,
-        SYNC_REMARKS,
-        WATER_TYPE_CD
-      )
-      VALUES (
-        1,
-        21,
-        '20-03-24',
-        :tranNo,
-        :farmerId,
-        :surveyNo,
-        :clusterCd,
-        :villageCd,
-        :plotNo,
-        :irrigationCd,
-        :soiltype,
-        :culType,
-        :drainage,
-        :prevCrop,
-        'SUNFLOWER',
-        NULL,       
-        290,
-        '20-03-24',
-        NULL,       
-        NULL,       
-        '20-03-24', 
-        '20-03-24', 
-        :testCd,
-        :pltArea,
-        :gunta,
-        2,
-        NULL,       
-        NULL,       
-        NULL,       
-        10,
-        51,
-        NULL,       
-        'N',
-        NULL,       
-        'N',
-        NULL,
-        17
-      )
-      `,
-      [
-        //convertDateFormat(new Date().toISOString().split("T")[0]),
-        parseInt(tranNo),
-        parseInt(farmerId),
-        farmerValues.surveyNo,
-        parseInt(farmerValues.cluster),
-        parseInt(farmerValues.village),
-        parseInt(farmerValues.plotNo),
-        parseInt(farmerValues.irrigationSource),
-        parseInt(farmerValues.soilType),
-        farmerValues.cultivationType,
-        farmerValues.drainage,
-        farmerValues.previousCrop,
-        //farmerValues.cropsToBeGrown,
-        //convertDateFormat(new Date().toISOString().split("T")[0]),
-        //convertDateFormat(farmerValues.dtOfSampling),
-        //convertDateFormat(farmerValues.dtOfSamplingReceipt),
-        parseInt(farmerValues.test),
-        parseInt(farmerValues.area),
-        parseInt(farmerValues.area),
-        //parseInt(tempNo),
-      ].map((value, index) => {
-        if (isNaN(value) && typeof value !== "string") {
-          throw new Error(
-            `Invalid value "${value}" at index ${index + 1}. Expected a number.`
-          );
-        }
-        return value;
-      })
+    const npk = {
+      nitrogen: parameterValues[15],
+      phosphorus: parameterValues[16],
+      potassium: parameterValues[17],
+    };
+    const npkObj = JSON.stringify(npk);
+    //Edit NPK
+    fs.writeFileSync(jsonFilePath, npkObj, "utf8", (err) => {
+      if (err) {
+        console.error("Error writing JSON file:", err);
+        return;
+      }
+      console.log("JSON file updated successfully.");
+    });
+    farmerInformation = farmerInfo;
+    all_local = local;
+    const selectedSuggestions = suggestions.filter(
+      (suggestion) => suggestion.selected === true
     );
-    console.log(tran_head);
+    suggestions_all = selectedSuggestions;
+    // console.log(parameterValues);
+    remarks = finalRemarks;
+    const tranNo = farmerValues.labNo;
+    // const tranNo = farmerValues.labNo[0].LAB_TRAN || farmerValues.labNo;
+    const farmerId = farmerValues.farmerId;
+    const connection = await dbConnection;
+    const lab_tran_all = await connection.execute(
+      `SELECT DISTINCT LAB_TRAN_NO FROM GSMAGRI.SW_RECOMMENDATION_TRAN WHERE LAB_TRAN_NO = :labNo`,
+      [tranNo]
+    );
+
+    // console.log(tranNo, farmerId);
+    // console.log(parameterValues[15], parameterValues[16], parameterValues[17]);
+    // let A_obj = yield_target.find((e) => {
+    //   e.CROP_SEASON === "ADASALI";
+    // });
+    // let P_obj = yield_target.find((e) => {
+    //   e.CROP_SEASON === "PRE-SEASONAL";
+    // });
+
+    // let S_obj = yield_target.find((e) => {
+    //   e.CROP_SEASON === "SEASONAL";
+    // });
+    // if (A_obj) {
+    //   // let A_yt = A_obj.TARGET_YIELD;
+    //   console.log(A_obj);
+    // }
+
+    const updateTables = async () => {
+      const tran_head = await connection.execute(
+        `INSERT INTO GSMAGRI.SW_TRAN_HEAD (
+          COMPANY_CD,
+          SEASON_CD,
+          TRAN_DATE,
+          LAB_TRAN_NO,
+          FARMER_ID,
+          SY_NO,
+          CLUSTER_CD,
+          VILLAGE_CD,
+          PLOT_NO,
+          IRRIGATION_CD,
+          SOIL_TYPE_CD,
+          TYPE_OF_CULTIVATION,
+          DRAINAGE,
+          PREVIOUS_CROP,
+          CROPS_TO_BE_GROWN,
+          REMARKS,
+          ADD_BY,
+          ADD_DATE,
+          RECOMMENTATION_REMARKS,
+          SUGESSTION_REMARKS,
+          DATE_OF_SAMPLING,
+          DATE_OF_SAMPLE_RECEIPT,
+          TEST_CD,
+          PLOT_AREA,
+          PLOT_AREA_IN_GUNTA,
+          TEMPLATE_NO,
+          LATTITUDE,
+          LONGITUDE,
+          GEO_CODE,
+          GBL_KHATE_ID,
+          GBL_PLOT_ID,
+          SF_SOIL_ID,
+          SMS_SENT_FLAG,
+          HEWF_ORDER_NO,
+          SYNC_STATUS,
+          SYNC_REMARKS,
+          WATER_TYPE_CD
+        )
+        VALUES (
+          1,
+          21,
+          SYSDATE,
+          :tranNo,
+          :farmerId,
+          :surveyNo,
+          :clusterCd,
+          :villageCd,
+          :plotNo,
+          :irrigationCd,
+          :soiltype,
+          :culType,
+          :drainage,
+          :prevCrop,
+          :cropToBeGrown,
+          NULL,       
+          290,
+          SYSDATE,
+          NULL,       
+          NULL,       
+          :sampling, 
+          :samplingreciept, 
+          :testCd,
+          :pltArea,
+          :gunta,
+          2,
+          NULL,       
+          NULL,       
+          NULL,       
+          10,
+          51,
+          NULL,       
+          'N',
+          NULL,       
+          'N',
+          NULL,
+          17
+        )
+        `,
+        [
+          //convertDateFormat(new Date().toISOString().split("T")[0]),
+          parseInt(tranNo),
+          parseInt(farmerId),
+          farmerValues.surveyNo,
+          parseInt(farmerValues.cluster),
+          parseInt(farmerValues.village),
+          parseInt(farmerValues.plotNo),
+          parseInt(farmerValues.irrigationSource),
+          parseInt(farmerValues.soilType),
+          farmerValues.cultivationType,
+          farmerValues.drainage,
+          farmerValues.previousCrop,
+          farmerValues.cropToBeGrown,
+          formatDateAlt(farmerValues.dtOfSampling),
+          formatDateAlt(farmerValues.dtOfSamplingReceipt),
+          parseInt(farmerValues.test),
+          parseInt(local.plotArea),
+          parseInt(local.plotArea),
+          //parseInt(tempNo),
+        ].map((value, index) => {
+          if (isNaN(value) && typeof value !== "string") {
+            throw new Error(
+              `Invalid value "${value}" at index ${
+                index + 1
+              }. Expected a number.`
+            );
+          }
+          return value;
+          // excelColor(values)
+        })
+      );
+
+      let suggestion_tail;
+      suggestions_all.map(async (suggestion) => {
+        suggestion_tail = await connection.execute(
+          `INSERT INTO gsmagri.sw_suggestion_tail (
+          lab_tran_no,
+          suggestion_id,
+          suggestion_name_value,
+          type_of_suggestion,
+          test_cd
+      ) VALUES (
+          :v0,
+          :v1,
+          :v2,
+          :v3,
+          :v4
+      )`,
+          [
+            tranNo,
+            suggestion.SUGGESTION_ID,
+            suggestion.SUGGESTION_NAME,
+            "NORMAL",
+            parseInt(farmerValues.test),
+          ]
+        );
+      });
+      let tran_tail;
+      const parameterValuesArray = Object.keys(parameterValues);
+      parameterValuesArray.map(async (key) => {
+        tran_tail = await connection.execute(
+          `INSERT INTO gsmagri.sw_tran_tail (
+            lab_tran_no,
+            parameter_id,
+            test_method,
+            result_value,
+            parameter_id_slno,
+            print_flag,
+            test_cd
+        ) VALUES (
+            :v0,
+            :v1,
+            'NONE',
+            :v3,
+            NULL,
+            :v5,
+            :v6
+        )`,
+          [
+            tranNo,
+            parseInt(key),
+            parseInt(parameterValues[key]),
+            "Y",
+            parseInt(farmerValues.test),
+          ]
+        );
+      });
+      const promises = [];
+
+      const comb_cd = Object.keys(final_calc);
+      comb_cd.forEach((comb) => {
+        const season_cd = Object.keys(final_calc[comb]);
+        season_cd.forEach((season) => {
+          const product_cd = Object.keys(final_calc[comb][season]);
+          product_cd.forEach((product) => {
+            const ta_cd = Object.keys(final_calc[comb][season][product]);
+            let value;
+            const group_cd_all = connection.execute(
+              `SELECT DISTINCT GROUP_CD FROM GSMAGRI.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
+              [product]
+            );
+            const unit_id_all = connection.execute(
+              `SELECT DISTINCT UNIT_NAME FROM GSMAGRI.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
+              [product]
+            );
+            const unit_value_all = connection.execute(
+              `SELECT DISTINCT UNIT_VALUE FROM GSMAGRI.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
+              [product]
+            );
+            function execute(ta) {
+              promises.push(
+                Promise.all([group_cd_all, unit_id_all, unit_value_all]).then(
+                  ([
+                    group_cd_all_result,
+                    unit_id_all_result,
+                    unit_value_all_result,
+                  ]) => {
+                    const group_cd = group_cd_all_result.rows;
+                    const unit_id = unit_id_all_result.rows;
+                    const unit_value = unit_value_all_result.rows;
+
+                    return connection.execute(
+                      `INSERT INTO gsmagri.sw_recommendation_tran_new (
+                    lab_tran_no,
+                    tran_date,
+                    sw_group_cd,
+                    sw_product_cd,
+                    combine_cd,
+                    product_value,
+                    option_value,
+                    ref_sw_product_cd,
+                    unit_value,
+                    unit_id,
+                    value_in_bags,
+                    convert_unit_name,
+                    test_cd,
+                    crop_season_cd,
+                    recom_apply_time_cd
+                ) VALUES (
+                    :v0,
+                    SYSDATE,
+                    :v2,
+                    :v3,
+                    :v4,
+                    :v5,
+                    NULL,
+                    :v7,
+                    NULL,
+                    1,
+                    NULL,
+                    NULL,
+                    :v12,
+                    :v13,
+                    :v14
+                )`,
+                      [
+                        tranNo,
+                        parseInt(group_cd[0].GROUP_CD),
+                        parseInt(product),
+                        parseInt(comb),
+                        parseInt(value),
+                        (unit_value[0] && parseInt(unit_value[0].UNIT_VALUE)) ||
+                          1,
+                        parseInt(farmerValues.test),
+                        parseInt(season),
+                        parseInt(ta),
+                      ]
+                    );
+                  }
+                )
+              );
+            }
+            if (comb == 12) {
+              value = parseInt(final_calc[comb][season][product][1]);
+              execute(1);
+            } else {
+              ta_cd.forEach((ta) => {
+                value = parseInt(final_calc[comb][season][product][ta]);
+                execute(ta);
+              });
+            }
+
+            // Push each promise to the promises array
+          });
+        });
+      });
+
+      // Wait for all promises to resolve
+      Promise.all(promises)
+        .then(async (recommendation_tran_results) => {
+          // console.log(recommendation_tran_results);
+          await connection.execute("COMMIT");
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    };
+
+    let recommendation_tran;
+
+    // // res.sendFile("output.xlsx", { root: __dirname }, (err) => {
+    // //   if (err) {
+    // //     console.error("Error sending Excel file:", err);
+    // //     res.status(500).send("Error sending Excel file");
+    // //     return;
+    // //   }
+    // // });
+    if (lab_tran_all.rows.length > 0) {
+      const tran_head_del = await connection.execute(
+        `DELETE FROM GSMAGRI.SW_TRAN_HEAD WHERE LAB_TRAN_NO = :labNo`,
+        [tranNo]
+      );
+      const tran_tail_del = await connection.execute(
+        `DELETE FROM GSMAGRI.SW_TRAN_TAIL WHERE LAB_TRAN_NO = :labNo`,
+        [tranNo]
+      );
+      const suggetion_tail_del = await connection.execute(
+        `DELETE FROM GSMAGRI.SW_SUGGESTION_TAIL WHERE LAB_TRAN_NO = :labNo`,
+        [tranNo]
+      );
+      const recomm_tail_del = await connection.execute(
+        `DELETE FROM GSMAGRI.SW_RECOMMENDATION_TRAN WHERE LAB_TRAN_NO= :labNo`,
+        [tranNo]
+      );
+      console.log(tran_head_del);
+      updateTables();
+    } else {
+      updateTables();
+    }
+    res.json({ status: "success" });
   } catch (error) {
     console.log(error);
   }
 });
-app.post("/calc", (req, res) => {
-  const { parameters } = req.body;
 
-  const nitr = parameters.nitr;
-  const phos = parameters.phos;
-  const pota = parameters.pota;
-  console.log(nitr);
-  const SYT_A = 70;
-  const SYT_P = 50;
-  const SYT_S = 40;
+app.get("/getValues", async (req, res) => {
+  const values_all = {
+    values: farmerValues,
+    paramValues: parameterValues,
+    suggestions: suggestions_all,
+  };
+  report_values = values_all;
+  const { yield_target } = await get_yields();
+  const cdtonames = await codeToName();
+  const { combination_cd, product_cd, time_apply_cd, crop_season_cd } =
+    await combination_cds();
+  console.log("This is before");
+  const pdfbuffer = await reportGen(
+    values_all,
+    parameter_names,
+    farmerInformation,
+    all_local,
+    cdtonames,
+    remarks,
+    yield_target,
+    combination_cd,
+    product_cd,
+    time_apply_cd,
+    crop_season_cd
+  );
+  if (pdfbuffer) {
+    console.log("buffer generated");
 
-  // const recomm_obj = calculations(8.33,203.04,117.9,40,50,70)
-  const recomm_obj = calculations(phos, pota, nitr, SYT_S, SYT_P, SYT_A);
-  res.json(recomm_obj);
+    res.send(pdfbuffer);
+  } else {
+    console.log("buffer not generated");
+  }
+  // console.log("This is After", status);
+
+  // res.json(response_obj);
+});
+app.post("/yield_target", async (req, res) => {
+  const connection = await dbConnection;
+  const yield_target_all = await connection.execute(
+    `SELECT * FROM GSMAGRI.CROP_NAME_YT`
+  );
+  const yield_target = yield_target_all.rows;
+  console.log(yield_target);
+});
+app.post("/npk", async (req, res) => {
+  try {
+    const res_obj = {
+      nitrogen: parameterValues[15],
+      phosphorus: parameterValues[16],
+      potash: parameterValues[17],
+    };
+    res.json(res_obj);
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+app.post("/checkLabTran", async (req, res) => {
+  const { labNo } = req.body;
+  const connection = await dbConnection;
+
+  const lab_tran_all = await connection.execute(
+    `SELECT DISTINCT LAB_TRAN_NO FROM GSMAGRI.SW_RECOMMENDATION_TRAN WHERE LAB_TRAN_NO = :labNo`,
+    [labNo]
+  );
+  console.log(lab_tran_all.rows);
+  res.json(lab_tran_all.rows).status(200);
+});
+
+app.get("/season", async (req, res) => {
+  const connection = await dbConnection;
+  const season_all = await connection.execute(
+    `SELECT DISTINCT SEASON_NAME,FROM_DATE,TO_DATE FROM GSMAGRI.SEASON_DIR`
+  );
+  const season = season_all.rows;
+  // console.log(season);
+  const currentDate = new Date();
+
+  // Find the season that matches the current date
+  const currentSeason = season.find(
+    (season) =>
+      currentDate >= new Date(season.FROM_DATE) &&
+      currentDate <= new Date(season.TO_DATE)
+  );
+
+  if (currentSeason) {
+    // Find the index of the current season in the array
+    const currentIndex = season.findIndex((season) => season === currentSeason);
+
+    // Initialize an array to hold the season names
+    const seasonNames = [];
+
+    // Push the name of the current season into the array
+
+    // Push the name of the previous season if it exists
+    if (currentIndex > 0) {
+      seasonNames.push(season[currentIndex - 1].SEASON_NAME);
+    }
+    seasonNames.push(currentSeason.SEASON_NAME);
+    // Push the name of the next season if it exists
+    if (currentIndex < season.length - 1) {
+      seasonNames.push(season[currentIndex + 1].SEASON_NAME);
+    }
+    console.log(seasonNames);
+    res.json(seasonNames);
+  } else {
+    console.log("Current date does not fall within any season.");
+  }
+});
+const get_yields = async () => {
+  const connection = await dbConnection;
+  const yield_target_all = await connection.execute(
+    `SELECT * FROM GSMAGRI.CROP_NAME_YT`
+  );
+  const yield_target = yield_target_all.rows;
+  return { yield_target };
+};
+const combination_cds = async () => {
+  const connection = await dbConnection;
+  const combination_cd_all = await connection.execute(
+    `SELECT DISTINCT COMBINATION_CD,COMBINATION_NAME FROM GSMAGRI.SW_COMBINATION_LIST`
+  );
+  const combination_cd = combination_cd_all.rows;
+
+  const product_cd_all = await connection.execute(
+    `SELECT DISTINCT PRODUCT_CD,SW_PRODUCT_NAME FROM GSMAGRI.SW_COMBINATION_LIST`
+  );
+  const product_cd = product_cd_all.rows;
+
+  const crop_season_cd_all = await connection.execute(
+    `SELECT DISTINCT CROP_SEASON_CD,CROP_SEASON FROM GSMAGRI.SW_CROP_SEASON_DIR`
+  );
+  const crop_season_cd = crop_season_cd_all.rows;
+
+  const time_apply_cd_all = await connection.execute(
+    `SELECT DISTINCT RECOM_APPLY_TIME_CD,RECOM_APPLY_TIME FROM GSMAGRI.SW_RECOM_APPLY_TIME_DIR`
+  );
+  const time_apply_cd = time_apply_cd_all.rows.slice(0, 5);
+
+  return { combination_cd, product_cd, time_apply_cd, crop_season_cd };
+};
+app.post("/combination_cds", async (req, res) => {
+  const connection = await dbConnection;
+  const combination_cd_all = await connection.execute(
+    `SELECT DISTINCT COMBINATION_CD,COMBINATION_NAME FROM GSMAGRI.SW_COMBINATION_LIST`
+  );
+  const combination_cd = combination_cd_all.rows;
+
+  const product_cd_all = await connection.execute(
+    `SELECT DISTINCT PRODUCT_CD,SW_PRODUCT_NAME FROM GSMAGRI.SW_COMBINATION_LIST`
+  );
+  const product_cd = product_cd_all.rows;
+
+  const crop_season_cd_all = await connection.execute(
+    `SELECT DISTINCT CROP_SEASON_CD,CROP_SEASON FROM GSMAGRI.SW_CROP_SEASON_DIR`
+  );
+  const crop_season_cd = crop_season_cd_all.rows;
+
+  const time_apply_cd_all = await connection.execute(
+    `SELECT DISTINCT RECOM_APPLY_TIME_CD,RECOM_APPLY_TIME FROM GSMAGRI.SW_RECOM_APPLY_TIME_DIR`
+  );
+  const time_apply_cd = time_apply_cd_all.rows.slice(0, 5);
+
+  console.log(combination_cd, product_cd, time_apply_cd, crop_season_cd);
+});
+const codeToName = async () => {
+  const connection = await dbConnection;
+  const villageCd = parseInt(farmerValues.village);
+  const clusterCd = parseInt(farmerValues.cluster);
+  const soilTypeCd = parseInt(farmerValues.soilType);
+  const irrigationCd = parseInt(farmerValues.irrigationSource);
+
+  const villagename = await connection.execute(
+    `SELECT DISTINCT VILLAGE_NAME FROM GSMAGRI.FARMER_PLOTS WHERE VILLAGE_CD=:villagecd`,
+    [villageCd]
+  );
+  const clustername = await connection.execute(
+    `SELECT DISTINCT CLUSTER_NAME FROM GSMAGRI.FARMER_PLOTS WHERE CLUSTER_CD=:clustercd`,
+    [clusterCd]
+  );
+  const soilname = await connection.execute(
+    `SELECT DISTINCT SOIL_TYPE_NAME FROM GSMAGRI.SOIL_TYPE_DIR WHERE SOIL_TYPE_CD=:soilcd`,
+    [soilTypeCd]
+  );
+  const irrgationname = await connection.execute(
+    `SELECT DISTINCT IRRIGATION_NAME FROM GSMAGRI.IRRIGATION_DIR WHERE IRRIGATION_CD=:irrgationcd`,
+    [irrigationCd]
+  );
+  return {
+    villageName: villagename.rows,
+    clusterName: clustername.rows,
+    soilName: soilname.rows,
+    irrigationName: irrgationname.rows,
+  };
+};
+// Authentication methods
+function isAuthenticated(req, res, next) {
+  if (req.session && req.session.user) {
+    // User is authenticated
+    return next();
+  }
+  // User is not authenticated, redirect or send an error response
+  res.status(401).send("Unauthorized");
+}
+app.get("/authenticate", isAuthenticated, (req, res) => {
+  res.status(200).send("Authorized");
+});
+app.get("/session", isAuthenticated, (req, res) => {
+  res.json({ user: req.session.user });
+});
+
+app.post("/login", async (req, res) => {
+  const { username, password } = req.body;
+  try {
+    // db connection
+    const connection = await dbConnection;
+
+    const user_all = await connection.execute(
+      `SELECT LOGIN_CD,USER_NAME,PASSORD_ENC FROM GSMAGRI.U_LOGON_DATA WHERE USER_NAME = :username`,
+      [username]
+    );
+    const user = user_all.rows;
+
+    if (user) {
+      const isPasswordValid = await bcrypt.compare(
+        password,
+        user[0].PASSORD_ENC
+      );
+      console.log(isPasswordValid);
+      if (isPasswordValid) {
+        req.session.user = req.body;
+        console.log(req.session.user.username);
+        return res.status(200).json({
+          email: req.session.user.username,
+          login_cd: user[0].LOGIN_CD,
+        });
+      } else {
+        res.status(401).send("Incorrect password");
+      }
+    } else {
+      res.status(401).send("Login failed");
+    }
+  } catch (error) {
+    console.error("Error during login:", error);
+    res.status(500).send("An error occurred during login");
+  }
+});
+
+app.post("/signUp", async (req, res) => {
+  try {
+    const { fullName, username, password } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    // const max_user_id = await connection.execute(
+    //   `SELECT MAX(LOGIN_CD) FROM U_LOGON_DATA`
+    // );
+    // const max_id = max_user_id.rows;
+    const connection = await dbConnection;
+    const new_user = await connection.execute(
+      `
+    INSERT INTO gsmagri.u_logon_data (
+      login_cd,
+      user_name,
+      password,
+      valid_from_date,
+      valid_upto_date,
+      user_type,
+      user_group,
+      counter,
+      user_flag,
+      last_logon_on,
+      last_password1,
+      last_password_on1,
+      last_password2,
+      last_password_on2,
+      last_password3,
+      last_password_on3,
+      last_password4,
+      last_password_on4,
+      last_password5,
+      last_password_on5,
+      date_format,
+      decimal_notation,
+      canvas_color,
+      add_by,
+      add_date,
+      alert_position,
+      member_id,
+      position_cd,
+      user_tag,
+      emp_cd,
+      dept,
+      passord_enc
+  ) VALUES (
+    (SELECT MAX(LOGIN_CD) + 1 FROM U_LOGON_DATA),
+      :v1,
+      :v2,
+      :v3,
+      '31-MAR-99',
+      'P',
+      'U',
+      NULL,
+      0,
+      NULL,
+      NULL,
+      NULL,
+      NULL,
+      NULL,
+      NULL,
+      NULL,
+      NULL,
+      NULL,
+      NULL,
+      NULL,
+      'DD-MM-YYYY',
+      NULL,
+      NULL,
+      4,
+      SYSDATE,
+      NULL,
+      NULL,
+      10,
+      'EMPLOYEE',
+      NULL,
+      NULL,
+      :hashed
+  )`,
+      [username, password, formatDate(today), hashedPassword]
+    );
+    await connection.execute("COMMIT");
+    if (new_user) {
+      res.sendStatus(201);
+    }
+    // Created
+  } catch (error) {
+    console.error("Error creating user:", error);
+    res.sendStatus(500); // Internal Server Error
+  }
 });
 
 app.listen(5000, () => {

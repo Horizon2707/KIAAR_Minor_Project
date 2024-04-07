@@ -13,7 +13,11 @@ import {
   FormControl,
   FormHelperText,
   InputRightElement,
-  Link
+  Link,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  CloseButton,
 } from "@chakra-ui/react";
 import { FaUserAlt, FaLock } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -23,43 +27,44 @@ const CFaLock = chakra(FaLock);
 function Sign() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [nameError, setNameError] = useState("");
-  const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [successAlert, setSuccessAlert] = useState(false);
 
   const handleSignup = async (event) => {
     event.preventDefault();
     try {
-      if (!fullName.trim()) {
-        setNameError("Full name cannot be empty");
-        return;
-      }
+      // Reset previous errors
+      setNameError("");
+      setPasswordError("");
 
-      if (!email.trim()) {
-        setEmailError("Email cannot be empty");
+      // Validation
+      if (!username.trim()) {
+        setNameError("Username cannot be empty");
         return;
       }
 
       if (!password.trim()) {
         setPasswordError("Password cannot be empty");
         return;
-      }
-
-      if (password !== confirmPassword) {
+      } else if (password !== confirmPassword) {
         setPasswordError("Passwords do not match");
+        return;
+      } else if (password.length < 6) {
+        setPasswordError("Password must be at least 6 characters long");
         return;
       }
 
+      // Form data is valid, proceed with signup
       const response = await fetch("http://localhost:5000/signUp", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ fullName, email, password }),
+        body: JSON.stringify({ username, password }),
       });
 
       if (!response.ok) {
@@ -67,9 +72,13 @@ function Sign() {
         throw new Error(error.message);
       }
 
-      const result = await response.json();
-      navigate("/");
-      console.log("Signup successful:", result);
+      // Signup successful
+      if (response.ok) {
+        setSuccessAlert(true);
+        setTimeout(() => {
+          navigate("/");
+        }, 500);
+      }
     } catch (error) {
       console.error("Error during signup:", error.message);
     }
@@ -111,40 +120,16 @@ function Sign() {
                     />
                     <Input
                       type="text"
-                      placeholder="Full Name"
-                      value={fullName}
+                      placeholder="Username"
+                      value={username}
                       onChange={(e) => {
-                        setFullName(e.target.value);
+                        setUsername(e.target.value);
                         setNameError("");
                       }}
                     />
                   </InputGroup>
                   {nameError && (
-                    <FormHelperText color="red.500">
-                      {nameError}
-                    </FormHelperText>
-                  )}
-                </FormControl>
-                <FormControl>
-                  <InputGroup>
-                    <InputLeftElement
-                      pointerEvents="none"
-                      children={<CFaUserAlt color="gray.300" />}
-                    />
-                    <Input
-                      type="email"
-                      placeholder="Email"
-                      value={email}
-                      onChange={(e) => {
-                        setEmail(e.target.value);
-                        setEmailError("");
-                      }}
-                    />
-                  </InputGroup>
-                  {emailError && (
-                    <FormHelperText color="red.500">
-                      {emailError}
-                    </FormHelperText>
+                    <FormHelperText color="red.500">{nameError}</FormHelperText>
                   )}
                 </FormControl>
                 <FormControl>
@@ -164,11 +149,7 @@ function Sign() {
                       }}
                     />
                     <InputRightElement width="4.5rem">
-                      <Button
-                        h="1.75rem"
-                        size="sm"
-                        onClick={handleShowClick}
-                      >
+                      <Button h="1.75rem" size="sm" onClick={handleShowClick}>
                         {showPassword ? "Hide" : "Show"}
                       </Button>
                     </InputRightElement>
@@ -214,11 +195,24 @@ function Sign() {
         </Stack>
         <Box>
           Already have an account?{" "}
-          <Link color="teal.500" to="/login">
+          <Link color="teal.500" href="/">
             Login
           </Link>
         </Box>
       </Flex>
+      {/* Success Alert */}
+      {successAlert && (
+        <Alert status="success" position="fixed" bottom="2rem" right="2rem">
+          <AlertIcon />
+          <AlertTitle mr={2}>Signup successful!</AlertTitle>
+          <CloseButton
+            onClick={() => setSuccessAlert(false)}
+            position="absolute"
+            right="8px"
+            top="8px"
+          />
+        </Alert>
+      )}
     </>
   );
 }

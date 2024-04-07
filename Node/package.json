@@ -5,24 +5,33 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js",
+    "start": "nodemon --ignore assests/data.json server.js --verbose",
     "gen": "nodemon excel_gen.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@jsreport/jsreport-cli": "^4.0.3",
     "@pspdfkit/nodejs": "^0.0.4",
     "bcrypt": "^5.1.1",
+    "cheerio": "^1.0.0-rc.12",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "excel4node": "^1.8.2",
+    "exceljs": "^4.4.0",
     "express": "^4.18.2",
     "express-session": "^1.18.0",
-    "instantclient": "^1.0.2",
+    "html-pdf": "^3.0.1",
+    "libreoffice-convert": "^1.5.1",
     "moment": "^2.30.1",
+    "node-json2html": "^3.0.0",
     "oracledb": "^6.3.0",
+    "pdfkit": "^0.15.0",
     "pspdfkit": "^2024.2.0",
-    "session": "^0.1.0"
+    "puppeteer": "^22.6.3",
+    "session": "^0.1.0",
+    "xlsx": "^0.18.5",
+    "xlsx-populate": "^1.21.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.0"

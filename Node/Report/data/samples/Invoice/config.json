@@ -1,0 +1,12 @@
+{
+    "shortid": "G3i2B3",
+    "name": "Invoice",
+    "creationDate": {
+        "$$date": 1711217211543
+    },
+    "modificationDate": {
+        "$$date": 1711217211543
+    },
+    "_id": "3YqmJ1Z1cwh0h64H",
+    "$entitySet": "folders"
+}

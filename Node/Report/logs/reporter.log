@@ -1,0 +1,821 @@
+2024-03-23T18:06:47.951Z - info: Initializing jsreport (version: 4.3.0, configuration file: jsreport.config.json, nodejs: 20.11.1)
+2024-03-23T18:06:47.955Z - info: Searching for available extensions in C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\
+2024-03-23T18:06:47.957Z - info: Extensions location cache not found, crawling directories
+2024-03-23T18:06:50.156Z - info: Found 35 extension(s)
+2024-03-23T18:06:50.191Z - debug: Writing extension locations cache to C:\Users\Kshitij\AppData\Local\Temp\jsreport\core\locations.json
+2024-03-23T18:06:50.192Z - debug: Discovered 35 extensions
+2024-03-23T18:06:50.226Z - debug: Extension authentication@4.1.0 is disabled, skipping
+2024-03-23T18:06:50.228Z - info: Using extension base@4.0.0
+2024-03-23T18:06:50.232Z - info: Using extension child-templates@4.1.0
+2024-03-23T18:06:50.234Z - info: Using extension cli@4.0.3
+2024-03-23T18:06:50.237Z - info: Using extension components@4.0.0
+2024-03-23T18:06:50.239Z - info: Using extension data@4.1.0
+2024-03-23T18:06:50.240Z - info: Using extension express@4.1.0
+2024-03-23T18:06:50.643Z - info: Using extension freeze@4.0.0
+2024-03-23T18:06:50.645Z - info: Using extension fs-store@4.0.2
+2024-03-23T18:06:50.786Z - info: Using extension handlebars@4.0.1
+2024-03-23T18:06:50.788Z - info: Using extension import-export@4.0.3
+2024-03-23T18:06:50.800Z - info: Using extension jsrender@4.0.0
+2024-03-23T18:06:50.801Z - info: Using extension licensing@4.0.2
+2024-03-23T18:06:50.827Z - info: Using extension localization@4.0.1
+2024-03-23T18:06:50.828Z - info: Using extension npm@4.0.0
+2024-03-23T18:06:50.831Z - info: Using extension pdf-utils@4.1.1
+2024-03-23T18:06:50.832Z - info: Using extension reports@4.1.0
+2024-03-23T18:06:50.835Z - info: Using extension tags@4.0.1
+2024-03-23T18:06:50.837Z - info: Using extension text@4.0.0
+2024-03-23T18:06:50.838Z - info: Using extension version-control@4.0.0
+2024-03-23T18:06:50.846Z - info: Using extension assets@4.1.0
+2024-03-23T18:06:50.858Z - info: Using extension authorization@4.0.0
+2024-03-23T18:06:50.863Z - debug: Extension authorization@4.0.0 was disabled
+2024-03-23T18:06:50.863Z - info: Using extension browser-client@4.1.0
+2024-03-23T18:06:50.866Z - info: Using extension chrome-pdf@4.1.0
+2024-03-23T18:06:50.869Z - debug: Chrome strategy is chrome-pool, numberOfWorkers: 1
+2024-03-23T18:06:50.869Z - info: Using extension docx@4.2.0
+2024-03-23T18:06:50.871Z - info: Using extension html-to-xlsx@4.1.1
+2024-03-23T18:06:51.329Z - info: html-to-xlsx detected chrome as available html engine
+2024-03-23T18:06:51.329Z - info: Using extension pptx@4.2.0
+2024-03-23T18:06:51.332Z - info: Using extension scheduling@4.0.0
+2024-03-23T18:06:51.364Z - info: Using extension scripts@4.1.0
+2024-03-23T18:06:51.366Z - info: Using extension static-pdf@4.1.0
+2024-03-23T18:06:51.366Z - info: Using extension studio@4.1.0
+2024-03-23T18:06:51.445Z - info: Using extension xlsx@4.1.0
+2024-03-23T18:06:51.448Z - info: Using extension public-templates@4.0.0
+2024-03-23T18:06:51.449Z - debug: Extension public-templates@4.0.0 was disabled
+2024-03-23T18:06:51.449Z - info: Using extension sample-template@4.0.0
+2024-03-23T18:06:51.451Z - info: Using extension studio-theme-dark@4.0.0
+2024-03-23T18:06:51.452Z - warn: options.allowLocalFilesAccess is deprecated, use options.trustUserCode instead
+2024-03-23T18:06:51.453Z - info: Using general timeout for rendering (reportTimeout: 60000)
+2024-03-23T18:06:51.453Z - info: Using fs provider for template store.
+2024-03-23T18:06:51.456Z - info: fs store is persisting using fs for C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\data
+2024-03-23T18:06:51.460Z - info: fs store is loading data
+2024-03-23T18:06:51.465Z - info: fs store is initialized successfully
+2024-03-23T18:06:51.470Z - debug: studio default theme is: light
+2024-03-23T18:06:51.473Z - info: Creating default express app.
+2024-03-23T18:06:51.494Z - info: jsreport server successfully started on http port: 5488
+2024-03-23T18:06:51.498Z - info: Verifying license key free
+2024-03-23T18:06:51.499Z - info: Using free license
+2024-03-23T18:06:51.525Z - info: Migrating templates chrome settings (waitForNetworkIddle -> waitForNetworkIdle)
+2024-03-23T18:06:51.529Z - info: Migration successful
+2024-03-23T18:06:51.530Z - debug: Inserting samples
+2024-03-23T18:06:51.535Z - debug: Creating folder "samples" for sample entities
+2024-03-23T18:06:51.543Z - debug: Inserting sample entity Invoice (entitySet: folders)
+2024-03-23T18:06:51.549Z - debug: Inserting sample entity shared (entitySet: folders)
+2024-03-23T18:06:51.555Z - debug: Inserting sample entity Orders (entitySet: folders)
+2024-03-23T18:06:51.561Z - debug: Inserting sample entity Sales (entitySet: folders)
+2024-03-23T18:06:51.566Z - debug: Inserting sample entity invoice-data (entitySet: data)
+2024-03-23T18:06:51.575Z - debug: Inserting sample entity sales-data (entitySet: data)
+2024-03-23T18:06:51.582Z - debug: Inserting sample entity sales-main (entitySet: templates)
+2024-03-23T18:06:51.595Z - debug: Inserting sample entity invoice-main (entitySet: templates)
+2024-03-23T18:06:51.602Z - debug: Inserting sample entity orders-header (entitySet: templates)
+2024-03-23T18:06:51.609Z - debug: Inserting sample entity orders-main (entitySet: templates)
+2024-03-23T18:06:51.616Z - debug: Inserting sample entity invoice-styles.css (entitySet: assets)
+2024-03-23T18:06:51.625Z - debug: Inserting sample entity global helpers.js (entitySet: assets)
+2024-03-23T18:06:51.632Z - debug: Inserting sample entity orders-styles.css (entitySet: assets)
+2024-03-23T18:06:51.638Z - debug: Inserting sample entity invoice-logo.png (entitySet: assets)
+2024-03-23T18:06:51.646Z - debug: Inserting sample entity sales-styles.css (entitySet: assets)
+2024-03-23T18:06:51.654Z - debug: Inserting sample entity orders-script (entitySet: scripts)
+2024-03-23T18:06:51.663Z - info: Initializing worker threads
+2024-03-23T18:06:51.663Z - debug: Extensions in workers: base, child-templates, components, data, express, handlebars, jsrender, localization, npm, pdf-utils, reports, text, version-control, assets, browser-client, chrome-pdf, docx, html-to-xlsx, pptx, scripts, static-pdf, studio, xlsx
+2024-03-23T18:06:52.692Z - info: 2 worker threads initialized in 1029ms
+2024-03-23T18:06:52.693Z - info: Starting temp files cleanup with 180000ms threshold
+2024-03-23T18:06:52.694Z - info: reporter initialized
+2024-03-23T18:06:52.697Z - info: Render request 1 queued for execution and waiting for available worker rootId=d0vi8nt1dljq0g9, id=d0vi8nt1dljq0g9
+2024-03-23T18:06:52.708Z - info: Starting rendering request 1 rootId=d0vi8nt1dljq0g9, id=d0vi8nt1dljq0g9
+2024-03-23T18:06:52.708Z - info: Rendering anonymous template { recipe: html-to-xlsx, engine: jsrender } rootId=d0vi8nt1dljq0g9, id=d0vi8nt1dljq0g9
+2024-03-23T18:06:52.708Z - debug: Inline data specified. rootId=d0vi8nt1dljq0g9, id=d0vi8nt1dljq0g9
+2024-03-23T18:06:52.709Z - debug: Base url not specified, skipping its injection. rootId=d0vi8nt1dljq0g9, id=d0vi8nt1dljq0g9
+2024-03-23T18:06:52.709Z - debug: Rendering engine jsrender rootId=d0vi8nt1dljq0g9, id=d0vi8nt1dljq0g9
+2024-03-23T18:06:53.149Z - warn: Error when processing render request 1
+(because) error when evaluating engine jsrender for template anonymous
+(because) syntax error
+Unmatched or missing {{/each}}, in template:
+<!DOCTYPE html>
+<html lang=\"en\">
+<head>
+    <meta charset=\"UTF-8\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+    <title>Report</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Report</h1>
+    <table border=\"1\">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Gender</th> <!-- New column header -->
+            </tr>
+        </thead>
+        <tbody>
+            {{#each rows}} <!-- Iterate over each row in the JSON data -->
+            <tr>
+                <td>{{this.name}}</td> <!-- Access the name property of the current row -->
+                <td>{{this.age}}</td> <!-- Access the age property of the current row -->
+                <td>{{this.gender}}</td> <!-- Access the gender property of the current row -->
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</body>
+</html>
+
+
+(sandbox.js line 3211:18)
+Error
+  at C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\jsrender\jsrender-node.js:221:27
+  at Object.<anonymous> (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\jsrender\jsrender-node.js:2965:2)
+  at Module._compile (node:internal/modules/cjs/loader:1376:14)
+  at Module._extensions..js (node:internal/modules/cjs/loader:1435:10)
+  at Module.load (node:internal/modules/cjs/loader:1207:32)
+  at Module._load (node:internal/modules/cjs/loader:1023:12)
+  at Module.require (node:internal/modules/cjs/loader:1235:19)
+  at require (node:internal/modules/helpers:176:18)
+  at requireMap (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\worker\sandbox\runInSandbox.js:85:18)
+  at sandboxRequire (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\worker\sandbox\requireSandbox.js:47:25)
+  at require (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\worker\sandbox\createSandbox.js:89:30)
+  at Object.compile (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-jsrender\lib\jsrenderEngine.js:10:24)
+  at executionFn (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\worker\render\executeEngine.js:209:42)
+  at eval (sandbox.js:3211:18)
+  at async run (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\worker\sandbox\createSandbox.js:132:18)
+  at async WorkerReporter.runInSandbox [as _runInSandbox] (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\worker\sandbox\runInSandbox.js:211:14)
+wrapped by:
+Error: Error when evaluating engine jsrender for template anonymous
+(because) syntax error
+Unmatched or missing {{/each}}, in template:
+<!DOCTYPE html>
+<html lang=\"en\">
+<head>
+    <meta charset=\"UTF-8\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+    <title>Report</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Report</h1>
+    <table border=\"1\">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Gender</th> <!-- New column header -->
+            </tr>
+        </thead>
+        <tbody>
+            {{#each rows}} <!-- Iterate over each row in the JSON data -->
+            <tr>
+                <td>{{this.name}}</td> <!-- Access the name property of the current row -->
+                <td>{{this.age}}</td> <!-- Access the age property of the current row -->
+                <td>{{this.gender}}</td> <!-- Access the gender property of the current row -->
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</body>
+</html>
+
+  at module.exports (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\shared\createError.js:10:13)
+  at WorkerReporter.createError (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\shared\reporter.js:53:12)
+  at executeEngine (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\worker\render\executeEngine.js:332:33)
+  at async engine.engine (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\worker\render\executeEngine.js:122:14)
+  at async invokeRender (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\worker\render\render.js:61:23)
+  at async WorkerReporter._render (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\worker\render\render.js:148:7)
+  at async C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\worker\reporter.js:227:24
+  at async processAndResponse (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\advanced-workers\lib\workerHandler.js:41:17) rootId=d0vi8nt1dljq0g9, id=d0vi8nt1dljq0g9
+2024-03-23T18:06:53.160Z - warn: Rendering request 1 finished with error in 454 ms rootId=d0vi8nt1dljq0g9, id=d0vi8nt1dljq0g9
+2024-03-23T18:08:42.648Z - info: Initializing jsreport (version: 4.3.0, configuration file: jsreport.config.json, nodejs: 20.11.1)
+2024-03-23T18:08:42.651Z - info: Searching for available extensions in C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\
+2024-03-23T18:08:42.656Z - info: Extensions location cache contains up to date information, skipping crawling in C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\
+2024-03-23T18:08:42.665Z - info: Found 35 extension(s)
+2024-03-23T18:08:42.692Z - debug: Writing extension locations cache to C:\Users\Kshitij\AppData\Local\Temp\jsreport\core\locations.json
+2024-03-23T18:08:42.694Z - debug: Discovered 35 extensions
+2024-03-23T18:08:42.731Z - debug: Extension authentication@4.1.0 is disabled, skipping
+2024-03-23T18:08:42.733Z - info: Using extension base@4.0.0
+2024-03-23T18:08:42.737Z - info: Using extension child-templates@4.1.0
+2024-03-23T18:08:42.740Z - info: Using extension cli@4.0.3
+2024-03-23T18:08:42.743Z - info: Using extension components@4.0.0
+2024-03-23T18:08:42.745Z - info: Using extension data@4.1.0
+2024-03-23T18:08:42.746Z - info: Using extension express@4.1.0
+2024-03-23T18:08:43.113Z - info: Using extension freeze@4.0.0
+2024-03-23T18:08:43.115Z - info: Using extension fs-store@4.0.2
+2024-03-23T18:08:43.236Z - info: Using extension handlebars@4.0.1
+2024-03-23T18:08:43.238Z - info: Using extension import-export@4.0.3
+2024-03-23T18:08:43.248Z - info: Using extension jsrender@4.0.0
+2024-03-23T18:08:43.249Z - info: Using extension licensing@4.0.2
+2024-03-23T18:08:43.273Z - info: Using extension localization@4.0.1
+2024-03-23T18:08:43.275Z - info: Using extension npm@4.0.0
+2024-03-23T18:08:43.278Z - info: Using extension pdf-utils@4.1.1
+2024-03-23T18:08:43.280Z - info: Using extension reports@4.1.0
+2024-03-23T18:08:43.282Z - info: Using extension tags@4.0.1
+2024-03-23T18:08:43.284Z - info: Using extension text@4.0.0
+2024-03-23T18:08:43.285Z - info: Using extension version-control@4.0.0
+2024-03-23T18:08:43.294Z - info: Using extension assets@4.1.0
+2024-03-23T18:08:43.304Z - info: Using extension authorization@4.0.0
+2024-03-23T18:08:43.308Z - debug: Extension authorization@4.0.0 was disabled
+2024-03-23T18:08:43.309Z - info: Using extension browser-client@4.1.0
+2024-03-23T18:08:43.311Z - info: Using extension chrome-pdf@4.1.0
+2024-03-23T18:08:43.314Z - debug: Chrome strategy is chrome-pool, numberOfWorkers: 1
+2024-03-23T18:08:43.314Z - info: Using extension docx@4.2.0
+2024-03-23T18:08:43.316Z - info: Using extension html-to-xlsx@4.1.1
+2024-03-23T18:08:43.743Z - info: html-to-xlsx detected chrome as available html engine
+2024-03-23T18:08:43.744Z - info: Using extension pptx@4.2.0
+2024-03-23T18:08:43.746Z - info: Using extension scheduling@4.0.0
+2024-03-23T18:08:43.772Z - info: Using extension scripts@4.1.0
+2024-03-23T18:08:43.773Z - info: Using extension static-pdf@4.1.0
+2024-03-23T18:08:43.774Z - info: Using extension studio@4.1.0
+2024-03-23T18:08:43.851Z - info: Using extension xlsx@4.1.0
+2024-03-23T18:08:43.854Z - info: Using extension public-templates@4.0.0
+2024-03-23T18:08:43.856Z - debug: Extension public-templates@4.0.0 was disabled
+2024-03-23T18:08:43.856Z - info: Using extension sample-template@4.0.0
+2024-03-23T18:08:43.860Z - info: Using extension studio-theme-dark@4.0.0
+2024-03-23T18:08:43.861Z - warn: options.allowLocalFilesAccess is deprecated, use options.trustUserCode instead
+2024-03-23T18:08:43.862Z - info: Using general timeout for rendering (reportTimeout: 60000)
+2024-03-23T18:08:43.862Z - info: Using fs provider for template store.
+2024-03-23T18:08:43.866Z - info: fs store is persisting using fs for C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\data
+2024-03-23T18:08:43.872Z - info: fs store is loading data
+2024-03-23T18:08:43.885Z - info: fs store is initialized successfully
+2024-03-23T18:08:43.891Z - debug: studio default theme is: light
+2024-03-23T18:08:43.896Z - info: Creating default express app.
+2024-03-23T18:08:43.917Z - info: jsreport server successfully started on http port: 5488
+2024-03-23T18:08:43.921Z - info: Verifying license key free
+2024-03-23T18:08:43.922Z - info: Using free license
+2024-03-23T18:08:43.927Z - info: Initializing worker threads
+2024-03-23T18:08:43.928Z - debug: Extensions in workers: base, child-templates, components, data, express, handlebars, jsrender, localization, npm, pdf-utils, reports, text, version-control, assets, browser-client, chrome-pdf, docx, html-to-xlsx, pptx, scripts, static-pdf, studio, xlsx
+2024-03-23T18:08:45.064Z - info: 2 worker threads initialized in 1137ms
+2024-03-23T18:08:45.065Z - info: Starting temp files cleanup with 180000ms threshold
+2024-03-23T18:08:45.066Z - info: reporter initialized
+2024-03-23T18:08:45.069Z - info: Render request 1 queued for execution and waiting for available worker rootId=ld3e7flsg18urc0, id=ld3e7flsg18urc0
+2024-03-23T18:08:45.093Z - info: Starting rendering request 1 rootId=ld3e7flsg18urc0, id=ld3e7flsg18urc0
+2024-03-23T18:08:45.093Z - info: Rendering anonymous template { recipe: html-to-xlsx, engine: jsrender } rootId=ld3e7flsg18urc0, id=ld3e7flsg18urc0
+2024-03-23T18:08:45.094Z - debug: Inline data specified. rootId=ld3e7flsg18urc0, id=ld3e7flsg18urc0
+2024-03-23T18:08:45.094Z - debug: Base url not specified, skipping its injection. rootId=ld3e7flsg18urc0, id=ld3e7flsg18urc0
+2024-03-23T18:08:45.094Z - debug: Rendering engine jsrender rootId=ld3e7flsg18urc0, id=ld3e7flsg18urc0
+2024-03-23T18:08:45.513Z - warn: Error when processing render request 1
+(because) error when evaluating engine jsrender for template anonymous
+(because) syntax error
+Unmatched or missing {{/each}}, in template:
+<!DOCTYPE html>
+<html lang=\"en\">
+<head>
+    <meta charset=\"UTF-8\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+    <title>Report</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Report</h1>
+    <table border=\"1\">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Gender</th> <!-- New column header -->
+            </tr>
+        </thead>
+        <tbody>
+            {{#each rows}} <!-- Iterate over each row in the JSON data -->
+            <tr>
+                <td>{{this.name}}</td> <!-- Access the name property of the current row -->
+                <td>{{this.age}}</td> <!-- Access the age property of the current row -->
+                <td>{{this.gender}}</td> <!-- Access the gender property of the current row -->
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</body>
+</html>
+
+
+(sandbox.js line 3211:18)
+Error
+  at C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\jsrender\jsrender-node.js:221:27
+  at Object.<anonymous> (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\jsrender\jsrender-node.js:2965:2)
+  at Module._compile (node:internal/modules/cjs/loader:1376:14)
+  at Module._extensions..js (node:internal/modules/cjs/loader:1435:10)
+  at Module.load (node:internal/modules/cjs/loader:1207:32)
+  at Module._load (node:internal/modules/cjs/loader:1023:12)
+  at Module.require (node:internal/modules/cjs/loader:1235:19)
+  at require (node:internal/modules/helpers:176:18)
+  at requireMap (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\worker\sandbox\runInSandbox.js:85:18)
+  at sandboxRequire (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\worker\sandbox\requireSandbox.js:47:25)
+  at require (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\worker\sandbox\createSandbox.js:89:30)
+  at Object.compile (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-jsrender\lib\jsrenderEngine.js:10:24)
+  at executionFn (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\worker\render\executeEngine.js:209:42)
+  at eval (sandbox.js:3211:18)
+  at async run (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\worker\sandbox\createSandbox.js:132:18)
+  at async WorkerReporter.runInSandbox [as _runInSandbox] (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\worker\sandbox\runInSandbox.js:211:14)
+wrapped by:
+Error: Error when evaluating engine jsrender for template anonymous
+(because) syntax error
+Unmatched or missing {{/each}}, in template:
+<!DOCTYPE html>
+<html lang=\"en\">
+<head>
+    <meta charset=\"UTF-8\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+    <title>Report</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Report</h1>
+    <table border=\"1\">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Gender</th> <!-- New column header -->
+            </tr>
+        </thead>
+        <tbody>
+            {{#each rows}} <!-- Iterate over each row in the JSON data -->
+            <tr>
+                <td>{{this.name}}</td> <!-- Access the name property of the current row -->
+                <td>{{this.age}}</td> <!-- Access the age property of the current row -->
+                <td>{{this.gender}}</td> <!-- Access the gender property of the current row -->
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</body>
+</html>
+
+  at module.exports (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\shared\createError.js:10:13)
+  at WorkerReporter.createError (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\shared\reporter.js:53:12)
+  at executeEngine (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\worker\render\executeEngine.js:332:33)
+  at async engine.engine (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\worker\render\executeEngine.js:122:14)
+  at async invokeRender (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\worker\render\render.js:61:23)
+  at async WorkerReporter._render (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\worker\render\render.js:148:7)
+  at async C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\worker\reporter.js:227:24
+  at async processAndResponse (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\advanced-workers\lib\workerHandler.js:41:17) rootId=ld3e7flsg18urc0, id=ld3e7flsg18urc0
+2024-03-23T18:08:45.523Z - warn: Rendering request 1 finished with error in 445 ms rootId=ld3e7flsg18urc0, id=ld3e7flsg18urc0
+2024-03-23T18:09:33.041Z - info: Initializing jsreport (version: 4.3.0, configuration file: jsreport.config.json, nodejs: 20.11.1)
+2024-03-23T18:09:33.044Z - info: Searching for available extensions in C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\
+2024-03-23T18:09:33.049Z - info: Extensions location cache contains up to date information, skipping crawling in C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\
+2024-03-23T18:09:33.057Z - info: Found 35 extension(s)
+2024-03-23T18:09:33.082Z - debug: Writing extension locations cache to C:\Users\Kshitij\AppData\Local\Temp\jsreport\core\locations.json
+2024-03-23T18:09:33.083Z - debug: Discovered 35 extensions
+2024-03-23T18:09:33.120Z - debug: Extension authentication@4.1.0 is disabled, skipping
+2024-03-23T18:09:33.122Z - info: Using extension base@4.0.0
+2024-03-23T18:09:33.126Z - info: Using extension child-templates@4.1.0
+2024-03-23T18:09:33.130Z - info: Using extension cli@4.0.3
+2024-03-23T18:09:33.132Z - info: Using extension components@4.0.0
+2024-03-23T18:09:33.134Z - info: Using extension data@4.1.0
+2024-03-23T18:09:33.136Z - info: Using extension express@4.1.0
+2024-03-23T18:09:33.454Z - info: Using extension freeze@4.0.0
+2024-03-23T18:09:33.456Z - info: Using extension fs-store@4.0.2
+2024-03-23T18:09:33.567Z - info: Using extension handlebars@4.0.1
+2024-03-23T18:09:33.569Z - info: Using extension import-export@4.0.3
+2024-03-23T18:09:33.578Z - info: Using extension jsrender@4.0.0
+2024-03-23T18:09:33.578Z - info: Using extension licensing@4.0.2
+2024-03-23T18:09:33.601Z - info: Using extension localization@4.0.1
+2024-03-23T18:09:33.602Z - info: Using extension npm@4.0.0
+2024-03-23T18:09:33.605Z - info: Using extension pdf-utils@4.1.1
+2024-03-23T18:09:33.607Z - info: Using extension reports@4.1.0
+2024-03-23T18:09:33.609Z - info: Using extension tags@4.0.1
+2024-03-23T18:09:33.611Z - info: Using extension text@4.0.0
+2024-03-23T18:09:33.611Z - info: Using extension version-control@4.0.0
+2024-03-23T18:09:33.619Z - info: Using extension assets@4.1.0
+2024-03-23T18:09:33.630Z - info: Using extension authorization@4.0.0
+2024-03-23T18:09:33.634Z - debug: Extension authorization@4.0.0 was disabled
+2024-03-23T18:09:33.634Z - info: Using extension browser-client@4.1.0
+2024-03-23T18:09:33.637Z - info: Using extension chrome-pdf@4.1.0
+2024-03-23T18:09:33.639Z - debug: Chrome strategy is chrome-pool, numberOfWorkers: 1
+2024-03-23T18:09:33.640Z - info: Using extension docx@4.2.0
+2024-03-23T18:09:33.642Z - info: Using extension html-to-xlsx@4.1.1
+2024-03-23T18:09:34.018Z - info: html-to-xlsx detected chrome as available html engine
+2024-03-23T18:09:34.018Z - info: Using extension pptx@4.2.0
+2024-03-23T18:09:34.020Z - info: Using extension scheduling@4.0.0
+2024-03-23T18:09:34.045Z - info: Using extension scripts@4.1.0
+2024-03-23T18:09:34.046Z - info: Using extension static-pdf@4.1.0
+2024-03-23T18:09:34.047Z - info: Using extension studio@4.1.0
+2024-03-23T18:09:34.115Z - info: Using extension xlsx@4.1.0
+2024-03-23T18:09:34.118Z - info: Using extension public-templates@4.0.0
+2024-03-23T18:09:34.119Z - debug: Extension public-templates@4.0.0 was disabled
+2024-03-23T18:09:34.119Z - info: Using extension sample-template@4.0.0
+2024-03-23T18:09:34.121Z - info: Using extension studio-theme-dark@4.0.0
+2024-03-23T18:09:34.122Z - warn: options.allowLocalFilesAccess is deprecated, use options.trustUserCode instead
+2024-03-23T18:09:34.122Z - info: Using general timeout for rendering (reportTimeout: 60000)
+2024-03-23T18:09:34.123Z - info: Using fs provider for template store.
+2024-03-23T18:09:34.127Z - info: fs store is persisting using fs for C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\data
+2024-03-23T18:09:34.131Z - info: fs store is loading data
+2024-03-23T18:09:34.145Z - info: fs store is initialized successfully
+2024-03-23T18:09:34.150Z - debug: studio default theme is: light
+2024-03-23T18:09:34.154Z - info: Creating default express app.
+2024-03-23T18:09:34.172Z - info: jsreport server successfully started on http port: 5488
+2024-03-23T18:09:34.173Z - info: Verifying license key free
+2024-03-23T18:09:34.177Z - info: Using free license
+2024-03-23T18:09:34.181Z - info: Initializing worker threads
+2024-03-23T18:09:34.181Z - debug: Extensions in workers: base, child-templates, components, data, express, handlebars, jsrender, localization, npm, pdf-utils, reports, text, version-control, assets, browser-client, chrome-pdf, docx, html-to-xlsx, pptx, scripts, static-pdf, studio, xlsx
+2024-03-23T18:09:35.098Z - info: 2 worker threads initialized in 917ms
+2024-03-23T18:09:35.099Z - info: Starting temp files cleanup with 180000ms threshold
+2024-03-23T18:09:35.100Z - info: reporter initialized
+2024-03-23T18:09:35.103Z - info: Render request 1 queued for execution and waiting for available worker rootId=kol1uqrqy2de2eb, id=kol1uqrqy2de2eb
+2024-03-23T18:09:35.121Z - info: Starting rendering request 1 rootId=kol1uqrqy2de2eb, id=kol1uqrqy2de2eb
+2024-03-23T18:09:35.121Z - info: Rendering anonymous template { recipe: html-to-xlsx, engine: jsrender } rootId=kol1uqrqy2de2eb, id=kol1uqrqy2de2eb
+2024-03-23T18:09:35.122Z - debug: Inline data specified. rootId=kol1uqrqy2de2eb, id=kol1uqrqy2de2eb
+2024-03-23T18:09:35.122Z - debug: Base url not specified, skipping its injection. rootId=kol1uqrqy2de2eb, id=kol1uqrqy2de2eb
+2024-03-23T18:09:35.122Z - debug: Rendering engine jsrender rootId=kol1uqrqy2de2eb, id=kol1uqrqy2de2eb
+2024-03-23T18:09:35.513Z - warn: Error when processing render request 1
+(because) error when evaluating engine jsrender for template anonymous
+(because) syntax error
+Unmatched or missing {{/each}}, in template:
+<!DOCTYPE html>
+<html lang=\"en\">
+<head>
+    <meta charset=\"UTF-8\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+    <title>Report</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Report</h1>
+    <table border=\"1\">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Gender</th> <!-- New column header -->
+            </tr>
+        </thead>
+        <tbody>
+            {{#each rows}} <!-- Iterate over each row in the JSON data -->
+            <tr>
+                <td>{{this.name}}</td> <!-- Access the name property of the current row -->
+                <td>{{this.age}}</td> <!-- Access the age property of the current row -->
+                <td>{{this.gender}}</td> <!-- Access the gender property of the current row -->
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</body>
+</html>
+
+
+(sandbox.js line 3211:18)
+Error
+  at C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\jsrender\jsrender-node.js:221:27
+  at Object.<anonymous> (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\jsrender\jsrender-node.js:2965:2)
+  at Module._compile (node:internal/modules/cjs/loader:1376:14)
+  at Module._extensions..js (node:internal/modules/cjs/loader:1435:10)
+  at Module.load (node:internal/modules/cjs/loader:1207:32)
+  at Module._load (node:internal/modules/cjs/loader:1023:12)
+  at Module.require (node:internal/modules/cjs/loader:1235:19)
+  at require (node:internal/modules/helpers:176:18)
+  at requireMap (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\worker\sandbox\runInSandbox.js:85:18)
+  at sandboxRequire (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\worker\sandbox\requireSandbox.js:47:25)
+  at require (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\worker\sandbox\createSandbox.js:89:30)
+  at Object.compile (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-jsrender\lib\jsrenderEngine.js:10:24)
+  at executionFn (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\worker\render\executeEngine.js:209:42)
+  at eval (sandbox.js:3211:18)
+  at async run (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\worker\sandbox\createSandbox.js:132:18)
+  at async WorkerReporter.runInSandbox [as _runInSandbox] (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\worker\sandbox\runInSandbox.js:211:14)
+wrapped by:
+Error: Error when evaluating engine jsrender for template anonymous
+(because) syntax error
+Unmatched or missing {{/each}}, in template:
+<!DOCTYPE html>
+<html lang=\"en\">
+<head>
+    <meta charset=\"UTF-8\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+    <title>Report</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Report</h1>
+    <table border=\"1\">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Gender</th> <!-- New column header -->
+            </tr>
+        </thead>
+        <tbody>
+            {{#each rows}} <!-- Iterate over each row in the JSON data -->
+            <tr>
+                <td>{{this.name}}</td> <!-- Access the name property of the current row -->
+                <td>{{this.age}}</td> <!-- Access the age property of the current row -->
+                <td>{{this.gender}}</td> <!-- Access the gender property of the current row -->
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</body>
+</html>
+
+  at module.exports (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\shared\createError.js:10:13)
+  at WorkerReporter.createError (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\shared\reporter.js:53:12)
+  at executeEngine (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\worker\render\executeEngine.js:332:33)
+  at async engine.engine (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\worker\render\executeEngine.js:122:14)
+  at async invokeRender (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\worker\render\render.js:61:23)
+  at async WorkerReporter._render (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\worker\render\render.js:148:7)
+  at async C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\jsreport-core\lib\worker\reporter.js:227:24
+  at async processAndResponse (C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\node_modules\@jsreport\advanced-workers\lib\workerHandler.js:41:17) rootId=kol1uqrqy2de2eb, id=kol1uqrqy2de2eb
+2024-03-23T18:09:35.524Z - warn: Rendering request 1 finished with error in 413 ms rootId=kol1uqrqy2de2eb, id=kol1uqrqy2de2eb
+2024-03-23T18:10:06.320Z - info: Initializing jsreport (version: 4.3.0, configuration file: jsreport.config.json, nodejs: 20.11.1)
+2024-03-23T18:10:06.324Z - info: Searching for available extensions in C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\
+2024-03-23T18:10:06.328Z - info: Extensions location cache contains up to date information, skipping crawling in C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\
+2024-03-23T18:10:06.336Z - info: Found 35 extension(s)
+2024-03-23T18:10:06.361Z - debug: Writing extension locations cache to C:\Users\Kshitij\AppData\Local\Temp\jsreport\core\locations.json
+2024-03-23T18:10:06.363Z - debug: Discovered 35 extensions
+2024-03-23T18:10:06.400Z - debug: Extension authentication@4.1.0 is disabled, skipping
+2024-03-23T18:10:06.402Z - info: Using extension base@4.0.0
+2024-03-23T18:10:06.406Z - info: Using extension child-templates@4.1.0
+2024-03-23T18:10:06.410Z - info: Using extension cli@4.0.3
+2024-03-23T18:10:06.413Z - info: Using extension components@4.0.0
+2024-03-23T18:10:06.415Z - info: Using extension data@4.1.0
+2024-03-23T18:10:06.416Z - info: Using extension express@4.1.0
+2024-03-23T18:10:06.735Z - info: Using extension freeze@4.0.0
+2024-03-23T18:10:06.737Z - info: Using extension fs-store@4.0.2
+2024-03-23T18:10:06.848Z - info: Using extension handlebars@4.0.1
+2024-03-23T18:10:06.849Z - info: Using extension import-export@4.0.3
+2024-03-23T18:10:06.858Z - info: Using extension jsrender@4.0.0
+2024-03-23T18:10:06.859Z - info: Using extension licensing@4.0.2
+2024-03-23T18:10:06.881Z - info: Using extension localization@4.0.1
+2024-03-23T18:10:06.882Z - info: Using extension npm@4.0.0
+2024-03-23T18:10:06.884Z - info: Using extension pdf-utils@4.1.1
+2024-03-23T18:10:06.886Z - info: Using extension reports@4.1.0
+2024-03-23T18:10:06.888Z - info: Using extension tags@4.0.1
+2024-03-23T18:10:06.890Z - info: Using extension text@4.0.0
+2024-03-23T18:10:06.891Z - info: Using extension version-control@4.0.0
+2024-03-23T18:10:06.899Z - info: Using extension assets@4.1.0
+2024-03-23T18:10:06.910Z - info: Using extension authorization@4.0.0
+2024-03-23T18:10:06.914Z - debug: Extension authorization@4.0.0 was disabled
+2024-03-23T18:10:06.914Z - info: Using extension browser-client@4.1.0
+2024-03-23T18:10:06.917Z - info: Using extension chrome-pdf@4.1.0
+2024-03-23T18:10:06.920Z - debug: Chrome strategy is chrome-pool, numberOfWorkers: 1
+2024-03-23T18:10:06.920Z - info: Using extension docx@4.2.0
+2024-03-23T18:10:06.922Z - info: Using extension html-to-xlsx@4.1.1
+2024-03-23T18:10:07.297Z - info: html-to-xlsx detected chrome as available html engine
+2024-03-23T18:10:07.297Z - info: Using extension pptx@4.2.0
+2024-03-23T18:10:07.299Z - info: Using extension scheduling@4.0.0
+2024-03-23T18:10:07.324Z - info: Using extension scripts@4.1.0
+2024-03-23T18:10:07.324Z - info: Using extension static-pdf@4.1.0
+2024-03-23T18:10:07.325Z - info: Using extension studio@4.1.0
+2024-03-23T18:10:07.393Z - info: Using extension xlsx@4.1.0
+2024-03-23T18:10:07.395Z - info: Using extension public-templates@4.0.0
+2024-03-23T18:10:07.396Z - debug: Extension public-templates@4.0.0 was disabled
+2024-03-23T18:10:07.397Z - info: Using extension sample-template@4.0.0
+2024-03-23T18:10:07.398Z - info: Using extension studio-theme-dark@4.0.0
+2024-03-23T18:10:07.400Z - warn: options.allowLocalFilesAccess is deprecated, use options.trustUserCode instead
+2024-03-23T18:10:07.400Z - info: Using general timeout for rendering (reportTimeout: 60000)
+2024-03-23T18:10:07.400Z - info: Using fs provider for template store.
+2024-03-23T18:10:07.404Z - info: fs store is persisting using fs for C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\data
+2024-03-23T18:10:07.408Z - info: fs store is loading data
+2024-03-23T18:10:07.422Z - info: fs store is initialized successfully
+2024-03-23T18:10:07.427Z - debug: studio default theme is: light
+2024-03-23T18:10:07.432Z - info: Creating default express app.
+2024-03-23T18:10:07.449Z - info: jsreport server successfully started on http port: 5488
+2024-03-23T18:10:07.452Z - info: Verifying license key free
+2024-03-23T18:10:07.454Z - info: Using free license
+2024-03-23T18:10:07.458Z - info: Initializing worker threads
+2024-03-23T18:10:07.458Z - debug: Extensions in workers: base, child-templates, components, data, express, handlebars, jsrender, localization, npm, pdf-utils, reports, text, version-control, assets, browser-client, chrome-pdf, docx, html-to-xlsx, pptx, scripts, static-pdf, studio, xlsx
+2024-03-23T18:10:08.383Z - info: 2 worker threads initialized in 925ms
+2024-03-23T18:10:08.384Z - info: Starting temp files cleanup with 180000ms threshold
+2024-03-23T18:10:08.384Z - info: reporter initialized
+2024-03-23T18:10:08.388Z - info: Render request 1 queued for execution and waiting for available worker rootId=fhhmq13uagerqs2, id=fhhmq13uagerqs2
+2024-03-23T18:10:08.406Z - info: Starting rendering request 1 rootId=fhhmq13uagerqs2, id=fhhmq13uagerqs2
+2024-03-23T18:10:08.407Z - info: Rendering anonymous template { recipe: html-to-xlsx, engine: jsrender } rootId=fhhmq13uagerqs2, id=fhhmq13uagerqs2
+2024-03-23T18:10:08.407Z - debug: Inline data specified. rootId=fhhmq13uagerqs2, id=fhhmq13uagerqs2
+2024-03-23T18:10:08.408Z - debug: Base url not specified, skipping its injection. rootId=fhhmq13uagerqs2, id=fhhmq13uagerqs2
+2024-03-23T18:10:08.408Z - debug: Rendering engine jsrender rootId=fhhmq13uagerqs2, id=fhhmq13uagerqs2
+2024-03-23T18:10:09.138Z - debug: Executing recipe html-to-xlsx rootId=fhhmq13uagerqs2, id=fhhmq13uagerqs2
+2024-03-23T18:10:09.139Z - info: html-to-xlsx generation is starting rootId=fhhmq13uagerqs2, id=fhhmq13uagerqs2
+2024-03-23T18:10:10.412Z - info: html-to-xlsx generation was finished rootId=fhhmq13uagerqs2, id=fhhmq13uagerqs2
+2024-03-23T18:10:10.414Z - debug: Skipping storing report. rootId=fhhmq13uagerqs2, id=fhhmq13uagerqs2
+2024-03-23T18:10:10.415Z - info: Rendering request 1 finished in 2029 ms rootId=fhhmq13uagerqs2, id=fhhmq13uagerqs2
+2024-03-29T08:08:02.014Z - info: Initializing jsreport (version: 4.3.0, configuration file: jsreport.config.json, nodejs: 20.11.1)
+2024-03-29T08:08:02.019Z - info: Searching for available extensions in C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\
+2024-03-29T08:08:02.040Z - info: Extensions location cache contains up to date information, skipping crawling in C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\
+2024-03-29T08:08:02.059Z - info: Found 35 extension(s)
+2024-03-29T08:08:02.132Z - debug: Writing extension locations cache to C:\Users\Kshitij\AppData\Local\Temp\jsreport\core\locations.json
+2024-03-29T08:08:02.134Z - debug: Discovered 35 extensions
+2024-03-29T08:08:02.202Z - debug: Extension authentication@4.1.0 is disabled, skipping
+2024-03-29T08:08:02.206Z - info: Using extension base@4.0.0
+2024-03-29T08:08:02.214Z - info: Using extension child-templates@4.1.0
+2024-03-29T08:08:02.221Z - info: Using extension cli@4.0.3
+2024-03-29T08:08:02.228Z - info: Using extension components@4.0.0
+2024-03-29T08:08:02.232Z - info: Using extension data@4.1.0
+2024-03-29T08:08:02.238Z - info: Using extension express@4.1.0
+2024-03-29T08:08:03.183Z - info: Using extension freeze@4.0.0
+2024-03-29T08:08:03.186Z - info: Using extension fs-store@4.0.2
+2024-03-29T08:08:03.477Z - info: Using extension handlebars@4.0.1
+2024-03-29T08:08:03.479Z - info: Using extension import-export@4.0.3
+2024-03-29T08:08:03.505Z - info: Using extension jsrender@4.0.0
+2024-03-29T08:08:03.509Z - info: Using extension licensing@4.0.2
+2024-03-29T08:08:03.577Z - info: Using extension localization@4.0.1
+2024-03-29T08:08:03.580Z - info: Using extension npm@4.0.0
+2024-03-29T08:08:03.584Z - info: Using extension pdf-utils@4.1.1
+2024-03-29T08:08:03.589Z - info: Using extension reports@4.1.0
+2024-03-29T08:08:03.595Z - info: Using extension tags@4.0.1
+2024-03-29T08:08:03.601Z - info: Using extension text@4.0.0
+2024-03-29T08:08:03.606Z - info: Using extension version-control@4.0.0
+2024-03-29T08:08:03.627Z - info: Using extension assets@4.1.0
+2024-03-29T08:08:03.658Z - info: Using extension authorization@4.0.0
+2024-03-29T08:08:03.670Z - debug: Extension authorization@4.0.0 was disabled
+2024-03-29T08:08:03.671Z - info: Using extension browser-client@4.1.0
+2024-03-29T08:08:03.682Z - info: Using extension chrome-pdf@4.1.0
+2024-03-29T08:08:03.689Z - debug: Chrome strategy is chrome-pool, numberOfWorkers: 1
+2024-03-29T08:08:03.691Z - info: Using extension docx@4.2.0
+2024-03-29T08:08:03.699Z - info: Using extension html-to-xlsx@4.1.1
+2024-03-29T08:08:04.556Z - info: html-to-xlsx detected chrome as available html engine
+2024-03-29T08:08:04.556Z - info: Using extension pptx@4.2.0
+2024-03-29T08:08:04.560Z - info: Using extension scheduling@4.0.0
+2024-03-29T08:08:04.621Z - info: Using extension scripts@4.1.0
+2024-03-29T08:08:04.624Z - info: Using extension static-pdf@4.1.0
+2024-03-29T08:08:04.626Z - info: Using extension studio@4.1.0
+2024-03-29T08:08:04.803Z - info: Using extension xlsx@4.1.0
+2024-03-29T08:08:04.807Z - info: Using extension public-templates@4.0.0
+2024-03-29T08:08:04.810Z - debug: Extension public-templates@4.0.0 was disabled
+2024-03-29T08:08:04.810Z - info: Using extension sample-template@4.0.0
+2024-03-29T08:08:04.814Z - info: Using extension studio-theme-dark@4.0.0
+2024-03-29T08:08:04.817Z - warn: options.allowLocalFilesAccess is deprecated, use options.trustUserCode instead
+2024-03-29T08:08:04.818Z - info: Using general timeout for rendering (reportTimeout: 60000)
+2024-03-29T08:08:04.818Z - info: Using fs provider for template store.
+2024-03-29T08:08:04.823Z - info: fs store is persisting using fs for C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\data
+2024-03-29T08:08:04.830Z - info: fs store is loading data
+2024-03-29T08:08:04.861Z - info: fs store is initialized successfully
+2024-03-29T08:08:04.870Z - debug: studio default theme is: light
+2024-03-29T08:08:04.880Z - info: Creating default express app.
+2024-03-29T08:08:04.934Z - info: jsreport server successfully started on http port: 5488
+2024-03-29T08:08:04.938Z - info: Verifying license key free
+2024-03-29T08:08:04.947Z - info: Using free license
+2024-03-29T08:08:04.952Z - info: Initializing worker threads
+2024-03-29T08:08:04.953Z - debug: Extensions in workers: base, child-templates, components, data, express, handlebars, jsrender, localization, npm, pdf-utils, reports, text, version-control, assets, browser-client, chrome-pdf, docx, html-to-xlsx, pptx, scripts, static-pdf, studio, xlsx
+2024-03-29T08:08:06.760Z - info: 2 worker threads initialized in 1808ms
+2024-03-29T08:08:06.761Z - info: Starting temp files cleanup with 180000ms threshold
+2024-03-29T08:08:06.762Z - info: reporter initialized
+2024-03-29T08:08:06.768Z - info: Render request 1 queued for execution and waiting for available worker rootId=smjgk8wtikviibs, id=smjgk8wtikviibs
+2024-03-29T08:08:06.800Z - info: Starting rendering request 1 rootId=smjgk8wtikviibs, id=smjgk8wtikviibs
+2024-03-29T08:08:06.801Z - info: Rendering anonymous template { recipe: html-to-xlsx, engine: jsrender } rootId=smjgk8wtikviibs, id=smjgk8wtikviibs
+2024-03-29T08:08:06.802Z - debug: Inline data specified. rootId=smjgk8wtikviibs, id=smjgk8wtikviibs
+2024-03-29T08:08:06.802Z - debug: Base url not specified, skipping its injection. rootId=smjgk8wtikviibs, id=smjgk8wtikviibs
+2024-03-29T08:08:06.802Z - debug: Rendering engine jsrender rootId=smjgk8wtikviibs, id=smjgk8wtikviibs
+2024-03-29T08:08:08.220Z - debug: Executing recipe html-to-xlsx rootId=smjgk8wtikviibs, id=smjgk8wtikviibs
+2024-03-29T08:08:08.221Z - info: html-to-xlsx generation is starting rootId=smjgk8wtikviibs, id=smjgk8wtikviibs
+2024-03-29T08:08:10.307Z - info: html-to-xlsx generation was finished rootId=smjgk8wtikviibs, id=smjgk8wtikviibs
+2024-03-29T08:08:10.308Z - debug: Skipping storing report. rootId=smjgk8wtikviibs, id=smjgk8wtikviibs
+2024-03-29T08:08:10.308Z - info: Rendering request 1 finished in 3544 ms rootId=smjgk8wtikviibs, id=smjgk8wtikviibs
+2024-03-29T08:11:56.312Z - info: Initializing jsreport (version: 4.3.0, configuration file: jsreport.config.json, nodejs: 20.11.1)
+2024-03-29T08:11:56.315Z - info: Searching for available extensions in C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\
+2024-03-29T08:11:56.320Z - info: Extensions location cache contains up to date information, skipping crawling in C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\
+2024-03-29T08:11:56.332Z - info: Found 35 extension(s)
+2024-03-29T08:11:56.389Z - debug: Writing extension locations cache to C:\Users\Kshitij\AppData\Local\Temp\jsreport\core\locations.json
+2024-03-29T08:11:56.391Z - debug: Discovered 35 extensions
+2024-03-29T08:11:56.436Z - debug: Extension authentication@4.1.0 is disabled, skipping
+2024-03-29T08:11:56.437Z - info: Using extension base@4.0.0
+2024-03-29T08:11:56.443Z - info: Using extension child-templates@4.1.0
+2024-03-29T08:11:56.447Z - info: Using extension cli@4.0.3
+2024-03-29T08:11:56.452Z - info: Using extension components@4.0.0
+2024-03-29T08:11:56.455Z - info: Using extension data@4.1.0
+2024-03-29T08:11:56.457Z - info: Using extension express@4.1.0
+2024-03-29T08:11:57.016Z - info: Using extension freeze@4.0.0
+2024-03-29T08:11:57.018Z - info: Using extension fs-store@4.0.2
+2024-03-29T08:11:57.214Z - info: Using extension handlebars@4.0.1
+2024-03-29T08:11:57.216Z - info: Using extension import-export@4.0.3
+2024-03-29T08:11:57.231Z - info: Using extension jsrender@4.0.0
+2024-03-29T08:11:57.232Z - info: Using extension licensing@4.0.2
+2024-03-29T08:11:57.265Z - info: Using extension localization@4.0.1
+2024-03-29T08:11:57.267Z - info: Using extension npm@4.0.0
+2024-03-29T08:11:57.271Z - info: Using extension pdf-utils@4.1.1
+2024-03-29T08:11:57.276Z - info: Using extension reports@4.1.0
+2024-03-29T08:11:57.285Z - info: Using extension tags@4.0.1
+2024-03-29T08:11:57.290Z - info: Using extension text@4.0.0
+2024-03-29T08:11:57.292Z - info: Using extension version-control@4.0.0
+2024-03-29T08:11:57.310Z - info: Using extension assets@4.1.0
+2024-03-29T08:11:57.333Z - info: Using extension authorization@4.0.0
+2024-03-29T08:11:57.341Z - debug: Extension authorization@4.0.0 was disabled
+2024-03-29T08:11:57.343Z - info: Using extension browser-client@4.1.0
+2024-03-29T08:11:57.351Z - info: Using extension chrome-pdf@4.1.0
+2024-03-29T08:11:57.357Z - debug: Chrome strategy is chrome-pool, numberOfWorkers: 1
+2024-03-29T08:11:57.358Z - info: Using extension docx@4.2.0
+2024-03-29T08:11:57.361Z - info: Using extension html-to-xlsx@4.1.1
+2024-03-29T08:11:58.122Z - info: html-to-xlsx detected chrome as available html engine
+2024-03-29T08:11:58.122Z - info: Using extension pptx@4.2.0
+2024-03-29T08:11:58.125Z - info: Using extension scheduling@4.0.0
+2024-03-29T08:11:58.175Z - info: Using extension scripts@4.1.0
+2024-03-29T08:11:58.177Z - info: Using extension static-pdf@4.1.0
+2024-03-29T08:11:58.178Z - info: Using extension studio@4.1.0
+2024-03-29T08:11:58.318Z - info: Using extension xlsx@4.1.0
+2024-03-29T08:11:58.321Z - info: Using extension public-templates@4.0.0
+2024-03-29T08:11:58.322Z - debug: Extension public-templates@4.0.0 was disabled
+2024-03-29T08:11:58.323Z - info: Using extension sample-template@4.0.0
+2024-03-29T08:11:58.325Z - info: Using extension studio-theme-dark@4.0.0
+2024-03-29T08:11:58.327Z - warn: options.allowLocalFilesAccess is deprecated, use options.trustUserCode instead
+2024-03-29T08:11:58.328Z - info: Using general timeout for rendering (reportTimeout: 60000)
+2024-03-29T08:11:58.328Z - info: Using fs provider for template store.
+2024-03-29T08:11:58.332Z - info: fs store is persisting using fs for C:\Users\Kshitij\Documents\GitHub\KIAAR_Minor_Project\Node\Report\data
+2024-03-29T08:11:58.337Z - info: fs store is loading data
+2024-03-29T08:11:58.362Z - info: fs store is initialized successfully
+2024-03-29T08:11:58.369Z - debug: studio default theme is: light
+2024-03-29T08:11:58.374Z - info: Creating default express app.
+2024-03-29T08:11:58.409Z - info: jsreport server successfully started on http port: 5488
+2024-03-29T08:11:58.412Z - info: Verifying license key free
+2024-03-29T08:11:58.414Z - info: Using free license
+2024-03-29T08:11:58.420Z - info: Initializing worker threads
+2024-03-29T08:11:58.421Z - debug: Extensions in workers: base, child-templates, components, data, express, handlebars, jsrender, localization, npm, pdf-utils, reports, text, version-control, assets, browser-client, chrome-pdf, docx, html-to-xlsx, pptx, scripts, static-pdf, studio, xlsx
+2024-03-29T08:12:00.108Z - info: 2 worker threads initialized in 1688ms
+2024-03-29T08:12:00.108Z - info: Starting temp files cleanup with 180000ms threshold
+2024-03-29T08:12:00.109Z - info: reporter initialized
+2024-03-29T08:12:00.113Z - info: Render request 1 queued for execution and waiting for available worker rootId=oq3s0urhp2cm77o, id=oq3s0urhp2cm77o
+2024-03-29T08:12:00.143Z - info: Starting rendering request 1 rootId=oq3s0urhp2cm77o, id=oq3s0urhp2cm77o
+2024-03-29T08:12:00.144Z - info: Rendering anonymous template { recipe: html-to-xlsx, engine: jsrender } rootId=oq3s0urhp2cm77o, id=oq3s0urhp2cm77o
+2024-03-29T08:12:00.145Z - debug: Inline data specified. rootId=oq3s0urhp2cm77o, id=oq3s0urhp2cm77o
+2024-03-29T08:12:00.145Z - debug: Base url not specified, skipping its injection. rootId=oq3s0urhp2cm77o, id=oq3s0urhp2cm77o
+2024-03-29T08:12:00.145Z - debug: Rendering engine jsrender rootId=oq3s0urhp2cm77o, id=oq3s0urhp2cm77o
+2024-03-29T08:12:01.156Z - debug: Executing recipe html-to-xlsx rootId=oq3s0urhp2cm77o, id=oq3s0urhp2cm77o
+2024-03-29T08:12:01.157Z - info: html-to-xlsx generation is starting rootId=oq3s0urhp2cm77o, id=oq3s0urhp2cm77o
+2024-03-29T08:12:02.146Z - info: html-to-xlsx generation was finished rootId=oq3s0urhp2cm77o, id=oq3s0urhp2cm77o
+2024-03-29T08:12:02.149Z - debug: Skipping storing report. rootId=oq3s0urhp2cm77o, id=oq3s0urhp2cm77o
+2024-03-29T08:12:02.150Z - info: Rendering request 1 finished in 2039 ms rootId=oq3s0urhp2cm77o, id=oq3s0urhp2cm77o
