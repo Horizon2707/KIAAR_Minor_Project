@@ -42,6 +42,7 @@ function ResultEntry() {
   const [alertTog, setalertTog] = useState(false);
   var [resValues, ressetValues] = useState([]);
   const [finalRemarks, setFinalRemarks] = useState("");
+
   let values = sessionStorage.getItem("values");
   let local = sessionStorage.getItem("local");
 
@@ -183,12 +184,90 @@ function ResultEntry() {
             Errors[element.PARAMETER_ID] =
               "Please enter a value between 0 and 999 for " +
               element.PARAMETER_NAME;
+          } else if (element.PARAMETER_ID === 11) {
+            if (value < 0.5 || value > 14) {
+              Errors[element.PARAMETER_ID] =
+                "Please enter a value between 0.5 and 14 for " +
+                element.PARAMETER_NAME;
+            }
+          } else if (element.PARAMETER_ID === 12) {
+            if (value <= 0 || value >= 30) {
+              Errors[element.PARAMETER_ID] =
+                "Please enter a value between 0 and 30 for " +
+                element.PARAMETER_NAME;
+            }
+          } else if (element.PARAMETER_ID === 14) {
+            if (value <= 0 || value >= 5) {
+              Errors[element.PARAMETER_ID] =
+                "Please enter a value between 0 and 5 for " +
+                element.PARAMETER_NAME;
+            }
+          } else if (element.PARAMETER_ID === 15) {
+            if (value <= 0 || value >= 750) {
+              Errors[element.PARAMETER_ID] =
+                "Please enter a value between 0 and 10 for " +
+                element.PARAMETER_NAME;
+            }
+          } else if (element.PARAMETER_ID === 16) {
+            if (value <= 0 || value >= 300) {
+              Errors[element.PARAMETER_ID] =
+                "Please enter a value between 0 and 300 for " +
+                element.PARAMETER_NAME;
+            }
+          } else if (element.PARAMETER_ID === 17) {
+            if (value <= 0 || value >= 2000) {
+              Errors[element.PARAMETER_ID] =
+                "Please enter a value between 0 and 2000 for " +
+                element.PARAMETER_NAME;
+            }
+          } else if (element.PARAMETER_ID === 21) {
+            if (value <= 0 || value >= 3000) {
+              Errors[element.PARAMETER_ID] =
+                "Please enter a value between 0 and 3000 for " +
+                element.PARAMETER_NAME;
+            }
+          } else if (element.PARAMETER_ID === 19) {
+            if (value <= 0 || value >= 60) {
+              Errors[element.PARAMETER_ID] =
+                "Please enter a value between 0 and 60 for " +
+                element.PARAMETER_NAME;
+            }
+          } else if (element.PARAMETER_ID === 20) {
+            if (value <= 0 || value >= 40) {
+              Errors[element.PARAMETER_ID] =
+                "Please enter a value between 0 and 40 for " +
+                element.PARAMETER_NAME;
+            }
+          } else if (element.PARAMETER_ID === 26) {
+            if (value <= 0 || value >= 20) {
+              Errors[element.PARAMETER_ID] =
+                "Please enter a value between 0 and 20 for " +
+                element.PARAMETER_NAME;
+            }
+          } else if (element.PARAMETER_ID === 25) {
+            if (value <= 0 || value >= 50) {
+              Errors[element.PARAMETER_ID] =
+                "Please enter a value between 0 and 50 for " +
+                element.PARAMETER_NAME;
+            }
+          } else if (element.PARAMETER_ID === 24) {
+            if (value <= 0 || value >= 30) {
+              Errors[element.PARAMETER_ID] =
+                "Please enter a value between 0 and 30 for " +
+                element.PARAMETER_NAME;
+            }
+          } else if (element.PARAMETER_ID === 23) {
+            if (value <= 0 || value >= 15) {
+              Errors[element.PARAMETER_ID] =
+                "Please enter a value between 0 and 15 for " +
+                element.PARAMETER_NAME;
+            }
           }
         }
       }
     }
     setErrors(Errors);
-    if (Errors.length !== 0) {
+    if (Errors.length === 0) {
       setMissing(true);
     }
     console.log(Errors);
@@ -225,9 +304,9 @@ function ResultEntry() {
           {missing && (
             <>
               <div ref={alertRef} className="stickyAlert">
-                <Alert status="error">
+                <Alert status="warning">
                   <AlertIcon />
-                  Please fill in all the fields.
+                  Please fill in all accurate values.
                 </Alert>
               </div>
             </>

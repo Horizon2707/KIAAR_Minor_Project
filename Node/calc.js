@@ -3,6 +3,7 @@ const dbConnection = require("./dbconnect.js");
 oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;
 const { calculations } = require("./calculations.js");
 const npk = require("../Node/assests/data.json");
+const micro = require("../Node/assests/micro.json");
 const combination_list_fetch = () => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -99,14 +100,19 @@ combination_list_fetch()
     //DB connection for fetching NPK values
     let comb_formulae = null;
     console.log(npk);
-
+    console.log(micro);
     comb_formulae = calculations(
       npk.phosphorus,
       npk.potassium,
       npk.nitrogen,
       yt_A,
       yt_P,
-      yt_S
+      yt_S,
+      micro.zincSulphate,
+      micro.copperSulphate,
+      micro.sodium,
+      micro.ferrousSulphate,
+      micro.manganeseSulphate
     );
     // const comb_formulae = calculations(8.33, 203, 117.9, yt_A, yt_P, yt_S);
     // console.log(JSON.stringify(comb_formulae, null, 2));
@@ -147,12 +153,14 @@ combination_list_fetch()
         }
       }
     }
+    // console.log(JSON.stringify(final_calc, null, 2));
   })
   .catch((err) => {
     console.error(err);
   });
 
 // console.log(comb_values);
+// console.log(JSON.stringify(final_calc, null, 2));
 // const values = JSON.parse(calculations.calc(8.33, 203, 117.9, 70, 50, 40));
-// console.log(values);
+
 module.exports = { final_calc };

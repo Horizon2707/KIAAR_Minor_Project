@@ -3,10 +3,9 @@
   margin-top: 2vh;
   width: 200vh;
   margin-left: 10vh;
-  /* border: 1px solid #d3d3d3; */
-  /* border-radius: 2vh; */
   padding: 3vh;
   background-color: #f9f9f9;
+  border-radius: 2%;
 }
 
 .item {
@@ -29,9 +28,8 @@
   display: flex;
   justify-content: space-start;
   gap: 10vh;
-  background-color: #53ffff5b;
+  background-color: #cef5f55b;
   border-radius: 10px;
-  box-shadow: 0 0 10px 0 #44ddf8;
 }
 
 .litspace {

@@ -109,21 +109,6 @@ function Form() {
           setwatVar(parsedData.watVar);
           setSoilVar(parsedData.soilVar);
           console.log(parsedData);
-          // fetchInit();
-          // fetchFarmerInfo(parsedData.values.farmerId);
-          // fetchClusterInfo(parsedData.values.farmerId);
-          // fetchVillageInfo(parsedData.farmerId, parsedData.values.cluster);
-          // fetchPlotNo(parsedData.values.farmerId, parsedData.values.village);
-          // fetchPlotarea(
-          //   parsedData.values.plotNo,
-          //   parsedData.values.farmerId,
-          //   parsedData.values.village
-          // );
-          // fetchSurveyNo(
-          //   parsedData.values.village,
-          //   parsedData.values.farmerId,
-          //   parsedData.values.cluster
-          // );
         } catch (error) {
           console.error("Error parsing JSON:", error);
         }
@@ -554,6 +539,7 @@ function Form() {
                               sessionStorage.removeItem("forParams");
                               sessionStorage.removeItem("result");
                               sessionStorage.removeItem("reset");
+                              sessionStorage.removeItem("local");
                               sessionStorage.removeItem("sandr");
                               sessionStorage.removeItem("combined");
                               sessionStorage.removeItem("paramValues");
@@ -1050,8 +1036,6 @@ function Form() {
             Reset
           </Button>
         )}
-        <br />
-        <br />
       </div>
     </>
   );

@@ -71,7 +71,9 @@
         font-weight: bold;
         text-align: center;
       }
-      
+      .table_width{
+        width: 75;
+      }
       hr {
         border: 1px solid black;
       }
@@ -174,8 +176,8 @@
           </tbody>
         </table>
       </div>
-      <p class="heading">Recommendations</p>
       <br>
+      <p class="heading">Recommendations</p>
       <p class="heading">Soil Reclamation</p>
       <table>
         <tr>
@@ -245,24 +247,30 @@
           </tbody>
         </table>
       </div>
+      
+      <br><br>
+      <br><br>
       <div class="row_11">
-        <p>{{remarksPara}}</p>
+        REMARKS 
+        <p><strong>
+          {{remarksPara}}
+        </strong></p>
         <p class="heading">SOIL TEST BASED NUTRIENT RECOMMENDATIONS</p>
         <table>
-          <thead>
+          <tbody>
             <tr>
-              <th >Sugarcane Season</th>
+              <th class="table_width" >Sugarcane Season</th>
               <th >Adsali</th>
               <th >Pre-seasonal</th>
               <th >Seasonal</th>
             </tr>
             <tr>
-              <td>Sugarcane Yield Target (tonne/acre)</td>
+              <td class="table_width">Sugarcane Yield Target (tonne/acre)</td>
               {{#each yield_targets}}
               <td>{{this.TARGET_YIELD}}</td>
               {{/each}}
-            </tr>
-          </thead>
+            </tr> 
+          <!-- </tbody>
         </table>
         </div>
         <p class="heading">
@@ -270,10 +278,10 @@
         </p>
         <div class="row_13">
           <table>
-            <tbody>
+            <tbody> -->
               {{#each npkdata}}
               <tr>
-                <td>{{npkname}}</td>
+                <td class="table_width">{{npkName}}</td>
                 {{#each npkvalues}}
                 <td>{{this}}</td>
                 {{/each}}
@@ -285,16 +293,19 @@
         <p class="heading">Recommended dose of straight and complex fertilizers (kg/acre)</p>
         <table>
           <tr>
-            <td colspan="1">Sugarcane Season</td>
+            <td>Sugarcane Season</td>
             <td colspan="3">Adsali</td>
             <td colspan="3">Pre-seasonal</td>
-            <td colspan="3">Seasonal</td>
+            <td colspan="3">Seasonarl</td>
           </tr>
-          {{#each comb_iter}}
+          
+            {{#each comb_iter}}
             {{generateTableHeader this}}
             {{generateTableBody this}} 
-          {{/each}}
-        </table>        
+            {{/each}}
+        </table>     
+        <br><br><br><br><br>
+        <br><br><br><br>
       <h2>Micronutrients</h2>
       <table>
         <thead>

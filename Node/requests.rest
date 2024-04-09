@@ -161,6 +161,13 @@ Content-Type: application/json
 POST http://localhost:5000/season
 Content-Type: application/json
 
+### Test 
+POST http://localhost:5000/test
+Content-Type: application/json
+
+{   
+   "labTran": 12579
+}
 ### Login 
 POST http://localhost:5000/login
 Content-Type: application/json

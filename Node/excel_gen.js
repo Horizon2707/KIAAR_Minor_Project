@@ -1,7 +1,7 @@
 const excel = require("excel4node");
 const wb = new excel.Workbook();
 const ws = wb.addWorksheet("Report");
-const { final_calc } = require("./calc.js");
+// const { final_calc } = require("./calc.js");
 const libre = require("libreoffice-convert");
 const xlsx = require("xlsx");
 const handlebars = require("handlebars");
@@ -21,8 +21,10 @@ async function reportGen(
   combination_cd,
   product_cd,
   time_apply_cd,
-  crop_season_cd
+  crop_season_cd,
+  final_calc
 ) {
+  console.log(JSON.stringify(final_calc, null, 2));
   time_apply_cd.push({ RECOM_APPLY_TIME_CD: 0, RECOM_APPLY_TIME: "Total" });
   time_apply_cd.sort((a, b) => a.RECOM_APPLY_TIME_CD - b.RECOM_APPLY_TIME_CD);
   function getCombinationName(code) {
@@ -550,6 +552,8 @@ async function reportGen(
       sr++;
     }
   });
+
+  // Direct PDF generation
   let srNo = 1;
   const comb_cd = Object.keys(final_calc);
   const parameterData = parameter_names.map((e) => {
@@ -669,6 +673,7 @@ async function reportGen(
   };
 
   sr = 1;
+  // console.log(nutrients);
   const micro_data_func = () => {
     let data = [];
     Object.keys(nutrients[1]).forEach((key) => {

@@ -1,4 +1,16 @@
-function calculations(phos, pota, nitr, SYT_A, SYT_P, SYT_S) {
+function calculations(
+  phos,
+  pota,
+  nitr,
+  SYT_A,
+  SYT_P,
+  SYT_S,
+  zn,
+  cu,
+  na,
+  fe,
+  mn
+) {
   const nitr_A = parseFloat((4.39 * SYT_A - 1.56 * nitr).toFixed(1));
   const nitr_P = parseFloat((4.76 * SYT_P - 1.34 * nitr).toFixed(1));
   const nitr_S = parseFloat((4.76 * SYT_S - 1.34 * nitr).toFixed(1));
@@ -623,13 +635,13 @@ function calculations(phos, pota, nitr, SYT_A, SYT_P, SYT_S) {
     12: {
       1: {
         6: {
-          1: 0,
+          1: zn,
         },
         8: {
-          1: 0,
+          1: mn,
         },
         9: {
-          1: 0,
+          1: cu,
         },
         10: {
           1: 0,
@@ -644,7 +656,7 @@ function calculations(phos, pota, nitr, SYT_A, SYT_P, SYT_S) {
           1: phos_A,
         },
         47: {
-          1: 0,
+          1: na,
         },
       },
       2: {

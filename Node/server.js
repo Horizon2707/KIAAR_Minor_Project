@@ -5,7 +5,8 @@ const cors = require("cors");
 const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
 const oracledb = require("oracledb");
-const { final_calc } = require("./calc.js");
+const { calculations } = require("./calculations.js");
+// const { final_calc } = require("./calc.js");
 const dbConnection = require("./dbconnect.js");
 const { reportGen } = require("./excel_gen.js");
 const fs = require("fs");
@@ -108,6 +109,7 @@ let farmerInformation;
 let all_local;
 let remarks;
 let formulae;
+let labTran;
 app.post("/farmerId", async (req, res) => {
   const { farmerId } = req.body;
 
@@ -513,21 +515,36 @@ app.post("/values", async (req, res) => {
       parameterValues[key] = parseInt(paramValues[key], 10);
     }
     //      calculations(parameterValues.phos, parameterValues.pota, parameterValues.nitr, 40, 50, 70);
-
+    const micro = {
+      zincSulphate: parameterValues[26],
+      ferrousSulphate: parameterValues[25],
+      copperSulphate: parameterValues[23],
+      sodium: parameterValues[27],
+      manganeseSulphate: parameterValues[24],
+    };
+    // const microObj = JSON.stringify(micronutrients);
+    // fs.writeFileSync("../Node/assests/micro.json", microObj, "utf8", (err) => {
+    //   if (err) {
+    //     console.error("Error writing JSON file:", err);
+    //     return;
+    //   }
+    //   console.log("JSON file updated successfully.");
+    // });
     const npk = {
       nitrogen: parameterValues[15],
       phosphorus: parameterValues[16],
       potassium: parameterValues[17],
     };
-    const npkObj = JSON.stringify(npk);
-    //Edit NPK
-    fs.writeFileSync(jsonFilePath, npkObj, "utf8", (err) => {
-      if (err) {
-        console.error("Error writing JSON file:", err);
-        return;
-      }
-      console.log("JSON file updated successfully.");
-    });
+    // const npkObj = JSON.stringify(npk);
+    // //Edit NPK
+    // fs.writeFileSync(jsonFilePath, npkObj, "utf8", (err) => {
+    //   if (err) {
+    //     console.error("Error writing JSON file:", err);
+    //     return;
+    //   }
+    //   console.log("JSON file updated successfully.");
+    // });
+
     farmerInformation = farmerInfo;
     all_local = local;
     const selectedSuggestions = suggestions.filter(
@@ -537,30 +554,31 @@ app.post("/values", async (req, res) => {
     // console.log(parameterValues);
     remarks = finalRemarks;
     const tranNo = farmerValues.labNo;
+    labTran = tranNo;
     // const tranNo = farmerValues.labNo[0].LAB_TRAN || farmerValues.labNo;
     const farmerId = farmerValues.farmerId;
     const connection = await dbConnection;
-    const lab_tran_all = await connection.execute(
-      `SELECT DISTINCT LAB_TRAN_NO FROM GSMAGRI.SW_RECOMMENDATION_TRAN WHERE LAB_TRAN_NO = :labNo`,
-      [tranNo]
-    );
 
+    const { yield_target } = await get_yields();
+    const yt_A = yield_target[0].TARGET_YIELD;
+    const yt_P = yield_target[1].TARGET_YIELD;
+    const yt_S = yield_target[2].TARGET_YIELD;
+    // console.log(parameterValues);
     // console.log(tranNo, farmerId);
     // console.log(parameterValues[15], parameterValues[16], parameterValues[17]);
-    // let A_obj = yield_target.find((e) => {
-    //   e.CROP_SEASON === "ADASALI";
-    // });
-    // let P_obj = yield_target.find((e) => {
-    //   e.CROP_SEASON === "PRE-SEASONAL";
-    // });
-
-    // let S_obj = yield_target.find((e) => {
-    //   e.CROP_SEASON === "SEASONAL";
-    // });
-    // if (A_obj) {
-    //   // let A_yt = A_obj.TARGET_YIELD;
-    //   console.log(A_obj);
-    // }
+    const final_calc = calculations(
+      npk.phosphorus,
+      npk.potassium,
+      npk.nitrogen,
+      yt_A,
+      yt_P,
+      yt_S,
+      micro.zincSulphate,
+      micro.copperSulphate,
+      micro.sodium,
+      micro.ferrousSulphate,
+      micro.manganeseSulphate
+    );
 
     const updateTables = async () => {
       const tran_head = await connection.execute(
@@ -753,20 +771,21 @@ app.post("/values", async (req, res) => {
               `SELECT DISTINCT UNIT_VALUE FROM GSMAGRI.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
               [product]
             );
-            function execute(ta) {
-              promises.push(
-                Promise.all([group_cd_all, unit_id_all, unit_value_all]).then(
-                  ([
-                    group_cd_all_result,
-                    unit_id_all_result,
-                    unit_value_all_result,
-                  ]) => {
-                    const group_cd = group_cd_all_result.rows;
-                    const unit_id = unit_id_all_result.rows;
-                    const unit_value = unit_value_all_result.rows;
+            function execute(ta, value) {
+              try {
+                promises.push(
+                  Promise.all([group_cd_all, unit_id_all, unit_value_all]).then(
+                    ([
+                      group_cd_all_result,
+                      unit_id_all_result,
+                      unit_value_all_result,
+                    ]) => {
+                      const group_cd = group_cd_all_result.rows;
+                      const unit_id = unit_id_all_result.rows;
+                      const unit_value = unit_value_all_result.rows;
 
-                    return connection.execute(
-                      `INSERT INTO gsmagri.sw_recommendation_tran_new (
+                      return connection.execute(
+                        `INSERT INTO gsmagri.sw_recommendation_tran_new (
                     lab_tran_no,
                     tran_date,
                     sw_group_cd,
@@ -799,30 +818,36 @@ app.post("/values", async (req, res) => {
                     :v13,
                     :v14
                 )`,
-                      [
-                        tranNo,
-                        parseInt(group_cd[0].GROUP_CD),
-                        parseInt(product),
-                        parseInt(comb),
-                        parseInt(value),
-                        (unit_value[0] && parseInt(unit_value[0].UNIT_VALUE)) ||
-                          1,
-                        parseInt(farmerValues.test),
-                        parseInt(season),
-                        parseInt(ta),
-                      ]
-                    );
-                  }
-                )
-              );
+                        [
+                          tranNo,
+                          parseInt(group_cd[0].GROUP_CD),
+                          parseInt(product),
+                          parseInt(comb),
+                          parseInt(value),
+                          (unit_value[0] &&
+                            parseInt(unit_value[0].UNIT_VALUE)) ||
+                            1,
+                          parseInt(farmerValues.test),
+                          parseInt(season),
+                          parseInt(ta),
+                        ]
+                      );
+                    }
+                  )
+                );
+              } catch (e) {
+                console.log(e);
+              }
             }
             if (comb == 12) {
               value = parseInt(final_calc[comb][season][product][1]);
-              execute(1);
+
+              execute(1, value);
             } else {
               ta_cd.forEach((ta) => {
                 value = parseInt(final_calc[comb][season][product][ta]);
-                execute(ta);
+
+                execute(ta, value);
               });
             }
 
@@ -851,6 +876,12 @@ app.post("/values", async (req, res) => {
     // //     return;
     // //   }
     // // });
+    console.log(tranNo);
+    const lab_tran_all = await connection.execute(
+      `SELECT DISTINCT LAB_TRAN_NO FROM GSMAGRI.SW_RECOMMENDATION_TRAN_NEW WHERE LAB_TRAN_NO = :labNo`,
+      [tranNo]
+    );
+    console.log(lab_tran_all.rows);
     if (lab_tran_all.rows.length > 0) {
       const tran_head_del = await connection.execute(
         `DELETE FROM GSMAGRI.SW_TRAN_HEAD WHERE LAB_TRAN_NO = :labNo`,
@@ -868,11 +899,13 @@ app.post("/values", async (req, res) => {
         `DELETE FROM GSMAGRI.SW_RECOMMENDATION_TRAN WHERE LAB_TRAN_NO= :labNo`,
         [tranNo]
       );
+      await connection.execute("COMMIT");
       console.log(tran_head_del);
       updateTables();
     } else {
       updateTables();
     }
+
     res.json({ status: "success" });
   } catch (error) {
     console.log(error);
@@ -891,6 +924,27 @@ app.get("/getValues", async (req, res) => {
   const { combination_cd, product_cd, time_apply_cd, crop_season_cd } =
     await combination_cds();
   console.log("This is before");
+  const connection = await dbConnection;
+  const get_recomm_all = await connection.execute(
+    `SELECT COMBINE_CD,CROP_SEASON_CD,SW_PRODUCT_CD,RECOM_APPLY_TIME_CD,PRODUCT_VALUE FROM SW_RECOMMENDATION_TRAN_NEW WHERE LAB_TRAN_NO = :tranNo`,
+    [labTran]
+  );
+  let final_calc = {};
+  get_recomm_all.rows.forEach((row) => {
+    if (!final_calc[row.COMBINE_CD]) {
+      final_calc[row.COMBINE_CD] = {};
+    }
+    if (!final_calc[row.COMBINE_CD][row.CROP_SEASON_CD]) {
+      final_calc[row.COMBINE_CD][row.CROP_SEASON_CD] = {};
+    }
+    if (!final_calc[row.COMBINE_CD][row.CROP_SEASON_CD][row.SW_PRODUCT_CD]) {
+      final_calc[row.COMBINE_CD][row.CROP_SEASON_CD][row.SW_PRODUCT_CD] = {};
+    }
+    final_calc[row.COMBINE_CD][row.CROP_SEASON_CD][row.SW_PRODUCT_CD][
+      row.RECOM_APPLY_TIME_CD
+    ] = parseInt(row.PRODUCT_VALUE);
+  });
+  // console.log(final_calc);
   const pdfbuffer = await reportGen(
     values_all,
     parameter_names,
@@ -902,7 +956,8 @@ app.get("/getValues", async (req, res) => {
     combination_cd,
     product_cd,
     time_apply_cd,
-    crop_season_cd
+    crop_season_cd,
+    final_calc
   );
   if (pdfbuffer) {
     console.log("buffer generated");
@@ -914,6 +969,36 @@ app.get("/getValues", async (req, res) => {
   // console.log("This is After", status);
 
   // res.json(response_obj);
+});
+
+app.post("/test", async (req, res) => {
+  const { labTran } = req.body;
+  try {
+    const connection = await dbConnection;
+    const get_recomm_all = await connection.execute(
+      `SELECT COMBINE_CD,CROP_SEASON_CD,SW_PRODUCT_CD,RECOM_APPLY_TIME_CD,PRODUCT_VALUE FROM SW_RECOMMENDATION_TRAN_NEW WHERE LAB_TRAN_NO = :tranNo`,
+      [labTran]
+    );
+    // console.log(get_recomm_all.rows);
+    let final_calc = {};
+    get_recomm_all.rows.forEach((row) => {
+      if (!final_calc[row.COMBINE_CD]) {
+        final_calc[row.COMBINE_CD] = {};
+      }
+      if (!final_calc[row.COMBINE_CD][row.CROP_SEASON_CD]) {
+        final_calc[row.COMBINE_CD][row.CROP_SEASON_CD] = {};
+      }
+      if (!final_calc[row.COMBINE_CD][row.CROP_SEASON_CD][row.SW_PRODUCT_CD]) {
+        final_calc[row.COMBINE_CD][row.CROP_SEASON_CD][row.SW_PRODUCT_CD] = {};
+      }
+      final_calc[row.COMBINE_CD][row.CROP_SEASON_CD][row.SW_PRODUCT_CD][
+        row.RECOM_APPLY_TIME_CD
+      ] = row.PRODUCT_VALUE;
+    });
+    console.log(JSON.stringify(final_calc, null, 2));
+  } catch (e) {
+    console.log(e);
+  }
 });
 app.post("/yield_target", async (req, res) => {
   const connection = await dbConnection;
@@ -1100,9 +1185,10 @@ app.post("/login", async (req, res) => {
       `SELECT LOGIN_CD,USER_NAME,PASSORD_ENC FROM GSMAGRI.U_LOGON_DATA WHERE USER_NAME = :username`,
       [username]
     );
+    console.log(user_all.rows);
     const user = user_all.rows;
 
-    if (user) {
+    if (user.length !== 0) {
       const isPasswordValid = await bcrypt.compare(
         password,
         user[0].PASSORD_ENC
