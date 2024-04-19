@@ -816,7 +816,7 @@ function Form() {
                 })} */}
               <option value="GOOD">Good</option>
               <option value="POOR">POOR</option>
-              <option value="NONE">None</option>
+              <option value="NOT_KNOWN">NOT KNOWN</option>
             </Select>
             {newErrors.drainage && (
               <div className="error">{newErrors.drainage}</div>
