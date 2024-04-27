@@ -5,7 +5,7 @@ import { Button } from "@chakra-ui/react";
 import { Checkbox } from "@chakra-ui/react";
 import { Textarea } from "@chakra-ui/react";
 // import "@react-pdf-viewer/default-layout/lib/styles/index.css";
-
+import Nav from "./Nav";
 import {
   Tabs,
   TabList,
@@ -42,10 +42,10 @@ function ResultEntry() {
   const [alertTog, setalertTog] = useState(false);
   var [resValues, ressetValues] = useState([]);
   const [finalRemarks, setFinalRemarks] = useState("");
-
+  // const [blob, setBlob] = useState();
   let values = sessionStorage.getItem("values");
   let local = sessionStorage.getItem("local");
-
+  let userI = sessionStorage.getItem("user");
   values = JSON.parse(values);
   local = JSON.parse(local);
   const [missing, setMissing] = useState(false);
@@ -55,7 +55,6 @@ function ResultEntry() {
     }
   };
   let postData = () => {
-    console.log(local.farmInfo);
     let com = {
       finalRemarks: finalRemarks,
       farmerInfo: local.farmInfo,
@@ -63,6 +62,7 @@ function ResultEntry() {
       values: values,
       suggestions: suggestion,
       local: local,
+      user: userI,
     };
     const dataString = JSON.stringify(com);
     sessionStorage.setItem("combined", dataString);
@@ -91,9 +91,13 @@ function ResultEntry() {
                 const blob = new Blob([arrayBuffer], {
                   type: "application/pdf",
                 });
+                // setBlob(blob);
                 const blobUrl = URL.createObjectURL(blob);
                 setPdf(blobUrl);
+                console.log(blobUrl);
+                console.log(blob);
               })
+
               .catch((error) => {
                 console.error(
                   "There was a problem with the fetch operation:",
@@ -285,17 +289,45 @@ function ResultEntry() {
             </Alert>;
           }, 300)}
           {pdf && (
-            <iframe
-              src={pdf}
-              style={{
-                position: "fixed",
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100%",
-                border: "none",
-              }}
-            ></iframe>
+            <>
+              <iframe
+                src={pdf}
+                style={{
+                  position: "fixed",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: "85%",
+                  border: "none",
+                }}
+              ></iframe>
+              <div className="last1">
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    const fileName = `${values.farmerId}`;
+                    const anchor = document.createElement("a");
+                    anchor.href = pdf;
+                    anchor.download = fileName;
+                    document.body.appendChild(anchor);
+                    anchor.click();
+                    document.body.removeChild(anchor);
+                    fetch("http://localhost:5000/savePDF", {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify({
+                        fileName: fileName,
+                      }),
+                    });
+                  }}
+                >
+                  {" "}
+                  Download & Save PDF
+                </Button>
+              </div>
+            </>
           )}
         </>
       )}
@@ -311,30 +343,7 @@ function ResultEntry() {
               </div>
             </>
           )}
-          <div className="navbar">
-            <h1
-              style={{
-                fontSize: "2.5vh",
-                color: "black",
-                textAlign: "left",
-              }}
-            >
-              Soil Water Test Entry Form
-            </h1>
-            <Button
-              onClick={() => {
-                if (window.confirm("Are you sure you want to log out?")) {
-                  sessionStorage.clear();
-                  window.location.reload();
-                }
-              }}
-              background="#CCE5FF"
-              color="#000000"
-              size="md"
-            >
-              Log Out
-            </Button>
-          </div>
+          <Nav />
           <div className="recom">
             <Tabs
               align="center"
@@ -557,6 +566,7 @@ function ResultEntry() {
                   setalertTog(true);
                   setMissing(false);
                   postData();
+                  console.log(userI);
                 } else {
                   setMissing(true);
                   scrollToAlert();
@@ -564,6 +574,16 @@ function ResultEntry() {
               }}
             >
               Go To Report Page
+            </Button>
+            <Button
+              background="#CCE5FF"
+              color="#000000"
+              size="md"
+              onClick={() => {
+                navigate("/form");
+              }}
+            >
+              Go Back
             </Button>
           </div>
           <br />

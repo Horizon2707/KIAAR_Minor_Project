@@ -88,3 +88,25 @@
   justify-content: space-around;
   margin-top: 2vh;
 } 
+
+
+.c1{
+  background: rgba(255, 255, 255, 0.25);
+}
+.tran1{
+ display: flex;
+  gap: 2%;
+  flex-direction: row;
+  width: 20%;
+  align-items: center;
+}
+.tran2{
+  align-items: center;
+  justify-content: space-around;
+  display: flex;
+  gap: 2%;
+  background: rgba(255, 255, 255, 0.25);
+  margin-left: 10px;
+  margin-right: 10px;
+  border-radius: 2%;
+}

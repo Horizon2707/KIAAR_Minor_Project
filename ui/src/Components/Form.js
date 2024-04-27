@@ -1,4 +1,5 @@
 import "../Styles/Form.css";
+import Nav from "./Nav";
 import { Select, Input, Button } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { EditIcon } from "@chakra-ui/icons";
@@ -421,30 +422,7 @@ function Form() {
 
   return (
     <>
-      <div className="navbar">
-        <h1
-          style={{
-            fontSize: "2.5vh",
-            color: "black",
-            textAlign: "left",
-          }}
-        >
-          Soil Water Test Entry Form
-        </h1>
-        <Button
-          onClick={() => {
-            if (window.confirm("Are you sure you want to log out?")) {
-              sessionStorage.clear();
-              window.location.reload();
-            }
-          }}
-          background="#CCE5FF"
-          color="#000000"
-          size="md"
-        >
-          Log Out
-        </Button>
-      </div>
+      <Nav />
       <div className="container">
         <div className="common">
           <div className="litspace item">
@@ -503,6 +481,7 @@ function Form() {
                     onChange={(e) => {
                       const labNo = e.target.value;
                       setforUpd(labNo);
+                      // sessionStorage.setItem("updateMode", true);
                     }}
                     value={forUpd}
                     type="number"
@@ -517,37 +496,36 @@ function Form() {
                       colorScheme="blue"
                       mr={3}
                       onClick={() => {
-                        console.log("Test Clicked");
+                        // console.log("Test Clicked");
                         fetch("http://localhost:5000/checkLabTran", {
                           method: "POST",
                           headers: {
                             "Content-Type": "application/json",
                           },
                           body: JSON.stringify({ labNo: forUpd }),
-                        })
-                          .then((res) => {
-                            if (res.status !== 200) {
-                              alert("No such lab number found");
-                            } else if (res.status === 200) {
-                              alert("Lab number found");
-                              sessionStorage.setItem(
-                                "editLabTran",
-                                JSON.stringify(parseInt(forUpd))
-                              );
-                              setestEx(true);
-                              sessionStorage.removeItem("values");
-                              sessionStorage.removeItem("forParams");
-                              sessionStorage.removeItem("result");
-                              sessionStorage.removeItem("reset");
-                              sessionStorage.removeItem("local");
-                              sessionStorage.removeItem("sandr");
-                              sessionStorage.removeItem("combined");
-                              sessionStorage.removeItem("paramValues");
-                              window.location.reload();
-                              onClose();
-                            }
-                          })
-                          .then((data) => {});
+                        }).then((res) => {
+                          if (res.status !== 200) {
+                            alert("No such lab number found");
+                          } else if (res.status === 200) {
+                            alert("Lab number found");
+                            sessionStorage.setItem(
+                              "editLabTran",
+                              JSON.stringify(parseInt(forUpd))
+                            );
+                            setestEx(true);
+                            sessionStorage.removeItem("values");
+                            sessionStorage.removeItem("forParams");
+                            sessionStorage.removeItem("result");
+                            sessionStorage.removeItem("reset");
+                            sessionStorage.removeItem("local");
+                            sessionStorage.removeItem("sandr");
+                            sessionStorage.removeItem("combined");
+                            sessionStorage.removeItem("paramValues");
+                            window.location.reload();
+                            onClose();
+                          }
+                        });
+                        // .then((data) => {});
                       }}
                     >
                       Test
@@ -604,6 +582,7 @@ function Form() {
                   window.location.reload();
                 } else {
                   onOpen();
+                  // sessionStorage.removeItem("updateMode");
                 }
               }}
             >
@@ -900,7 +879,7 @@ function Form() {
               value={values.cultivationType}
             >
               <option value="IRRIGATED">Irrigated</option>
-              <option value="RAINED">Rained</option>
+              <option value="RAINFED">Rainfed</option>
               <option value="NONE">None</option>
             </Select>
             {newErrors.cultivationType && (
@@ -1012,6 +991,16 @@ function Form() {
           size="md"
         >
           Go to ResultEntry
+        </Button>
+        <Button
+          background="#CCE5FF"
+          color="#000000"
+          size="md"
+          onClick={() => {
+            navigate("/transaction");
+          }}
+        >
+          Check Previous Transaction
         </Button>
         {reset && (
           <Button

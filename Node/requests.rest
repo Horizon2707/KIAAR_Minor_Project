@@ -161,6 +161,15 @@ Content-Type: application/json
 POST http://localhost:5000/season
 Content-Type: application/json
 
+{}
+### Transactions
+POST http://localhost:5000/transactions
+Content-Type: application/json
+
+{
+    "startDate" : "2024-04-09",
+    "endDate" : "2024-04-25"
+}
 ### Test 
 POST http://localhost:5000/test
 Content-Type: application/json

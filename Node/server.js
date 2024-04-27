@@ -11,7 +11,13 @@ const dbConnection = require("./dbconnect.js");
 const { reportGen } = require("./excel_gen.js");
 const fs = require("fs");
 const { formatWithOptions } = require("util");
-
+const AWS = require("aws-sdk");
+const multer = require("multer");
+AWS.config.update({
+  accessKeyId: "AKIA5FTY7W63IQSVYTEC",
+  secretAccessKey: "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",
+  region: "ap-south-1",
+});
 oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;
 
 const jsonFilePath = "../Node/assests/data.json";
@@ -110,6 +116,7 @@ let all_local;
 let remarks;
 let formulae;
 let labTran;
+let pdfbuffer;
 app.post("/farmerId", async (req, res) => {
   const { farmerId } = req.body;
 
@@ -508,6 +515,7 @@ app.post("/values", async (req, res) => {
       farmerInfo,
       local,
       finalRemarks,
+      user,
     } = req.body;
     farmerValues = values;
     parameterValues = {};
@@ -579,7 +587,7 @@ app.post("/values", async (req, res) => {
       micro.ferrousSulphate,
       micro.manganeseSulphate
     );
-
+    console.log(user);
     const updateTables = async () => {
       const tran_head = await connection.execute(
         `INSERT INTO GSMAGRI.SW_TRAN_HEAD (
@@ -638,7 +646,7 @@ app.post("/values", async (req, res) => {
           :prevCrop,
           :cropToBeGrown,
           NULL,       
-          290,
+          23,
           SYSDATE,
           NULL,       
           NULL,       
@@ -675,6 +683,7 @@ app.post("/values", async (req, res) => {
           farmerValues.drainage,
           farmerValues.previousCrop,
           farmerValues.cropToBeGrown,
+          // parseInt(user.login_cd),
           formatDateAlt(farmerValues.dtOfSampling),
           formatDateAlt(farmerValues.dtOfSamplingReceipt),
           parseInt(farmerValues.test),
@@ -945,7 +954,7 @@ app.get("/getValues", async (req, res) => {
     ] = parseInt(row.PRODUCT_VALUE);
   });
   // console.log(final_calc);
-  const pdfbuffer = await reportGen(
+  pdfbuffer = await reportGen(
     values_all,
     parameter_names,
     farmerInformation,
@@ -1159,6 +1168,74 @@ const codeToName = async () => {
     irrigationName: irrgationname.rows,
   };
 };
+app.post("/transactions", async (req, res) => {
+  const { startDate, endDate } = req.body;
+  let stDate = formatDateAlt(startDate);
+  let edDate = formatDateAlt(endDate);
+  console.log(edDate, stDate);
+  let parsedEndDate = new Date(edDate.replace(/-/g, " "));
+
+  // Increment the day by 1
+  parsedEndDate.setDate(parsedEndDate.getDate() + 1);
+
+  // Format the incremented date back to the required format
+  let incrementedDay = parsedEndDate.getDate();
+  let incrementedMonth = parsedEndDate
+    .toLocaleString("default", {
+      month: "short",
+    })
+    .toUpperCase();
+  let incrementedYear = parsedEndDate.getFullYear();
+  let incrementedEndDate = `${incrementedDay}-${incrementedMonth}-${incrementedYear}`;
+
+  console.log(incrementedEndDate, stDate);
+  try {
+    const connection = await dbConnection;
+    const transaction_all = await connection.execute(
+      `SELECT * FROM GSMAGRI.SW_TRAN_HEAD WHERE TRAN_DATE >= :stDate AND TRAN_DATE <=:edDate`,
+      [stDate, incrementedEndDate]
+    );
+    const transactions = transaction_all.rows;
+    res.json(transactions);
+  } catch (err) {
+    console.log(err);
+  }
+});
+// const storage = multer.memoryStorage();
+// const upload = multer({ storage: storage });
+app.post("/savePDF", (req, res) => {
+  const { fileName } = req.body;
+  console.log(fileName);
+  try {
+    const s3 = new AWS.S3();
+    const listObjectsParams = {
+      Bucket: "pddf-bucket",
+      Prefix: "uploads/",
+    };
+    const buffer = Buffer.from(pdfbuffer);
+    const uploadParams = {
+      Bucket: "pddf-bucket",
+      Key: `uploads/${fileName}.pdf`, // Specify the folder path and filename
+      Body: buffer,
+    };
+    // s3.listObjects(listObjectsParams, function (err, data) {
+    //   if (err) {
+    //     console.error("Error listing objects: ", err);
+    //   } else {
+    //     console.log("Objects in the bucket: ", data.Contents);
+    //   }
+    // });
+    s3.upload(uploadParams, function (err, data) {
+      if (err) {
+        console.error("Error uploading file:", err);
+      } else {
+        console.log("File uploaded successfully. Location:", data.Location);
+      }
+    });
+  } catch (err) {
+    console.log(err);
+  }
+});
 // Authentication methods
 function isAuthenticated(req, res, next) {
   if (req.session && req.session.user) {
