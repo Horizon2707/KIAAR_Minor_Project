@@ -177,6 +177,13 @@ Content-Type: application/json
 {   
    "labTran": 12579
 }
+### Delete
+POST http://localhost:5000/delete
+Content-Type: application/json
+
+{   
+   "tranNo": 12600
+}
 ### Login 
 POST http://localhost:5000/login
 Content-Type: application/json

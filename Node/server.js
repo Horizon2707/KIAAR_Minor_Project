@@ -122,13 +122,10 @@ app.post("/farmerId", async (req, res) => {
 
   try {
     const connection = await dbConnection;
-    //Farermer ID Retreival
     const farmer_rows = await connection.execute(
       `SELECT * FROM GSMAGRI.SW_TRAN_HEAD WHERE FARMER_ID =:farmerId`,
       [farmerId]
     );
-    //Farmer Information Retreival
-    //handle not found
     if (farmer_rows <= 0) {
       return res.status(404).json({ message: "Farmer not found" });
     }
@@ -143,19 +140,15 @@ app.post("/farmerId", async (req, res) => {
     } else {
       console.log("Personal info not found");
     }
-
     const farmers = farmer_rows.rows;
-    //Lab Tran Numbers
     const labtranno = await connection.execute(
       `SELECT MAX(LAB_TRAN_NO) + 1 AS LAB_TRAN FROM SW_TRAN_HEAD`
     );
     const labtran = labtranno.rows;
     console.log(labtran);
-    //Survey Numbers
     const survey_no_t = new Set(farmers.map((item) => item.SY_NO));
     const survey_no = Array.from(survey_no_t);
     console.log(survey_no);
-    //DropDown Information Retreival
     if (farmers.length > 0) {
       fieldsToExtract.forEach((field) => {
         dropdowns[field] = extractUniqueValues(farmers, field);
@@ -165,21 +158,7 @@ app.post("/farmerId", async (req, res) => {
     } else {
       return res.status(404).json({ message: "Farmer not found" });
     }
-
-    //Soil Type CD to Name
-
     const soilTypes = dropdowns.SOIL_TYPE_CD;
-
-    // if (soilTypes) {
-    //   for (let i = 0; i < soilTypes.length; i++) {
-    //     j = soilTypes[i];
-    //     const res = await connection.execute(
-    //       `SELECT DISTINCT SOIL_TYPE_NAME FROM GSMAGRI.SOIL_TYPE_DIR WHERE SOIL_TYPE_CD =:j`,
-    //       [j]
-    //     );
-    //     soil_types.push(res.rows[0]);
-    //   }
-    // }
     const soil_all = await connection.execute(
       `SELECT DISTINCT SOIL_TYPE_NAME,SOIL_TYPE_CD FROM GSMAGRI.SOIL_TYPE_DIR`
     );
@@ -192,16 +171,6 @@ app.post("/farmerId", async (req, res) => {
     //Irrigation Type CD to Name
     const irrigationTypes = dropdowns.IRRIGATION_CD;
 
-    // if (irrigationTypes) {
-    //   for (let i = 0; i < irrigationTypes.length; i++) {
-    //     j = irrigationTypes[i];
-    //     const res = await connection.execute(
-    //       `SELECT DISTINCT IRRIGATION_NAME FROM GSMAGRI.IRRIGATION_DIR WHERE IRRIGATION_CD IN (:i)`,
-    //       [j]
-    //     );
-    //     irrigation_types.push(res.rows[0]);
-    //   }
-    // }
     const irrigation_all = await connection.execute(
       `SELECT DISTINCT IRRIGATION_NAME,IRRIGATION_CD FROM GSMAGRI.IRRIGATION_DIR `
     );
@@ -239,6 +208,32 @@ app.post("/farmerId", async (req, res) => {
     console.error("Error searching for farmer:", error);
     res.status(500).json({ message: "Internal server error" });
   }
+  // try{
+  //   let data=0;
+  //   let res = fetch("http://localhost:5000/farmerInfo",{
+  //     method: "POST",
+  //     body: JSON.stringify({farmerId: farmerId}),
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //   });
+  //   if(res.ok){
+  //     data = await res.json();
+  //   }
+  //   let {farmer_rows,personal,labtranno,soil_all,irrigation_all,crop_all} = data;
+  //     if (farmer_rows <= 0) {
+  //     return res.status(404).json({ message: "Farmer not found" });
+  //   }
+  //   personal_info = personal.rows;
+  //   if (personal_info) {
+  //     console.log(personal_info);
+  //   } else {
+  //     console.log("Personal info not found");
+  //   }
+  //   const farmers = farmer_rows.rows;
+  // } catch(e){
+  //   console.log(e);
+  // }
 });
 
 app.post("/init", async (req, res) => {
@@ -287,7 +282,11 @@ app.post("/clusterInfo", async (req, res) => {
       `SELECT DISTINCT CLUSTER_CD,CLUSTER_NAME FROM GSMAGRI.FARMER_PLOTS WHERE FARMER_ID = :farmerId`,
       [farmerId]
     );
-    res.json(cluster_cd.rows);
+    if (cluster_cd.rows.length > 0) {
+      res.json(cluster_cd.rows);
+    } else {
+      res.status(404);
+    }
     //Cluster Codes to Names
 
     const cluster_codes = cluster_cd.rows.map((item) => item.CLUSTER_CD);
@@ -530,36 +529,19 @@ app.post("/values", async (req, res) => {
       sodium: parameterValues[27],
       manganeseSulphate: parameterValues[24],
     };
-    // const microObj = JSON.stringify(micronutrients);
-    // fs.writeFileSync("../Node/assests/micro.json", microObj, "utf8", (err) => {
-    //   if (err) {
-    //     console.error("Error writing JSON file:", err);
-    //     return;
-    //   }
-    //   console.log("JSON file updated successfully.");
-    // });
+
     const npk = {
       nitrogen: parameterValues[15],
       phosphorus: parameterValues[16],
       potassium: parameterValues[17],
     };
-    // const npkObj = JSON.stringify(npk);
-    // //Edit NPK
-    // fs.writeFileSync(jsonFilePath, npkObj, "utf8", (err) => {
-    //   if (err) {
-    //     console.error("Error writing JSON file:", err);
-    //     return;
-    //   }
-    //   console.log("JSON file updated successfully.");
-    // });
 
     farmerInformation = farmerInfo;
     all_local = local;
     const selectedSuggestions = suggestions.filter(
       (suggestion) => suggestion.selected === true
     );
-    suggestions_all = selectedSuggestions;
-    // console.log(parameterValues);
+    let suggestions_all = selectedSuggestions;
     remarks = finalRemarks;
     const tranNo = farmerValues.labNo;
     labTran = tranNo;
@@ -905,7 +887,7 @@ app.post("/values", async (req, res) => {
         [tranNo]
       );
       const recomm_tail_del = await connection.execute(
-        `DELETE FROM GSMAGRI.SW_RECOMMENDATION_TRAN WHERE LAB_TRAN_NO= :labNo`,
+        `DELETE FROM GSMAGRI.SW_RECOMMENDATION_TRAN_NEW WHERE LAB_TRAN_NO= :labNo`,
         [tranNo]
       );
       await connection.execute("COMMIT");
@@ -1033,13 +1015,18 @@ app.post("/npk", async (req, res) => {
 app.post("/checkLabTran", async (req, res) => {
   const { labNo } = req.body;
   const connection = await dbConnection;
-
+  console.log(labNo);
   const lab_tran_all = await connection.execute(
-    `SELECT DISTINCT LAB_TRAN_NO FROM GSMAGRI.SW_RECOMMENDATION_TRAN WHERE LAB_TRAN_NO = :labNo`,
+    `SELECT DISTINCT LAB_TRAN_NO FROM GSMAGRI.SW_RECOMMENDATION_TRAN_NEW WHERE LAB_TRAN_NO = :labNo`,
     [labNo]
   );
   console.log(lab_tran_all.rows);
-  res.json(lab_tran_all.rows).status(200);
+  if (lab_tran_all.rows.length > 0) {
+    console.log(lab_tran_all.rows);
+    res.json(lab_tran_all.rows).status(200);
+  } else {
+    res.status(404).json({ message: "Lab Tran not found" });
+  }
 });
 
 app.get("/season", async (req, res) => {
@@ -1201,8 +1188,46 @@ app.post("/transactions", async (req, res) => {
     console.log(err);
   }
 });
-// const storage = multer.memoryStorage();
-// const upload = multer({ storage: storage });
+app.post("/delete", async (req, res) => {
+  const { tranNo } = req.body;
+  console.log(tranNo);
+  try {
+    const connection = await dbConnection;
+    const lab_tran_all = await connection.execute(
+      `SELECT DISTINCT LAB_TRAN_NO FROM GSMAGRI.SW_RECOMMENDATION_TRAN_NEW WHERE LAB_TRAN_NO = :labNo`,
+      [tranNo]
+    );
+    console.log(lab_tran_all.rows.length);
+    if (lab_tran_all.rows.length > 0) {
+      await connection.execute(
+        `DELETE FROM GSMAGRI.SW_TRAN_HEAD WHERE LAB_TRAN_NO = :labNo`,
+        [tranNo]
+      );
+      await connection.execute(
+        `DELETE FROM GSMAGRI.SW_TRAN_TAIL WHERE LAB_TRAN_NO = :labNo`,
+        [tranNo]
+      );
+      await connection.execute(
+        `DELETE FROM GSMAGRI.SW_SUGGESTION_TAIL WHERE LAB_TRAN_NO = :labNo`,
+        [tranNo]
+      );
+      await connection.execute(
+        `DELETE FROM GSMAGRI.SW_RECOMMENDATION_TRAN_NEW WHERE LAB_TRAN_NO= :labNo`,
+        [tranNo]
+      );
+      await connection.execute("COMMIT");
+      console.log("Deleted" + tranNo);
+      res.status(200).json({ message: "Lab number found and deleted" });
+    } else {
+      console.log(404);
+      res.status(404).json({ error: "No such lab number found" });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 app.post("/savePDF", (req, res) => {
   const { fileName } = req.body;
   console.log(fileName);

@@ -4,7 +4,7 @@ import "../Styles/ResultEntry.css";
 import { Button } from "@chakra-ui/react";
 import { Checkbox } from "@chakra-ui/react";
 import { Textarea } from "@chakra-ui/react";
-// import "@react-pdf-viewer/default-layout/lib/styles/index.css";
+import { Spinner } from "@chakra-ui/react";
 import Nav from "./Nav";
 import {
   Tabs,
@@ -288,7 +288,7 @@ function ResultEntry() {
               Data uploaded to the server.
             </Alert>;
           }, 300)}
-          {pdf && (
+          {pdf ? (
             <>
               <iframe
                 src={pdf}
@@ -328,6 +328,20 @@ function ResultEntry() {
                 </Button>
               </div>
             </>
+          ) : (
+            <Spinner
+              thickness="4px"
+              speed="0.65s"
+              emptyColor="gray.200"
+              color="blue.500"
+              size="xl"
+              style={{
+                position: "fixed",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+              }}
+            />
           )}
         </>
       )}
@@ -491,6 +505,7 @@ function ResultEntry() {
                           rows={1}
                           variant="filled"
                           onChange={setT}
+                          id="clear"
                         />
                         <Button
                           background="#CCE5FF"
@@ -524,6 +539,8 @@ function ResultEntry() {
                                     .then((response) => response.json())
                                     .then((data) => {
                                       setSuggestion(data);
+                                      document.getElementById("clear").value =
+                                        "";
                                     });
                                 });
                             } catch (error) {

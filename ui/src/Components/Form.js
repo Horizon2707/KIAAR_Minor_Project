@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { EditIcon } from "@chakra-ui/icons";
 import { useState, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
+import { Alert, AlertIcon, AlertTitle } from "@chakra-ui/react";
 import { useDisclosure } from "@chakra-ui/react";
 import {
   Modal,
@@ -32,6 +33,7 @@ function Form() {
   const [plotNo, setplotNo] = useState([]);
   const [plotArea, setPlotArea] = useState();
   const [labTran, setLabTran] = useState([]);
+  const [notfoundFarmer, setnotFoundFarmer] = useState(false);
   const [values, setValues] = useState({
     farmerId: "",
     labNo: "",
@@ -62,7 +64,16 @@ function Form() {
   });
   const [testEx, setestEx] = useState(false);
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isOpenModal1,
+    onOpen: onOpenModal1,
+    onClose: onCloseModal1,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenModal2,
+    onOpen: onOpenModal2,
+    onClose: onCloseModal2,
+  } = useDisclosure();
   const localDataPush = () => {
     const locals = {
       values: values,
@@ -201,17 +212,26 @@ function Form() {
       console.error("Error:", error);
     }
   };
-  const fetchFarmerInfo = (farmerId) => {
-    fetch("http://localhost:5000/farmerId", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ farmerId: values.farmerId || farmerId }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
+  const fetchFarmerInfo = async (farmerId) => {
+    try {
+      const response = await fetch("http://localhost:5000/farmerId", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ farmerId: values.farmerId || farmerId }),
+      });
+
+      if (response.status === 404) {
+        setnotFoundFarmer(true);
+        return;
+      }
+
+      if (response.ok) {
+        const data = await response.json();
         console.log(data);
+        setnotFoundFarmer(false);
+
         setfarmInfo({
           name: data.farmer_name,
           MBLNO: data.phone_no,
@@ -225,32 +245,40 @@ function Form() {
         setIrrigationSources(data.irrigation_types);
         setSoilTypes(data.soil_types);
         setPreviousCrop(data.previous_crop);
-        setLabTran(data.tran_nos[0].LAB_TRAN);
-        if (forUpd) {
-          setValues({ ...values, labNo: forUpd });
-        } else {
-          setValues({ ...values, labNo: data.tran_nos[0].LAB_TRAN });
-        }
-        console.log(data);
-      });
+        setLabTran(forUpd ? forUpd : data.tran_nos[0].LAB_TRAN);
+        setValues({
+          ...values,
+          labNo: forUpd ? forUpd : data.tran_nos[0].LAB_TRAN,
+        });
+      } else {
+        throw new Error("Network response was not ok.");
+      }
+    } catch (error) {
+      console.error("Error fetching farmer info:", error);
+    }
   };
 
-  const fetchClusterInfo = (farmerId) => {
-    try {
-      fetch("http://localhost:5000/clusterInfo", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ farmerId: values.farmerId || farmerId }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log(data);
-          setCluster(data);
-        });
-    } catch (e) {
-      console.error(e);
+  const fetchClusterInfo = async (farmerId) => {
+    const response = await fetch("http://localhost:5000/clusterInfo", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ farmerId: values.farmerId || farmerId }),
+    });
+
+    if (response.status === 404) {
+      setnotFoundFarmer(true);
+      return;
+    }
+
+    if (response.ok) {
+      setnotFoundFarmer(false);
+
+      const data = await response.json();
+      setCluster(data);
+    } else {
+      throw new Error("Network response was not ok.");
     }
   };
   const fetchVillageInfo = (farmerId, clusterCd) => {
@@ -297,13 +325,11 @@ function Form() {
     }
   };
   let [forUpd, setforUpd] = useState("");
+  const [forDel, setforDel] = useState("");
   const navigate = useNavigate();
   const o = {
     marginTop: "2vh",
   };
-  const [isDisabled, setIsDisabled] = useState(true);
-
-  let handleEnableElement = () => {};
   const [reset, setReset] = useState(false);
   let validate = () => {
     const errors = {};
@@ -423,6 +449,12 @@ function Form() {
   return (
     <>
       <Nav />
+      {notfoundFarmer && (
+        <Alert status="error">
+          <AlertIcon />
+          <AlertTitle>No such farmer found</AlertTitle>
+        </Alert>
+      )}
       <div className="container">
         <div className="common">
           <div className="litspace item">
@@ -468,27 +500,45 @@ function Form() {
             </Select>
           </div>
           <div className="item litspace">
-            <Modal isOpen={isOpen} onClose={onClose}>
+            <Modal
+              isOpen={isOpenModal1}
+              onClose={() => {
+                sessionStorage.removeItem("values");
+                sessionStorage.removeItem("forParams");
+                sessionStorage.removeItem("result");
+                sessionStorage.removeItem("local");
+                sessionStorage.removeItem("reset");
+                sessionStorage.removeItem("sandr");
+                sessionStorage.removeItem("combined");
+                sessionStorage.removeItem("paramValues");
+                sessionStorage.removeItem("editLabTran");
+                window.location.reload();
+                onCloseModal1();
+              }}
+            >
               <ModalOverlay />
               <ModalContent>
                 <ModalHeader>Update</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
-                  <label className="mLabel" htmlFor="labNo">
-                    Lab No:
-                  </label>
-                  <Input
-                    onChange={(e) => {
-                      const labNo = e.target.value;
-                      setforUpd(labNo);
-                      // sessionStorage.setItem("updateMode", true);
-                    }}
-                    value={forUpd}
-                    type="number"
-                    id="labNo"
-                    size="sm"
-                    style={{ width: "10vh" }}
-                  ></Input>
+                  <div className="space">
+                    <label className="mLabel" htmlFor="labNo">
+                      Lab No:
+                    </label>
+                    <Input
+                      onChange={(e) => {
+                        let labNo = e.target.value;
+                        labNo = labNo.replace(/\D/g, "").slice(0, 10);
+                        setforUpd(parseInt(labNo));
+                      }}
+                      value={forUpd}
+                      type="text"
+                      id="labNo"
+                      size="sm"
+                      maxLength={10}
+                      style={{ width: "10vh" }}
+                    />{" "}
+                  </div>
                 </ModalBody>
                 <ModalFooter>
                   {!testEx && (
@@ -496,7 +546,6 @@ function Form() {
                       colorScheme="blue"
                       mr={3}
                       onClick={() => {
-                        // console.log("Test Clicked");
                         fetch("http://localhost:5000/checkLabTran", {
                           method: "POST",
                           headers: {
@@ -522,10 +571,9 @@ function Form() {
                             sessionStorage.removeItem("combined");
                             sessionStorage.removeItem("paramValues");
                             window.location.reload();
-                            onClose();
+                            onCloseModal1();
                           }
                         });
-                        // .then((data) => {});
                       }}
                     >
                       Test
@@ -548,7 +596,73 @@ function Form() {
               </>
             )}
           </div>
-
+          <div className="item litspace">
+            <Modal isOpen={isOpenModal2} onClose={onCloseModal2}>
+              <ModalOverlay />
+              <ModalContent>
+                <ModalHeader>Delete</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                  <div className="space">
+                    <label className="mLabel" htmlFor="l1">
+                      Lab No:
+                    </label>
+                    <Input
+                      onChange={(e) => {
+                        let labNo = e.target.value;
+                        setforDel(parseInt(labNo));
+                        // console.log(e.target.value);
+                      }}
+                      value={forDel}
+                      type="number"
+                      id="l1"
+                      size="sm"
+                      style={{ width: "10vh" }}
+                    ></Input>
+                  </div>
+                </ModalBody>
+                <ModalFooter>
+                  <Button
+                    colorScheme="blue"
+                    mr={3}
+                    onClick={() => {
+                      fetch("http://localhost:5000/delete", {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ tranNo: forDel }),
+                      })
+                        .then((res) => {
+                          if (res.status === 200) {
+                            alert("Lab number found and deleted");
+                            sessionStorage.removeItem("values");
+                            sessionStorage.removeItem("forParams");
+                            sessionStorage.removeItem("result");
+                            sessionStorage.removeItem("reset");
+                            sessionStorage.removeItem("local");
+                            sessionStorage.removeItem("sandr");
+                            sessionStorage.removeItem("combined");
+                            sessionStorage.removeItem("paramValues");
+                            window.location.reload();
+                            onCloseModal2();
+                          } else if (res.status === 404) {
+                            alert("No such lab number found");
+                          } else {
+                            console.error("Unexpected error occurred");
+                          }
+                        })
+                        .catch((error) => {
+                          console.error("Fetch error:", error);
+                        });
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </ModalFooter>
+              </ModalContent>
+            </Modal>
+          </div>
           <div className="item litspace">
             <label className="mLabel" htmlFor="HEWFno">
               HEWF no.
@@ -581,13 +695,38 @@ function Form() {
                   sessionStorage.removeItem("paramValues");
                   window.location.reload();
                 } else {
-                  onOpen();
+                  onOpenModal1();
                   // sessionStorage.removeItem("updateMode");
                 }
               }}
             >
               {forUpd ? "Create New" : "Update Existing"}
             </Button>
+            {!forUpd && (
+              <Button
+                color="CCE5FF"
+                background="#ffffff"
+                size="sm"
+                onClick={() => {
+                  if (forDel) {
+                    sessionStorage.removeItem("editLabTran");
+                    sessionStorage.removeItem("values");
+                    sessionStorage.removeItem("forParams");
+                    sessionStorage.removeItem("result");
+                    sessionStorage.removeItem("local");
+                    sessionStorage.removeItem("reset");
+                    sessionStorage.removeItem("sandr");
+                    sessionStorage.removeItem("combined");
+                    sessionStorage.removeItem("paramValues");
+                    window.location.reload();
+                  } else {
+                    onOpenModal2();
+                  }
+                }}
+              >
+                Delete Existing
+              </Button>
+            )}
           </div>
         </div>
         <div className="common">
@@ -748,15 +887,14 @@ function Form() {
               id="area"
               ref={ref}
               value={plotArea}
-              disabled={isDisabled}
               onChange={(e) => {
                 const area = e.target.value;
                 setValues({ ...values, area: area });
               }}
             ></Input>
-            <button onClick={handleEnableElement}>
+            {/* <button onClick={handleEnableElement}>
               <EditIcon />
-            </button>
+            </button> */}
           </div>
         </div>
         <div className="row5 common">
@@ -782,6 +920,7 @@ function Form() {
               <option value="GOOD">Good</option>
               <option value="POOR">POOR</option>
               <option value="NONE">None</option>
+              {/* <option value="NOT KNOWN">NOT KNOWN</option> */}
             </Select>
             {newErrors.drainage && (
               <div className="error">{newErrors.drainage}</div>
