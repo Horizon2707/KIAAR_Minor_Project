@@ -1,0 +1,172 @@
+// const tran_head = await connection.execute(
+      //   `INSERT INTO GSMAGRI.SW_TRAN_HEAD (
+      //     COMPANY_CD,
+      //     SEASON_CD,
+      //     TRAN_DATE,
+      //     LAB_TRAN_NO,
+      //     FARMER_ID,
+      //     SY_NO,
+      //     CLUSTER_CD,
+      //     VILLAGE_CD,
+      //     PLOT_NO,
+      //     IRRIGATION_CD,
+      //     SOIL_TYPE_CD,
+      //     TYPE_OF_CULTIVATION,
+      //     DRAINAGE,
+      //     PREVIOUS_CROP,
+      //     CROPS_TO_BE_GROWN,
+      //     REMARKS,
+      //     ADD_BY,
+      //     ADD_DATE,
+      //     RECOMMENTATION_REMARKS,
+      //     SUGESSTION_REMARKS,
+      //     DATE_OF_SAMPLING,
+      //     DATE_OF_SAMPLE_RECEIPT,
+      //     TEST_CD,
+      //     PLOT_AREA,
+      //     PLOT_AREA_IN_GUNTA,
+      //     TEMPLATE_NO,
+      //     LATTITUDE,
+      //     LONGITUDE,
+      //     GEO_CODE,
+      //     GBL_KHATE_ID,
+      //     GBL_PLOT_ID,
+      //     SF_SOIL_ID,
+      //     SMS_SENT_FLAG,
+      //     HEWF_ORDER_NO,
+      //     SYNC_STATUS,
+      //     SYNC_REMARKS,
+      //     WATER_TYPE_CD
+      //   )
+      //   VALUES (
+      //     1,
+      //     21,
+      //     SYSDATE,
+      //     :tranNo,
+      //     :farmerId,
+      //     :surveyNo,
+      //     :clusterCd,
+      //     :villageCd,
+      //     :plotNo,
+      //     :irrigationCd,
+      //     :soiltype,
+      //     :culType,
+      //     :drainage,
+      //     :prevCrop,
+      //     :cropToBeGrown,
+      //     NULL,
+      //     23,
+      //     SYSDATE,
+      //     NULL,
+      //     NULL,
+      //     :sampling,
+      //     :samplingreciept,
+      //     :testCd,
+      //     :pltArea,
+      //     :gunta,
+      //     2,
+      //     NULL,
+      //     NULL,
+      //     NULL,
+      //     10,
+      //     51,
+      //     NULL,
+      //     'N',
+      //     NULL,
+      //     'N',
+      //     NULL,
+      //     17
+      //   )
+      //   `,
+      //   [
+      //     //convertDateFormat(new Date().toISOString().split("T")[0]),
+      //     parseInt(tranNo),
+      //     parseInt(farmerId),
+      //     farmerValues.surveyNo,
+      //     parseInt(farmerValues.cluster),
+      //     parseInt(farmerValues.village),
+      //     parseInt(farmerValues.plotNo),
+      //     parseInt(farmerValues.irrigationSource),
+      //     parseInt(farmerValues.soilType),
+      //     farmerValues.cultivationType,
+      //     farmerValues.drainage,
+      //     farmerValues.previousCrop,
+      //     farmerValues.cropToBeGrown,
+      //     // parseInt(user.login_cd),
+      //     formatDateAlt(farmerValues.dtOfSampling),
+      //     formatDateAlt(farmerValues.dtOfSamplingReceipt),
+      //     parseInt(farmerValues.test),
+      //     parseInt(local.plotArea),
+      //     parseInt(local.plotArea),
+      //     //parseInt(tempNo),
+      //   ].map((value, index) => {
+      //     if (isNaN(value) && typeof value !== "string") {
+      //       throw new Error(
+      //         `Invalid value "${value}" at index ${
+      //           index + 1
+      //         }. Expected a number.`
+      //       );
+      //     }
+      //     return value;
+      //     // excelColor(values)
+      //   })
+      // );
+
+      // let suggestion_tail;
+      // suggestions_all.map(async (suggestion) => {
+      //   suggestion_tail = await connection.execute(
+      //     `INSERT INTO gsmagri.sw_suggestion_tail (
+      //     lab_tran_no,
+      //     suggestion_id,
+      //     suggestion_name_value,
+      //     type_of_suggestion,
+      //     test_cd
+      // ) VALUES (
+      //     :v0,
+      //     :v1,
+      //     :v2,
+      //     :v3,
+      //     :v4
+      // )`,
+      //     [
+      //       tranNo,
+      //       suggestion.SUGGESTION_ID,
+      //       suggestion.SUGGESTION_NAME,
+      //       "NORMAL",
+      //       parseInt(farmerValues.test),
+      //     ]
+      //   );
+      // });
+
+
+
+After Delete Contraint in Tran tran_head
+
+create or replace TRIGGER "GSMAGRI"."AD_SW_TRAN_HEAD" 
+AFTER DELETE ON SW_TRAN_HEAD 
+REFERENCING OLD AS OLD NEW AS NEW 
+FOR EACH ROW 
+Declare 
+  M_Alert_Type				Varchar2(100);
+	M_Alert_Message			Varchar2(1000);
+  M_Bill_No 					Varchar2(50);
+  M_WS_Tran_Seq_ID 	  Number(38)     :=46 ;
+  M_Ws_Tran_id        Number(38);
+  Result 							Number;
+
+BEGIN
+   
+   Gsmagri.Get_Sequence_No(1, null, 46, Trunc(Sysdate), M_Ws_Tran_Id, M_Alert_Type, M_Alert_Message);
+ 
+   INSERT INTO WS_GSMAGRI.SW_TRAN_HEAD
+   (TRAN_ID, COMPANY_CD,SEASON_CD,TRAN_DATE,LAB_TRAN_NO,FARMER_ID,SY_NO,CLUSTER_CD,VILLAGE_CD,PLOT_NO,IRRIGATION_CD,
+    SOIL_TYPE_CD,TYPE_OF_CULTIVATION, DRAINAGE, PREVIOUS_CROP, CROPS_TO_BE_GROWN,REMARKS,ADD_BY,ADD_DATE,RECOMMENTATION_REMARKS,
+    SUGESSTION_REMARKS, DATE_OF_SAMPLING, DATE_OF_SAMPLE_RECEIPT,TEST_CD,PLOT_AREA,PLOT_AREA_IN_GUNTA,TEMPLATE_NO,
+    LATTITUDE,LONGITUDE,GEO_CODE,GBL_KHATE_ID,GBL_PLOT_ID,SF_SOIL_ID,SMS_SENT_FLAG,WS_TRAN_TYPE,WS_SYNC_STATUS,WS_REMARKS )
+   VALUES
+    (M_Ws_Tran_Id, :NEW.COMPANY_CD,:NEW.SEASON_CD,:NEW.TRAN_DATE,:NEW.LAB_TRAN_NO,:NEW.FARMER_ID,:NEW.SY_NO,:NEW.CLUSTER_CD,:NEW.VILLAGE_CD,:NEW.PLOT_NO,:NEW.IRRIGATION_CD,
+    :NEW.SOIL_TYPE_CD,:NEW.TYPE_OF_CULTIVATION, :NEW.DRAINAGE, :NEW.PREVIOUS_CROP, :NEW.CROPS_TO_BE_GROWN,:NEW.REMARKS,:NEW.ADD_BY,:NEW.ADD_DATE,:NEW.RECOMMENTATION_REMARKS,
+    :NEW.SUGESSTION_REMARKS, :NEW.DATE_OF_SAMPLING, :NEW.DATE_OF_SAMPLE_RECEIPT,:NEW.TEST_CD,:NEW.PLOT_AREA,:NEW.PLOT_AREA_IN_GUNTA,:NEW.TEMPLATE_NO,
+    :NEW.LATTITUDE,:NEW.LONGITUDE,:NEW.GEO_CODE,:NEW.GBL_KHATE_ID,:NEW.GBL_PLOT_ID,:NEW.SF_SOIL_ID,:NEW.SMS_SENT_FLAG,'D','N',Null );
+ 
+END;

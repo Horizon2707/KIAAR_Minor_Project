@@ -918,7 +918,7 @@ function Form() {
                   return <option value={item}>{item}</option>;
                 })} */}
               <option value="GOOD">Good</option>
-              <option value="POOR">POOR</option>
+              <option value="POOR">Poor</option>
               <option value="NONE">None</option>
               {/* <option value="NOT KNOWN">NOT KNOWN</option> */}
             </Select>

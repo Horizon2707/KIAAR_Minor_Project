@@ -87,8 +87,8 @@ const Login = () => {
 
       if (!response.ok) {
         if (response.status === 401) {
-          setShowErrorAlert(true); // Display validation alert
-          return; // Exit function to prevent further execution
+          setShowErrorAlert(true);
+          return;
         } else {
           const error = await response.json();
           throw new Error(error.message);

@@ -13,9 +13,9 @@ async function connectToDatabase() {
     //    SID = SYS_CONTEXT('USERENV', 'SID')`
     // );
     const connection = await oracledb.getConnection({
-      user: "GSMAGRI",
-      password: "gsmagri",
-      connectString: "localhost/kiaarpdb",
+      user: "kiaar",
+      password: "kiaar##",
+      connectString: "182.74.145.94/gsmkk",
     });
     // console.log(result);
     console.log("Connected to Oracle Database");

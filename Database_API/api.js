@@ -1,8 +1,10 @@
 const express = require("express");
 const cors = require("cors");
+const session = require("express-session");
 const oracledb = require("oracledb");
 const dbConnection = require("./dbconnect.js");
 const bodyParser = require("body-parser");
+const bcrypt = require("bcrypt");
 oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;
 const app = express();
 
@@ -12,21 +14,61 @@ app.use(
     credentials: true,
   })
 );
+app.use(
+  session({
+    key: "userId",
+    secret: "test",
+    resave: false,
+    saveUninitialized: true,
+  })
+);
 app.use(express.json());
+function formatDate(date) {
+  const months = [
+    "JAN",
+    "FEB",
+    "MAR",
+    "APR",
+    "MAY",
+    "JUN",
+    "JUL",
+    "AUG",
+    "SEP",
+    "OCT",
+    "NOV",
+    "DEC",
+  ];
+  const day = date.getDate();
+  const month = months[date.getMonth()];
+  const year = date.getFullYear();
+  return `${day}-${month}-${year}`;
+}
+function formatDateAlt(originalDate) {
+  const dateParts = originalDate.split("-");
+  const year = dateParts[0];
+  const month = new Date(originalDate)
+    .toLocaleString("default", { month: "short" })
+    .toUpperCase();
+  const day = dateParts[2];
+
+  return `${day}-${month}-${year}`;
+}
+const today = new Date();
+let Values;
 app.post("/farmerInfo", async (req, res) => {
-  const { farmerId } = req.body;
   try {
-    const connection = await oracledb.getConnection(dbConnection);
+    const { farmerId } = req.body;
+    const connection = await dbConnection;
     const farmer_rows = await connection.execute(
       `SELECT * FROM GSMAGRI.SW_TRAN_HEAD WHERE FARMER_ID =:farmerId`,
       [farmerId]
     );
     const personal = await connection.execute(
-      `SELECT FARMER_NAME,F_ADDRESS,PHONE_NO FROM FARMER_LIST WHERE FARMER_ID =:farmerId`,
+      `SELECT FARMER_NAME,F_ADDRESS,PHONE_NO FROM GSMAGRI.V_SW_FARMER_LIST WHERE FARMER_ID =:farmerId`,
       [farmerId]
     );
     const labtranno = await connection.execute(
-      `SELECT MAX(LAB_TRAN_NO) + 1 AS LAB_TRAN FROM SW_TRAN_HEAD`
+      `SELECT MAX(LAB_TRAN_NO) + 1 AS LAB_TRAN FROM GSMAGRI.SW_TRAN_HEAD`
     );
     const soil_all = await connection.execute(
       `SELECT DISTINCT SOIL_TYPE_NAME,SOIL_TYPE_CD FROM GSMAGRI.SOIL_TYPE_DIR`
@@ -39,12 +81,12 @@ app.post("/farmerInfo", async (req, res) => {
     );
 
     const response_obj = {
-      farmer_rows: farmer_rows,
-      personal: personal,
-      labtranno: labtranno,
-      soil_all: soil_all,
-      irrigation_all: irrigation_all,
-      crop_all: crop_all,
+      farmer_rows: farmer_rows.rows,
+      personal: personal.rows,
+      labtranno: labtranno.rows,
+      soil_all: soil_all.rows,
+      irrigation_all: irrigation_all.rows,
+      crop_all: crop_all.rows,
     };
     res.json(response_obj);
   } catch (error) {
@@ -55,11 +97,12 @@ app.post("/farmerInfo", async (req, res) => {
 app.post("/testName", async (req, res) => {
   try {
     const connection = await dbConnection;
-    const test_type = await connection.execute(
+    const test_type_all = await connection.execute(
       `SELECT TEST_CD,TEST_NAME FROM GSMAGRI.SW_TEST_DIR`
     );
-    res.json(test_type);
+    let test_type = test_type_all.rows;
     console.log(test_type);
+    res.json(test_type);
   } catch (error) {
     res.json(error);
   }
@@ -77,7 +120,7 @@ app.post("/tempNo", async (req, res) => {
       res.json(template_no.rows);
     }
   } catch (error) {
-    res.json(error);
+    res.status(404).json({ message: "Template number not found" });
   }
 });
 
@@ -86,7 +129,7 @@ app.post("/clusterInfo", async (req, res) => {
     const { farmerId } = req.body;
     const connection = await dbConnection;
     const cluster_cd = await connection.execute(
-      `SELECT DISTINCT CLUSTER_CD,CLUSTER_NAME FROM GSMAGRI.FARMER_PLOTS WHERE FARMER_ID = :farmerId`,
+      `SELECT DISTINCT CLUSTER_CD,CLUSTER_NAME FROM GSMAGRI.v_sw_farmer_plots WHERE FARMER_ID = :farmerId`,
       [farmerId]
     );
     if (cluster_cd.rows.length > 0) {
@@ -118,30 +161,30 @@ app.post("/clusterName", async (req, res) => {
     console.log(e);
   }
 });
-app.post("/village_cd", async (req, res) => {
+app.post("/villageInfo", async (req, res) => {
   try {
     const { clusterCd, farmerId } = req.body;
 
     const connection = await dbConnection;
     const village_names = await connection.execute(
-      `SELECT DISTINCT VILLAGE_CD,VILLAGE_NAME FROM FARMER_PLOTS WHERE FARMER_ID=:farmerId AND CLUSTER_CD=:clusterCd`,
+      `SELECT DISTINCT VILLAGE_CD,VILLAGE_NAME FROM GSMAGRI.v_sw_farmer_plots WHERE FARMER_ID=:farmerId AND CLUSTER_CD=:clusterCd`,
       [farmerId, clusterCd]
     );
-    res.json(village_names);
+    res.json(village_names.rows);
   } catch (error) {
     console.error("Village not found");
   }
 });
-app.post("/surveyno", async (req, res) => {
+app.post("/surveyNo", async (req, res) => {
   try {
     const { farmerId, clusterCd, villageCd } = req.body;
 
     const connection = await dbConnection;
     const surveyno_all = await connection.execute(
-      `SELECT DISTINCT SY_NO FROM FARMER_PLOTS WHERE FARMER_ID=:farmerId AND CLUSTER_CD=:clusterCd AND VILLAGE_CD=:villageCd`,
+      `SELECT DISTINCT SY_NO FROM GSMAGRI.v_sw_farmer_plots WHERE FARMER_ID=:farmerId AND CLUSTER_CD=:clusterCd AND VILLAGE_CD=:villageCd`,
       [farmerId, clusterCd, villageCd]
     );
-    res.json(surveyno_all);
+    res.json(surveyno_all.rows);
   } catch (error) {
     console.log(error);
   }
@@ -153,7 +196,7 @@ app.post("/plotNo", async (req, res) => {
     console.log(villageCd, farmerId);
     const connection = await dbConnection;
     const plot_nos = await connection.execute(
-      `SELECT DISTINCT PLOT_NO FROM FARMER_PLOTS WHERE FARMER_ID=:farmerId AND VILLAGE_CD=:villageCd`,
+      `SELECT DISTINCT PLOT_NO FROM GSMAGRI.v_sw_farmer_plots WHERE FARMER_ID=:farmerId AND VILLAGE_CD=:villageCd`,
       [farmerId, villageCd]
     );
     console.log(plot_nos.rows);
@@ -168,7 +211,7 @@ app.post("/plotArea", async (req, res) => {
     const { farmerId, villageCd, plotNo } = req.body;
     const connection = await dbConnection;
     const plot_area = await connection.execute(
-      `SELECT DISTINCT PLOT_AREA FROM FARMER_PLOTS WHERE FARMER_ID=:farmerId AND VILLAGE_CD=:villageCd AND PLOT_NO = :plotNo`,
+      `SELECT DISTINCT PLOT_AREA FROM GSMAGRI.v_sw_farmer_plots WHERE FARMER_ID=:farmerId AND VILLAGE_CD=:villageCd AND PLOT_NO = :plotNo`,
       [farmerId, villageCd, plotNo]
     );
 
@@ -181,19 +224,18 @@ app.post("/plotArea", async (req, res) => {
 app.post("/parameter_head", async (req, res) => {
   const { test } = req.body;
   try {
-    const { farmerId, villageCd, plotNo } = req.body;
     const connection = await dbConnection;
     const parameter_head_all = await connection.execute(
       `SELECT PARAMETER_ID,PARAMETER_NAME,PARAMETER_TYPE FROM GSMAGRI.SW_PARAMETER_DIR_HEAD WHERE TEST_CD = :testCd`,
       [test]
     );
-
-    res.json(parameter_head_all);
+    console.log(test);
+    res.json(parameter_head_all.rows);
   } catch (error) {
     console.error("Plot area not found");
   }
 });
-app.post("para_range_min", async (req, res) => {
+app.post("/para_range_min", async (req, res) => {
   const connection = await dbConnection;
   const { parameterIds } = req.body;
   parameters_range_min = [];
@@ -206,7 +248,7 @@ app.post("para_range_min", async (req, res) => {
   }
   res.json(parameters_range_min);
 });
-app.post("para_range_max", async (req, res) => {
+app.post("/para_range_max", async (req, res) => {
   const connection = await dbConnection;
   const { parameterIds } = req.body;
   parameters_range_max = [];
@@ -219,8 +261,9 @@ app.post("para_range_max", async (req, res) => {
   }
   res.json(parameters_range_max);
 });
-app.post("para_range_mid", async (req, res) => {
+app.post("/para_range_mid", async (req, res) => {
   const connection = await dbConnection;
+  const { parameterIds } = req.body;
   parameters_range_mid = [];
   for (const i of parameterIds) {
     const range_mid = await connection.execute(
@@ -229,6 +272,7 @@ app.post("para_range_mid", async (req, res) => {
     );
     parameters_range_mid.push(range_mid.rows[0]);
   }
+  console.log(parameters_range_mid);
   res.json(parameters_range_mid);
 });
 app.post("/suggestions", async (req, res) => {
@@ -267,7 +311,7 @@ app.post("/newSuggestion", async (req, res) => {
           'NULL',
           :testCd
         )`,
-      [newSuggestion, testCd]
+      [newSuggestion, test]
     );
     await connection.execute("COMMIT");
     if (new_suggestion) {
@@ -283,7 +327,8 @@ app.post("/insert_tran_head", async (req, res) => {
   const connection = await dbConnection;
 
   try {
-    farmerValues = values;
+    let farmerValues = values;
+    Values = values;
     const tran_head = await connection.execute(
       `INSERT INTO GSMAGRI.SW_TRAN_HEAD (
           COMPANY_CD,
@@ -366,8 +411,8 @@ app.post("/insert_tran_head", async (req, res) => {
         `,
       [
         //convertDateFormat(new Date().toISOString().split("T")[0]),
-        parseInt(tranNo),
-        parseInt(farmerId),
+        parseInt(farmerValues.labNo),
+        parseInt(farmerValues.farmerId),
         farmerValues.surveyNo,
         parseInt(farmerValues.cluster),
         parseInt(farmerValues.village),
@@ -395,17 +440,18 @@ app.post("/insert_tran_head", async (req, res) => {
         // excelColor(values)
       })
     );
+    console.log("Tran Head Triggered");
     await connection.execute("COMMIT");
-    res.status(200);
+    res.status(200).json({ message: "OK" });
   } catch (e) {
     console.log(e);
   }
 });
 
 app.post("/insert_suggestion_tail", async (req, res) => {
-  const { suggestions } = req.body;
+  const { suggestions, farmerValues } = req.body;
   const connection = await dbConnection;
-
+  console.log("Suggestion Tail Triggered");
   try {
     let suggestion_tail;
     const selectedSuggestions = suggestions.filter(
@@ -414,7 +460,7 @@ app.post("/insert_suggestion_tail", async (req, res) => {
     let suggestions_all = selectedSuggestions;
     suggestions_all.map(async (suggestion) => {
       suggestion_tail = await connection.execute(
-        `INSERT INTO gsmagri.sw_suggestion_tail (
+        `INSERT INTO GSMAGRI.SW_SUGGESTION_TAIL(
           lab_tran_no,
           suggestion_id,
           suggestion_name_value,
@@ -428,7 +474,7 @@ app.post("/insert_suggestion_tail", async (req, res) => {
           :v4
       )`,
         [
-          tranNo,
+          farmerValues.labNo,
           suggestion.SUGGESTION_ID,
           suggestion.SUGGESTION_NAME,
           "NORMAL",
@@ -436,16 +482,17 @@ app.post("/insert_suggestion_tail", async (req, res) => {
         ]
       );
     });
+
     await connection.execute("COMMIT");
-    res.status(200);
+    res.status(200).json({ message: "OK" });
   } catch (e) {
     console.log(e);
   }
 });
 app.post("/insert_tran_tail", async (req, res) => {
-  const { values, paramValues } = req.body;
+  const { paramValues, farmerValues } = req.body;
   const connection = await dbConnection;
-  farmerValues = values;
+
   let parameterValues = {};
   for (const key in paramValues) {
     parameterValues[key] = parseInt(paramValues[key], 10);
@@ -455,7 +502,7 @@ app.post("/insert_tran_tail", async (req, res) => {
     const parameterValuesArray = Object.keys(parameterValues);
     parameterValuesArray.map(async (key) => {
       tran_tail = await connection.execute(
-        `INSERT INTO gsmagri.sw_tran_tail (
+        `INSERT INTO GSMAGRI.SW_TRAN_TAIL (
           lab_tran_no,
           parameter_id,
           test_method,
@@ -468,12 +515,12 @@ app.post("/insert_tran_tail", async (req, res) => {
           :v1,
           'NONE',
           :v3,
-          NULL,
+          0,
           :v5,
           :v6
       )`,
         [
-          tranNo,
+          farmerValues.labNo,
           parseInt(key),
           parseInt(parameterValues[key]),
           "Y",
@@ -481,8 +528,9 @@ app.post("/insert_tran_tail", async (req, res) => {
         ]
       );
     });
+    console.log("Tran Tail");
     await connection.execute("COMMIT");
-    res.status(200);
+    return res.status(200).json({ message: "OK" });
   } catch (e) {
     console.log(e);
   }
@@ -500,7 +548,7 @@ app.post("group_cd", async (req, res) => {
     console.log(e);
   }
 });
-app.post("unit_id", async (req, res) => {
+app.post("/unit_id", async (req, res) => {
   const { product } = req.body;
   const connection = await dbConnection;
   try {
@@ -513,7 +561,7 @@ app.post("unit_id", async (req, res) => {
     console.log(e);
   }
 });
-app.post("unit_value", async (req, res) => {
+app.post("/unit_value", async (req, res) => {
   const { product } = req.body;
   const connection = await dbConnection;
   try {
@@ -526,21 +574,147 @@ app.post("unit_value", async (req, res) => {
     console.log(e);
   }
 });
-app.post("insert_recomm_tran", async (req, res) => {
-  const { final_calc, values } = req.body;
-  let farmerValues = values;
+// app.post("/insert_recomm_tran", async (req, res) => {
+//   const { final_calc, farmerValues } = req.body;
+
+//   const connection = await dbConnection;
+//   try {
+//     const promises = [];
+
+//     const comb_cd = Object.keys(final_calc);
+//     comb_cd.forEach((comb) => {
+//       const season_cd = Object.keys(final_calc[comb]);
+//       season_cd.forEach((season) => {
+//         const product_cd = Object.keys(final_calc[comb][season]);
+//         product_cd.forEach(async (product) => {
+//           const ta_cd = Object.keys(final_calc[comb][season][product]);
+//           let value;
+//           const group_cd_all = await connection.execute(
+//             `SELECT DISTINCT GROUP_CD FROM GSMAGRI.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
+//             [product]
+//           );
+//           const unit_id_all = await connection.execute(
+//             `SELECT DISTINCT UNIT_NAME FROM GSMAGRI.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
+//             [product]
+//           );
+//           const unit_value_all = await connection.execute(
+//             `SELECT DISTINCT UNIT_VALUE FROM GSMAGRI.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
+//             [product]
+//           );
+
+//           function execute(ta, value) {
+//             try {
+//               promises.push(
+//                 Promise.all([group_cd_all, unit_id_all, unit_value_all]).then(
+//                   async ([
+//                     group_cd_all_result,
+//                     unit_id_all_result,
+//                     unit_value_all_result,
+//                   ]) => {
+//                     const group_cd = group_cd_all_result.rows;
+//                     const unit_id = unit_id_all_result.rows;
+//                     const unit_value = unit_value_all_result.rows;
+
+//                     let res = await connection.execute(
+//                       `INSERT INTO GSMAGRI.SW_RECOMMENDATION_TRAN (
+//                     lab_tran_no,
+//                     tran_date,
+//                     sw_group_cd,
+//                     sw_product_cd,
+//                     combine_cd,
+//                     product_value,
+//                     option_value,
+//                     ref_sw_product_cd,
+//                     unit_value,
+//                     unit_id,
+//                     value_in_bags,
+//                     convert_unit_name,
+//                     test_cd,
+//                     crop_season_cd,
+//                     recom_apply_time_cd
+//                 ) VALUES (
+//                     :v0,
+//                     SYSDATE,
+//                     :v2,
+//                     :v3,
+//                     :v4,
+//                     :v5,
+//                     NULL,
+//                     :v7,
+//                     NULL,
+//                     1,
+//                     NULL,
+//                     NULL,
+//                     :v12,
+//                     :v13,
+//                     :v14
+//                 )`,
+//                       [
+//                         farmerValues.labNo,
+//                         parseInt(group_cd[0].GROUP_CD),
+//                         parseInt(product),
+//                         parseInt(comb),
+//                         parseInt(value),
+//                         (unit_value[0] && parseInt(unit_value[0].UNIT_VALUE)) ||
+//                           1,
+//                         parseInt(farmerValues.test),
+//                         parseInt(season),
+//                         parseInt(ta),
+//                       ]
+//                     );
+
+//                     console.log(res);
+//                     connection.execute("COMMIT");
+//                   }
+//                 )
+//               );
+//             } catch (e) {
+//               console.log(e);
+//             }
+//           }
+
+//           if (comb == 12) {
+//             value = parseInt(final_calc[comb][season][product][1]);
+
+//             execute(1, value);
+//           } else {
+//             ta_cd.forEach((ta) => {
+//               value = parseInt(final_calc[comb][season][product][ta]);
+//               execute(ta, value);
+//             });
+//           }
+//         });
+//       });
+//     });
+//     console.log(promises);
+//     Promise.all(promises)
+//       .then(async () => {
+//         console.log("Recomm Tran");
+//         await connection.execute("COMMIT");
+//         return res.status(200);
+//       })
+//       .catch((error) => {
+//         console.error("Error:", error);
+//       });
+//   } catch (e) {
+//     console.log(e);
+//   }
+// });
+app.post("/insert_recomm_tran", async (req, res) => {
+  const { final_calc, farmerValues } = req.body;
+
   const connection = await dbConnection;
   try {
     const promises = [];
 
     const comb_cd = Object.keys(final_calc);
-    comb_cd.forEach((comb) => {
+    for (const comb of comb_cd) {
       const season_cd = Object.keys(final_calc[comb]);
-      season_cd.forEach((season) => {
+      for (const season of season_cd) {
         const product_cd = Object.keys(final_calc[comb][season]);
-        product_cd.forEach((product) => {
+        for (const product of product_cd) {
           const ta_cd = Object.keys(final_calc[comb][season][product]);
-          let value;
+
           const group_cd_all = connection.execute(
             `SELECT DISTINCT GROUP_CD FROM GSMAGRI.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
             [product]
@@ -553,115 +727,97 @@ app.post("insert_recomm_tran", async (req, res) => {
             `SELECT DISTINCT UNIT_VALUE FROM GSMAGRI.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
             [product]
           );
-          function execute(ta, value) {
-            try {
-              promises.push(
-                Promise.all([group_cd_all, unit_id_all, unit_value_all]).then(
-                  ([
-                    group_cd_all_result,
-                    unit_id_all_result,
-                    unit_value_all_result,
-                  ]) => {
-                    const group_cd = group_cd_all_result.rows;
-                    const unit_id = unit_id_all_result.rows;
-                    const unit_value = unit_value_all_result.rows;
 
-                    return connection.execute(
-                      `INSERT INTO gsmagri.sw_recommendation_tran_new (
-                    lab_tran_no,
-                    tran_date,
-                    sw_group_cd,
-                    sw_product_cd,
-                    combine_cd,
-                    product_value,
-                    option_value,
-                    ref_sw_product_cd,
-                    unit_value,
-                    unit_id,
-                    value_in_bags,
-                    convert_unit_name,
-                    test_cd,
-                    crop_season_cd,
-                    recom_apply_time_cd
+          const execute = async (ta, value) => {
+            try {
+              const [
+                group_cd_all_result,
+                unit_id_all_result,
+                unit_value_all_result,
+              ] = await Promise.all([
+                group_cd_all,
+                unit_id_all,
+                unit_value_all,
+              ]);
+
+              const group_cd = group_cd_all_result.rows;
+              const unit_id = unit_id_all_result.rows;
+              const unit_value = unit_value_all_result.rows;
+
+              const result = await connection.execute(
+                `INSERT INTO GSMAGRI.SW_RECOMMENDATION_TRAN (
+                  lab_tran_no,
+                  tran_date,
+                  sw_group_cd,
+                  sw_product_cd,
+                  combine_cd,
+                  product_value,
+                  option_value,
+                  ref_sw_product_cd,
+                  unit_value,
+                  unit_id,
+                  value_in_bags,
+                  convert_unit_name,
+                  test_cd,
+                  crop_season_cd,
+                  recom_apply_time_cd
                 ) VALUES (
-                    :v0,
-                    SYSDATE,
-                    :v2,
-                    :v3,
-                    :v4,
-                    :v5,
-                    NULL,
-                    :v7,
-                    NULL,
-                    1,
-                    NULL,
-                    NULL,
-                    :v12,
-                    :v13,
-                    :v14
+                  :v0,
+                  SYSDATE,
+                  :v2,
+                  :v3,
+                  :v4,
+                  :v5,
+                  NULL,
+                  :v7,
+                  NULL,
+                  1,
+                  NULL,
+                  NULL,
+                  :v12,
+                  :v13,
+                  :v14
                 )`,
-                      [
-                        tranNo,
-                        parseInt(group_cd[0].GROUP_CD),
-                        parseInt(product),
-                        parseInt(comb),
-                        parseInt(value),
-                        (unit_value[0] && parseInt(unit_value[0].UNIT_VALUE)) ||
-                          1,
-                        parseInt(farmerValues.test),
-                        parseInt(season),
-                        parseInt(ta),
-                      ]
-                    );
-                  }
-                )
+                [
+                  farmerValues.labNo,
+                  parseInt(group_cd[0].GROUP_CD),
+                  parseInt(product),
+                  parseInt(comb),
+                  parseInt(value),
+                  (unit_value[0] && parseInt(unit_value[0].UNIT_VALUE)) || 1,
+                  parseInt(farmerValues.test),
+                  parseInt(season),
+                  parseInt(ta),
+                ]
               );
+              console.log(result);
             } catch (e) {
-              console.log(e);
+              console.error("Insert Error:", e);
+              throw e;
+            }
+          };
+
+          if (comb == 12) {
+            const value = parseInt(final_calc[comb][season][product][1]);
+            promises.push(execute(1, value));
+          } else {
+            for (const ta of ta_cd) {
+              const value = parseInt(final_calc[comb][season][product][ta]);
+              promises.push(execute(ta, value));
             }
           }
-          if (comb == 12) {
-            value = parseInt(final_calc[comb][season][product][1]);
+        }
+      }
+    }
 
-            execute(1, value);
-          } else {
-            ta_cd.forEach((ta) => {
-              value = parseInt(final_calc[comb][season][product][ta]);
+    await Promise.all(promises);
+    await connection.execute("COMMIT");
 
-              execute(ta, value);
-            });
-          }
-
-          // Push each promise to the promises array
-        });
-      });
-    });
-
-    // Wait for all promises to resolve
-    Promise.all(promises)
-      .then(async (recommendation_tran_results) => {
-        // console.log(recommendation_tran_results);
-        await connection.execute("COMMIT");
-        res.status(200);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+    console.log("Recommendation Transactions Inserted");
+    res.status(200).json({ message: "Data inserted successfully" });
   } catch (e) {
-    console.log(e);
-  }
-});
-app.post("/checkLabTran", async (req, res) => {
-  const { labNo } = req.body;
-  const connection = await dbConnection;
-  const lab_tran_all = await connection.execute(
-    `SELECT DISTINCT LAB_TRAN_NO FROM GSMAGRI.SW_RECOMMENDATION_TRAN_NEW WHERE LAB_TRAN_NO = :labNo`,
-    [labNo]
-  );
-  if (lab_tran_all.rows.length > 0) {
-    res.json(lab_tran_all.rows).status(200);
-  } else {
-    res.status(404).json({ message: "Lab Tran not found" });
+    console.error("Transaction Error:", e);
+    res.status(500).json({ error: "An error occurred during the transaction" });
   }
 });
 
@@ -670,7 +826,7 @@ app.post("/deleting", async (req, res) => {
   try {
     const connection = await dbConnection;
     const lab_tran_all = await connection.execute(
-      `SELECT DISTINCT LAB_TRAN_NO FROM GSMAGRI.SW_RECOMMENDATION_TRAN_NEW WHERE LAB_TRAN_NO = :labNo`,
+      `SELECT DISTINCT LAB_TRAN_NO FROM GSMAGRI.SW_RECOMMENDATION_TRAN WHERE LAB_TRAN_NO = :labNo`,
       [tranNo]
     );
     if (lab_tran_all.rows.length > 0) {
@@ -687,14 +843,52 @@ app.post("/deleting", async (req, res) => {
         [tranNo]
       );
       await connection.execute(
-        `DELETE FROM GSMAGRI.SW_RECOMMENDATION_TRAN_NEW WHERE LAB_TRAN_NO= :labNo`,
+        `DELETE FROM GSMAGRI.SW_RECOMMENDATION_TRAN WHERE LAB_TRAN_NO= :labNo`,
         [tranNo]
       );
       await connection.execute("COMMIT");
       console.log("Deleted" + tranNo);
       res.status(200).json({ message: "Lab number found and deleted" });
     } else {
-      console.log(404);
+      console.log("No such lab no found");
+      res.status(200).json({ error: "No such lab number found" });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.post("/delete_func", async (req, res) => {
+  const { tranNo } = req.body;
+  try {
+    const connection = await dbConnection;
+    const lab_tran_all = await connection.execute(
+      `SELECT DISTINCT LAB_TRAN_NO FROM GSMAGRI.SW_RECOMMENDATION_TRAN WHERE LAB_TRAN_NO = :labNo`,
+      [tranNo]
+    );
+    if (lab_tran_all.rows.length > 0) {
+      await connection.execute(
+        `DELETE FROM GSMAGRI.SW_TRAN_HEAD WHERE LAB_TRAN_NO = :labNo`,
+        [tranNo]
+      );
+      await connection.execute(
+        `DELETE FROM GSMAGRI.SW_TRAN_TAIL WHERE LAB_TRAN_NO = :labNo`,
+        [tranNo]
+      );
+      await connection.execute(
+        `DELETE FROM GSMAGRI.SW_SUGGESTION_TAIL WHERE LAB_TRAN_NO = :labNo`,
+        [tranNo]
+      );
+      await connection.execute(
+        `DELETE FROM GSMAGRI.SW_RECOMMENDATION_TRAN WHERE LAB_TRAN_NO= :labNo`,
+        [tranNo]
+      );
+      await connection.execute("COMMIT");
+      console.log("Deleted" + tranNo);
+      res.status(200).json({ message: "Lab number found and deleted" });
+    } else {
+      console.log("No such lab no found");
       res.status(404).json({ error: "No such lab number found" });
     }
   } catch (err) {
@@ -702,8 +896,160 @@ app.post("/deleting", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+app.post("/get_recomm_all", async (req, res) => {
+  const { labTran } = req.body;
+  console.log(labTran);
+  const connection = await dbConnection;
+  const recomm_tran_all = await connection.execute(
+    `SELECT COMBINE_CD,CROP_SEASON_CD,SW_PRODUCT_CD,RECOM_APPLY_TIME_CD,PRODUCT_VALUE FROM GSMAGRI.SW_RECOMMENDATION_TRAN WHERE LAB_TRAN_NO = :tranNo`,
+    [labTran]
+  );
+  console.log(recomm_tran_all.rows);
+  res.json(recomm_tran_all.rows).status(200);
+});
+
+app.get("/season", async (req, res) => {
+  const connection = await dbConnection;
+  const season_all = await connection.execute(
+    `SELECT DISTINCT SEASON_CD,SEASON_NAME,FROM_DATE,TO_DATE FROM GSMAGRI.SEASON_DIR`
+  );
+  const season = season_all.rows;
+  const currentDate = new Date();
+
+  const currentSeason = season.find(
+    (season) =>
+      currentDate >= new Date(season.FROM_DATE) &&
+      currentDate <= new Date(season.TO_DATE)
+  );
+  console.log(currentSeason);
+  if (currentSeason) {
+    const currentIndex = season.findIndex((season) => season === currentSeason);
+    const current_season_cd = currentSeason.SEASON_CD;
+    // Initialize an array to hold the season names
+    const seasonNames = [];
+    const prevSeason = season.find(
+      (season) => season.SEASON_CD == current_season_cd - 1
+    );
+    const nextSeason = season.find(
+      (season) => season.SEASON_CD == current_season_cd + 1
+    );
+    console.log(currentSeason, prevSeason, nextSeason);
+    // Push the name of the current season into the array
+    seasonNames.push(prevSeason.SEASON_NAME);
+    seasonNames.push(currentSeason.SEASON_NAME);
+    seasonNames.push(nextSeason.SEASON_NAME);
+    // Push the name of the previous season if it exists
+    // if (currentIndex > 0) {
+    //   seasonNames.push(season[currentIndex - 1].SEASON_NAME);
+    // }
+    // seasonNames.push(currentSeason.SEASON_NAME);
+    // Push the name of the next season if it exists
+    // if (currentIndex < season.length - 1) {
+    //   seasonNames.push(season[currentIndex + 1].SEASON_NAME);
+    // }
+    console.log(seasonNames);
+    res.json(seasonNames);
+  } else {
+    console.log("Current date does not fall within any season.");
+  }
+});
+
+app.get("/get_yields", async (req, res) => {
+  const connection = await dbConnection;
+  const yield_target_all = await connection.execute(
+    `SELECT * FROM GSMAGRI.SW_CROP_YIELDTARGET`
+  );
+  const yield_target = yield_target_all.rows;
+  res.json(yield_target).status(200);
+});
+
+app.get("/combination_cds", async (req, res) => {
+  const connection = await dbConnection;
+  const combination_cd_all = await connection.execute(
+    `SELECT DISTINCT COMBINATION_CD,COMBINATION_NAME FROM GSMAGRI.V_SW_COMBINATION_LIST`
+  );
+  const combination_cd = combination_cd_all.rows;
+
+  const product_cd_all = await connection.execute(
+    `SELECT DISTINCT PRODUCT_CD,SW_PRODUCT_NAME FROM GSMAGRI.V_SW_COMBINATION_LIST`
+  );
+  const product_cd = product_cd_all.rows;
+
+  const crop_season_cd_all = await connection.execute(
+    `SELECT DISTINCT CROP_SEASON_CD,CROP_SEASON FROM GSMAGRI.SW_CROP_SEASON_DIR`
+  );
+  const crop_season_cd = crop_season_cd_all.rows;
+
+  const time_apply_cd_all = await connection.execute(
+    `SELECT DISTINCT RECOM_APPLY_TIME_CD,RECOM_APPLY_TIME FROM GSMAGRI.SW_RECOM_APPLY_TIME_DIR`
+  );
+  const time_apply_cd = time_apply_cd_all.rows.slice(0, 5);
+  res
+    .status(200)
+    .json({ combination_cd, product_cd, time_apply_cd, crop_season_cd });
+});
+
+app.post("/codeToName", async (req, res) => {
+  const { farmerValues } = req.body;
+  const connection = await dbConnection;
+  const villageCd = parseInt(farmerValues.village);
+  const clusterCd = parseInt(farmerValues.cluster);
+  const soilTypeCd = parseInt(farmerValues.soilType);
+  const irrigationCd = parseInt(farmerValues.irrigationSource);
+
+  const villagename = await connection.execute(
+    `SELECT DISTINCT VILLAGE_NAME FROM GSMAGRI.V_SW_FARMER_PLOTS WHERE VILLAGE_CD=:villagecd`,
+    [villageCd]
+  );
+  const clustername = await connection.execute(
+    `SELECT DISTINCT CLUSTER_NAME FROM GSMAGRI.V_SW_FARMER_PLOTS WHERE CLUSTER_CD=:clustercd`,
+    [clusterCd]
+  );
+  const soilname = await connection.execute(
+    `SELECT DISTINCT SOIL_TYPE_NAME FROM GSMAGRI.SOIL_TYPE_DIR WHERE SOIL_TYPE_CD=:soilcd`,
+    [soilTypeCd]
+  );
+  const irrgationname = await connection.execute(
+    `SELECT DISTINCT IRRIGATION_NAME FROM GSMAGRI.IRRIGATION_DIR WHERE IRRIGATION_CD=:irrgationcd`,
+    [irrigationCd]
+  );
+  res.status(200).json({
+    villageName: villagename.rows,
+    clusterName: clustername.rows,
+    soilName: soilname.rows,
+    irrigationName: irrgationname.rows,
+  });
+});
+app.post("/checkLabTran", async (req, res) => {
+  const { labNo } = req.body;
+  const connection = await dbConnection;
+  console.log(labNo);
+  const lab_tran_all = await connection.execute(
+    `SELECT DISTINCT LAB_TRAN_NO FROM GSMAGRI.SW_RECOMMENDATION_TRAN WHERE LAB_TRAN_NO = :labNo`,
+    [labNo]
+  );
+  console.log(lab_tran_all.rows);
+  if (lab_tran_all.rows.length > 0) {
+    console.log(lab_tran_all.rows);
+    res.json(lab_tran_all.rows).status(200);
+  } else {
+    res.status(404).json({ message: "Lab Tran not found" });
+  }
+});
+app.post("/transaction", async (req, res) => {
+  const { stDate, incrementedEndDate } = req.body;
+  const connection = await dbConnection;
+  const transaction_all = await connection.execute(
+    `SELECT * FROM GSMAGRI.SW_TRAN_HEAD WHERE TRAN_DATE >= :stDate AND TRAN_DATE <=:edDate`,
+    [stDate, incrementedEndDate]
+  );
+  const transactions = transaction_all.rows;
+  res.json(transactions).status(200);
+});
+
 app.post("/login", async (req, res) => {
   const { username, password } = req.body;
+  console.log(username, password);
   try {
     const connection = await dbConnection;
     const user_all = await connection.execute(
@@ -727,10 +1073,10 @@ app.post("/login", async (req, res) => {
           login_cd: user[0].LOGIN_CD,
         });
       } else {
-        res.status(401).send("Incorrect password");
+        res.status(401).json({ message: "Incorrect password" });
       }
     } else {
-      res.status(401).send("Login failed");
+      res.status(500).json({ message: "Login failed" });
     }
   } catch (error) {
     console.error("Error during login:", error);
@@ -741,11 +1087,11 @@ app.post("/login", async (req, res) => {
 app.post("/signUp", async (req, res) => {
   try {
     const { username, password } = req.body;
+    console.log(username, password);
     const hashedPassword = await bcrypt.hash(password, 10);
     const connection = await dbConnection;
     const new_user = await connection.execute(
-      `
-      INSERT INTO gsmagri.u_logon_data (
+      `INSERT INTO GSMAGRI.u_logon_data (
         login_cd,
         user_name,
         password,
@@ -823,6 +1169,6 @@ app.post("/signUp", async (req, res) => {
     res.sendStatus(500); // Internal Server Error
   }
 });
-app.listen(5000, () => {
-  console.log("Server is running...");
+app.listen(7000, () => {
+  console.log("Server is running", 7000);
 });

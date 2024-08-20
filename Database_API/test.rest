@@ -1,10 +1,10 @@
 ### POST ###
-POST http://localhost:5000/testName
+POST http://localhost:7000/testName
 Content-Type: application/json
 
 ###
 
-POST http://localhost:5000/tempNo
+POST http://localhost:7000/tempNo
 Content-Type: application/json
 
 {
@@ -12,9 +12,208 @@ Content-Type: application/json
 }
 
 ###
-POST http://localhost:5000/clusterInfo
+POST http://localhost:7000/farmerInfo
 Content-Type: application/json
 
 {
   "farmerId":153227
 }
+###
+POST http://localhost:7000/clusterInfo
+Content-Type: application/json
+
+{
+  "farmerId":153227
+}
+###
+POST http://localhost:7000/villageInfo
+Content-Type: application/json
+
+{
+  "farmerId":153227,
+  "clusterId":3
+}
+###
+POST http://localhost:7000/surveyNo
+Content-Type: application/json
+
+{
+  "farmerId":153227,
+  "clusterCd":3,
+  "villageCd":27
+}
+###
+POST http://localhost:7000/plotNo
+Content-Type: application/json
+
+{
+    "farmerId" : 153227,
+    "villageCd" : 27
+}
+###
+POST http://localhost:7000/plotArea
+Content-Type: application/json
+
+{
+    "farmerId" : 153227,
+    "villageCd" : 27,
+    "plotNo": 2
+}
+
+###
+POST http://localhost:7000/parameter_head
+Content-Type: application/json
+
+{
+    "test" : 1
+}
+###
+POST http://localhost:7000/para_range_mid
+Content-Type: application/json
+
+{   
+    "parameterIds" : [27,25,24,26]
+}
+###
+POST http://localhost:7000/suggestions
+Content-Type: application/json
+
+{
+    "test" : 1
+}
+###
+POST http://localhost:7000/newSuggestion
+Content-Type: application/json
+
+{   
+    "newSuggestion" : "TEMP",
+    "test" : "1"
+}
+###
+POST http://localhost:7000/insert_tran_head
+Content-Type: application/json
+
+{   
+    "newSuggestion" : "TEMP",
+    "test" : "1"
+}
+###
+POST http://localhost:7000/login
+Content-Type: application/json
+
+{   
+    "username" : "kshitij",
+    "password" : "kshitij"
+}
+###
+POST http://localhost:7000/signUp
+Content-Type: application/json
+
+{   
+    "username" : "VPATIL",
+    "password" : "patil123"
+}
+###
+POST http://localhost:7000/insert_tran_head
+Content-Type: application/json
+
+{   
+    "values" : {"farmerId":"153227","labNo":12392,"test":"1","surveyNo":"45/1A","cluster":"3","village":"27","plotNo":11,"drainage":"GOOD","soilType":"1","waterType":"","irrigationSource":"3","cultivationType":"RAINFED","previousCrop":"SUNFLOWER","cropToBeGrown":"SOYABEAN","dtOfSampling":"2024-08-10","dtOfSamplingReceipt":"2024-08-10","templateNo":[{"TEMPLATE_NO":2}],"HEWFno":"","area":""},
+    "local"  : {"values":{"farmerId":"153227","labNo":12378,"test":"1","surveyNo":"45/1A","cluster":"3","village":"27","plotNo":11,"drainage":"GOOD","soilType":"1","waterType":"","irrigationSource":"3","cultivationType":"RAINFED","previousCrop":"SUNFLOWER","cropToBeGrown":"SOYABEAN","dtOfSampling":"2024-08-10","dtOfSamplingReceipt":"2024-08-10","templateNo":[{"TEMPLATE_NO":2}],"HEWFno":"","area":""},"watVar":false,"soilVar":true,"farmInfo":{"name":"NAIK URF PATIL SHARADA RAVASAB","MBLNO":9886237358,"PAddress":"PALABHAVI"},"cropToBeGrown":[{"CROP_NAME":" -None-"},{"CROP_NAME":"BANANA"},{"CROP_NAME":"GINGER"},{"CROP_NAME":"GROUND NUT"},{"CROP_NAME":"MAIZE"},{"CROP_NAME":"SOYABEAN"},{"CROP_NAME":"SUGAR CANE"},{"CROP_NAME":"SUNFLOWER"},{"CROP_NAME":"TURMERIC"},{"CROP_NAME":"WHEAT"}],"irrigationSources":[{"IRRIGATION_NAME":"CANAL","IRRIGATION_CD":1},{"IRRIGATION_NAME":"RIVER","IRRIGATION_CD":2},{"IRRIGATION_NAME":"WELL_BORE","IRRIGATION_CD":3},{"IRRIGATION_NAME":"WELL","IRRIGATION_CD":4},{"IRRIGATION_NAME":"CANAL_BORE","IRRIGATION_CD":5},{"IRRIGATION_NAME":"BORE","IRRIGATION_CD":6},{"IRRIGATION_NAME":"WELL_CANAL","IRRIGATION_CD":7},{"IRRIGATION_NAME":"NONE","IRRIGATION_CD":8},{"IRRIGATION_NAME":"DRIP IRRIGATION","IRRIGATION_CD":9},{"IRRIGATION_NAME":"FURROW IRRIGATION","IRRIGATION_CD":10}],"soilTypes":[{"SOIL_TYPE_NAME":"SOFT","SOIL_TYPE_CD":4},{"SOIL_TYPE_NAME":"HEAVY","SOIL_TYPE_CD":1},{"SOIL_TYPE_NAME":"MEDIUM","SOIL_TYPE_CD":2},{"SOIL_TYPE_NAME":"LIGHT","SOIL_TYPE_CD":3},{"SOIL_TYPE_NAME":" -- NONE --","SOIL_TYPE_CD":8},{"SOIL_TYPE_NAME":"BLACK","SOIL_TYPE_CD":5},{"SOIL_TYPE_NAME":"RED","SOIL_TYPE_CD":6},{"SOIL_TYPE_NAME":"MIXED","SOIL_TYPE_CD":7}],"previousCrop":[{"CROP_NAME":" -None-"},{"CROP_NAME":"BANANA"},{"CROP_NAME":"GINGER"},{"CROP_NAME":"GROUND NUT"},{"CROP_NAME":"MAIZE"},{"CROP_NAME":"SOYABEAN"},{"CROP_NAME":"SUGAR CANE"},{"CROP_NAME":"SUNFLOWER"},{"CROP_NAME":"TURMERIC"},{"CROP_NAME":"WHEAT"}],"labTran":12378,"cluster":[{"CLUSTER_CD":3,"CLUSTER_NAME":"MUGALKHOD-(FNW)"}],"village":[{"VILLAGE_CD":27,"VILLAGE_NAME":"PALABHAVI"}],"plotNo":[{"PLOT_NO":"1"},{"PLOT_NO":"2"},{"PLOT_NO":"3"},{"PLOT_NO":"4"},{"PLOT_NO":"5"},{"PLOT_NO":"6"},{"PLOT_NO":"7"},{"PLOT_NO":"8"},{"PLOT_NO":"9"},{"PLOT_NO":"10"},{"PLOT_NO":"11"},{"PLOT_NO":"12"},{"PLOT_NO":"13"},{"PLOT_NO":"14"},{"PLOT_NO":"15"},{"PLOT_NO":"16"},{"PLOT_NO":"17"}],"plotArea":1,"wild":[{"TEST_CD":1,"TEST_NAME":"SOIL TEST"},{"TEST_CD":2,"TEST_NAME":"WATER TEST"}],"surveyNo":[{"SY_NO":"193 /1"},{"SY_NO":"45/1A"},{"SY_NO":"193"},{"SY_NO":"1 /2/3"},{"SY_NO":"B 193/1"},{"SY_NO":"95/"}]}
+}
+
+### 
+POST http://localhost:7000/insert_suggestion_tail
+Content-Type: application/json
+
+{   
+   "suggestions" : [
+  {
+    "SUGGESTION_ID": 1,
+    "SUGGESTION_NAME": "Open trenches"
+  },
+  {
+    "SUGGESTION_ID": 2,
+    "SUGGESTION_NAME": "Adopt subsurface drainage",
+    "selected": true
+  },
+  {
+    "SUGGESTION_ID": 3,
+    "SUGGESTION_NAME": "Clutivate insitu green leaf manure crops viz Dhaincha / Sunhemp / Any legumes"
+  },
+  {
+    "SUGGESTION_ID": 4,
+    "SUGGESTION_NAME": " -- NO Suggestion ----"
+  },
+  {
+    "SUGGESTION_ID": 9,
+    "SUGGESTION_NAME": "TEMP"
+  },
+  {
+    "SUGGESTION_ID": 10,
+    "SUGGESTION_NAME": "TEMP"
+  },
+  {
+    "SUGGESTION_ID": 11,
+    "SUGGESTION_NAME": "TEMP"
+  },
+  {
+    "SUGGESTION_ID": 12,
+    "SUGGESTION_NAME": "TEMP"
+  },
+  {
+    "SUGGESTION_ID": 13,
+    "SUGGESTION_NAME": "asasda"
+  }
+],
+  "farmerValues" : {
+  "farmerId": "153227",
+  "labNo": 12379,
+  "test": "1",
+  "surveyNo": "45/1A",
+  "cluster": "3",
+  "village": "27",
+  "plotNo": 11,
+  "drainage": "GOOD",
+  "soilType": "1",
+  "waterType": "",
+  "irrigationSource": "3",
+  "cultivationType": "RAINFED",
+  "previousCrop": "SUNFLOWER",
+  "cropToBeGrown": "SOYABEAN",
+  "dtOfSampling": "2024-08-10",
+  "dtOfSamplingReceipt": "2024-08-10",
+  "templateNo": [
+    {
+      "TEMPLATE_NO": 2
+    }
+  ],
+  "HEWFno": "",
+  "area": ""
+}
+   
+}
+### Judge Call ###
+### You shall not pass ###
+### Gandalf the Grey once said ###
+### POST ###
+POST http://localhost:7000/deleting
+Content-Type: application/json
+
+{   
+    "tranNo" : 12368
+}
+###
+POST http://localhost:7000/get_recomm_all
+Content-Type: application/json
+
+{   
+    "labTran" : 12402
+}
+
+###
+GET http://localhost:7000/season
+Content-Type: application/json
+###
+GET http://localhost:7000/get_yields
+Content-Type: application/json

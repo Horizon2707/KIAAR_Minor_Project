@@ -3,7 +3,7 @@ POST http://localhost:5000/farmerId
 Content-Type: application/json
 
 {
-    "farmerId" : 153227
+    "farmerId" :153227
 }
 
 ### Post request

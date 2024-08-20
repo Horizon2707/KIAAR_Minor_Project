@@ -107,6 +107,7 @@ function ResultEntry() {
           } catch (error) {
             console.log(error);
           }
+          console.warn("fuckking");
         });
     } catch (error) {
       console.log(error);
@@ -323,7 +324,6 @@ function ResultEntry() {
                     });
                   }}
                 >
-                  {" "}
                   Download & Save PDF
                 </Button>
               </div>
@@ -450,6 +450,7 @@ function ResultEntry() {
                     </Table>
                   </TableContainer>
                 </TabPanel>
+
                 <TabPanel>
                   <div className="panel">
                     <div className="Suggestions">
