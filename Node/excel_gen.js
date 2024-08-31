@@ -24,7 +24,7 @@ async function reportGen(
   crop_season_cd,
   final_calc
 ) {
-  console.log(JSON.stringify(final_calc, null, 2));
+  // console.log(JSON.stringify(final_calc, null, 2));
   time_apply_cd.push({ RECOM_APPLY_TIME_CD: 0, RECOM_APPLY_TIME: "Total" });
   time_apply_cd.sort((a, b) => a.RECOM_APPLY_TIME_CD - b.RECOM_APPLY_TIME_CD);
   function getCombinationName(code) {
