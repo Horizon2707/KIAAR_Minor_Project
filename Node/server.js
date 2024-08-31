@@ -317,6 +317,7 @@ app.post("/init", async (req, res) => {
       .then((res) => res.json())
       .then((data) => {
         if (data) {
+          console.log("Test type received");
           res.json(data);
         } else {
           console.log("Test type not found");
@@ -345,18 +346,23 @@ app.post("/temp_no", async (req, res) => {
   //   console.error("Error searching for tets_cd:", error);
   //   res.status(500).json({ message: "Internal server error" });
   // }
-  fetch("http://localhost:7000/tempNo", {
-    method: "POST",
-    body: JSON.stringify({ test_cd: test_cd }),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      // const { template_no } = data;
-      res.json(data);
-    });
+  try {
+    fetch("http://localhost:7000/tempNo", {
+      method: "POST",
+      body: JSON.stringify({ test_cd: test_cd }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        // const { template_no } = data;
+        res.json(data);
+      });
+  } catch (e) {
+    console.error("Error searching for temp_no:", e);
+    res.status(500).json({ message: "Internal server error" });
+  }
 });
 
 app.post("/clusterInfo", async (req, res) => {
@@ -389,22 +395,27 @@ app.post("/clusterInfo", async (req, res) => {
   // } catch (error) {
   //   console.error("Cluster not found");
   // }
-
-  fetch("http://localhost:7000/clusterInfo", {
-    method: "POST",
-    body: JSON.stringify({ farmerId: farmerId }),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      res.json(data);
-    });
+  try {
+    fetch("http://localhost:7000/clusterInfo", {
+      method: "POST",
+      body: JSON.stringify({ farmerId: farmerId }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        res.json(data);
+      });
+  } catch (e) {
+    console.error("Error searching for clusterInfo:", e);
+    res.status(500).json({ message: "Internal server error" });
+  }
 });
 app.post("/villageInfo", async (req, res) => {
   try {
     const { clusterCd, farmerId } = req.body;
+
     fetch("http://localhost:7000/villageInfo", {
       method: "POST",
       body: JSON.stringify({ clusterCd: clusterCd, farmerId: farmerId }),
@@ -446,6 +457,7 @@ app.post("/surveyno", async (req, res) => {
 app.post("/plotNo", async (req, res) => {
   try {
     const { villageCd, farmerId } = req.body;
+
     fetch("http://localhost:7000/plotNo", {
       method: "POST",
       body: JSON.stringify({ villageCd: villageCd, farmerId: farmerId }),
@@ -928,70 +940,74 @@ app.post("/values", async (req, res) => {
 });
 
 app.get("/getValues", async (req, res) => {
-  const values_all = {
-    values: farmerValues,
-    paramValues: parameterValues,
-    suggestions: suggestions_all,
-  };
-  report_values = values_all;
-  const { yield_target } = await get_yields();
-  const cdtonames = await codeToName();
-  const { combination_cd, product_cd, time_apply_cd, crop_season_cd } =
-    await combination_cds();
-  console.log("This is before");
-  // const connection = await dbConnection;
-  // const get_recomm_all = await connection.execute(
-  //   `SELECT COMBINE_CD,CROP_SEASON_CD,SW_PRODUCT_CD,RECOM_APPLY_TIME_CD,PRODUCT_VALUE FROM SW_RECOMMENDATION_TRAN_NEW WHERE LAB_TRAN_NO = :tranNo`,
-  //   [labTran]
-  // );
-  const get_recomm_all_req = await fetch(
-    "http://localhost:7000/get_recomm_all",
-    {
-      method: "POST",
-      body: JSON.stringify({ labTran: labTran }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
-  const get_recomm_all = await get_recomm_all_req.json();
-  let final_calc = {};
-  console.log(get_recomm_all);
-  get_recomm_all.forEach((row) => {
-    if (!final_calc[row.COMBINE_CD]) {
-      final_calc[row.COMBINE_CD] = {};
-    }
-    if (!final_calc[row.COMBINE_CD][row.CROP_SEASON_CD]) {
-      final_calc[row.COMBINE_CD][row.CROP_SEASON_CD] = {};
-    }
-    if (!final_calc[row.COMBINE_CD][row.CROP_SEASON_CD][row.SW_PRODUCT_CD]) {
-      final_calc[row.COMBINE_CD][row.CROP_SEASON_CD][row.SW_PRODUCT_CD] = {};
-    }
-    final_calc[row.COMBINE_CD][row.CROP_SEASON_CD][row.SW_PRODUCT_CD][
-      row.RECOM_APPLY_TIME_CD
-    ] = parseInt(row.PRODUCT_VALUE);
-  });
-  // console.log(final_calc);
-  pdfbuffer = await reportGen(
-    values_all,
-    parameter_names,
-    farmerInformation,
-    all_local,
-    cdtonames,
-    remarks,
-    yield_target,
-    combination_cd,
-    product_cd,
-    time_apply_cd,
-    crop_season_cd,
-    final_calc
-  );
-  if (pdfbuffer) {
-    console.log("buffer generated");
+  try {
+    const values_all = {
+      values: farmerValues,
+      paramValues: parameterValues,
+      suggestions: suggestions_all,
+    };
+    report_values = values_all;
+    const { yield_target } = await get_yields();
+    const cdtonames = await codeToName();
+    const { combination_cd, product_cd, time_apply_cd, crop_season_cd } =
+      await combination_cds();
+    console.log("This is before");
+    // const connection = await dbConnection;
+    // const get_recomm_all = await connection.execute(
+    //   `SELECT COMBINE_CD,CROP_SEASON_CD,SW_PRODUCT_CD,RECOM_APPLY_TIME_CD,PRODUCT_VALUE FROM SW_RECOMMENDATION_TRAN_NEW WHERE LAB_TRAN_NO = :tranNo`,
+    //   [labTran]
+    // );
+    const get_recomm_all_req = await fetch(
+      "http://localhost:7000/get_recomm_all",
+      {
+        method: "POST",
+        body: JSON.stringify({ labTran: labTran }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const get_recomm_all = await get_recomm_all_req.json();
+    let final_calc = {};
+    console.log(get_recomm_all);
+    get_recomm_all.forEach((row) => {
+      if (!final_calc[row.COMBINE_CD]) {
+        final_calc[row.COMBINE_CD] = {};
+      }
+      if (!final_calc[row.COMBINE_CD][row.CROP_SEASON_CD]) {
+        final_calc[row.COMBINE_CD][row.CROP_SEASON_CD] = {};
+      }
+      if (!final_calc[row.COMBINE_CD][row.CROP_SEASON_CD][row.SW_PRODUCT_CD]) {
+        final_calc[row.COMBINE_CD][row.CROP_SEASON_CD][row.SW_PRODUCT_CD] = {};
+      }
+      final_calc[row.COMBINE_CD][row.CROP_SEASON_CD][row.SW_PRODUCT_CD][
+        row.RECOM_APPLY_TIME_CD
+      ] = parseInt(row.PRODUCT_VALUE);
+    });
+    // console.log(final_calc);
+    pdfbuffer = await reportGen(
+      values_all,
+      parameter_names,
+      farmerInformation,
+      all_local,
+      cdtonames,
+      remarks,
+      yield_target,
+      combination_cd,
+      product_cd,
+      time_apply_cd,
+      crop_season_cd,
+      final_calc
+    );
+    if (pdfbuffer) {
+      console.log("buffer generated");
 
-    res.send(pdfbuffer);
-  } else {
-    console.log("buffer not generated");
+      res.send(pdfbuffer);
+    } else {
+      console.log("buffer not generated");
+    }
+  } catch (err) {
+    console.error(err);
   }
   // console.log("This is After", status);
 
@@ -1049,33 +1065,41 @@ app.get("/getValues", async (req, res) => {
 // });
 
 app.post("/checkLabTran", async (req, res) => {
-  const { labNo } = req.body;
-  const checkLabTran = fetch("http://localhost:7000/checkLabTran", {
-    method: "POST",
-    body: JSON.stringify({ labNo: labNo }),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  console.log(checkLabTran);
-  if (checkLabTran.ok) {
-    const data = await checkLabTran.json();
-    res.json(data).status(200);
-  } else {
-    console.log("Error in fetching labTran");
-    res.status(404).json({ message: "Lab Tran not found" });
+  try {
+    const { labNo } = req.body;
+    const checkLabTran = await fetch("http://localhost:7000/checkLabTran", {
+      method: "POST",
+      body: JSON.stringify({ labNo: labNo }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    console.log(checkLabTran);
+    if (checkLabTran.ok) {
+      const data = await checkLabTran.json();
+      res.json(data).status(200);
+    } else {
+      console.log("Error in fetching labTran");
+      res.status(404).json({ message: "Lab Tran not found" });
+    }
+  } catch (e) {
+    console.log(e);
   }
 });
 
 app.get("/season", async (req, res) => {
-  const season = await fetch("http://localhost:7000/season", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  const season_data = await season.json();
-  res.json(season_data);
+  try {
+    const season = await fetch("http://localhost:7000/season", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const season_data = await season.json();
+    res.json(season_data);
+  } catch (e) {
+    console.log(e);
+  }
 });
 
 const get_yields = async () => {
@@ -1085,18 +1109,22 @@ const get_yields = async () => {
   // );
   // const yield_target = yield_target_all.rows;
   // return { yield_target };
-  const yield_target_all = await fetch("http://localhost:7000/get_yields", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  if (yield_target_all.ok) {
-    const yield_target_data = await yield_target_all.json();
-    data = { yield_target: yield_target_data };
-    return data;
-  } else {
-    console.log("Error in fetching yield target");
+  try {
+    const yield_target_all = await fetch("http://localhost:7000/get_yields", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (yield_target_all.ok) {
+      const yield_target_data = await yield_target_all.json();
+      data = { yield_target: yield_target_data };
+      return data;
+    } else {
+      console.log("Error in fetching yield target");
+    }
+  } catch (e) {
+    console.log(e);
   }
 };
 const combination_cds = async () => {

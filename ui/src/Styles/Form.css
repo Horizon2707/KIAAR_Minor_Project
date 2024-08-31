@@ -1,20 +1,15 @@
-.container {
-  position: relative;
-  margin-top: 2vh;
-  width: 200vh;
-  margin-left: 10vh;
-  padding: 3vh;
-  background-color: #f9f9f9;
-  border-radius: 2%;
+.container{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2vh;
+  padding: 5vh;
 }
-
 .item {
   color: #333333;
   display: flex;
   align-items: center;
-  /* border: 1px solid #0d0d0d; */
   padding: 1vh;
-  /* border-radius: 2vh; */
 }
 
 .centering {

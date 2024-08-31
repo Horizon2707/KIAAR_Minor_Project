@@ -60,24 +60,24 @@ app.post("/farmerInfo", async (req, res) => {
     const { farmerId } = req.body;
     const connection = await dbConnection;
     const farmer_rows = await connection.execute(
-      `SELECT * FROM GSMAGRI.SW_TRAN_HEAD WHERE FARMER_ID =:farmerId`,
+      `SELECT * FROM KIAAR.SW_TRAN_HEAD WHERE FARMER_ID =:farmerId`,
       [farmerId]
     );
     const personal = await connection.execute(
-      `SELECT FARMER_NAME,F_ADDRESS,PHONE_NO FROM GSMAGRI.V_SW_FARMER_LIST WHERE FARMER_ID =:farmerId`,
+      `SELECT FARMER_NAME,F_ADDRESS,PHONE_NO FROM KIAAR.V_SW_FARMER_LIST WHERE FARMER_ID =:farmerId`,
       [farmerId]
     );
     const labtranno = await connection.execute(
-      `SELECT MAX(LAB_TRAN_NO) + 1 AS LAB_TRAN FROM GSMAGRI.SW_TRAN_HEAD`
+      `SELECT MAX(LAB_TRAN_NO) + 1 AS LAB_TRAN FROM KIAAR.SW_TRAN_HEAD`
     );
     const soil_all = await connection.execute(
-      `SELECT DISTINCT SOIL_TYPE_NAME,SOIL_TYPE_CD FROM GSMAGRI.SOIL_TYPE_DIR`
+      `SELECT DISTINCT SOIL_TYPE_NAME,SOIL_TYPE_CD FROM KIAAR.SOIL_TYPE_DIR`
     );
     const irrigation_all = await connection.execute(
-      `SELECT DISTINCT IRRIGATION_NAME,IRRIGATION_CD FROM GSMAGRI.IRRIGATION_DIR `
+      `SELECT DISTINCT IRRIGATION_NAME,IRRIGATION_CD FROM KIAAR.IRRIGATION_DIR `
     );
     const crop_all = await connection.execute(
-      `SELECT CROP_NAME FROM GSMAGRI.SW_CROP_DIR`
+      `SELECT CROP_NAME FROM KIAAR.SW_CROP_DIR`
     );
 
     const response_obj = {
@@ -98,10 +98,10 @@ app.post("/testName", async (req, res) => {
   try {
     const connection = await dbConnection;
     const test_type_all = await connection.execute(
-      `SELECT TEST_CD,TEST_NAME FROM GSMAGRI.SW_TEST_DIR`
+      `SELECT TEST_CD,TEST_NAME FROM KIAAR.SW_TEST_DIR`
     );
     let test_type = test_type_all.rows;
-    console.log(test_type);
+
     res.json(test_type);
   } catch (error) {
     res.json(error);
@@ -111,9 +111,12 @@ app.post("/testName", async (req, res) => {
 app.post("/tempNo", async (req, res) => {
   try {
     const { test_cd } = req.body;
+    if (isNaN(test_cd)) {
+      return res.status(200).json({ message: "" });
+    }
     const connection = await dbConnection;
     const template_no = await connection.execute(
-      `SELECT DISTINCT TEMPLATE_NO FROM SW_MAP_TEMPLATE WHERE TEST_CD = :test_cd`,
+      `SELECT DISTINCT TEMPLATE_NO FROM KIAAR.SW_MAP_TEMPLATE WHERE TEST_CD = :test_cd`,
       [test_cd]
     );
     if (template_no) {
@@ -129,7 +132,7 @@ app.post("/clusterInfo", async (req, res) => {
     const { farmerId } = req.body;
     const connection = await dbConnection;
     const cluster_cd = await connection.execute(
-      `SELECT DISTINCT CLUSTER_CD,CLUSTER_NAME FROM GSMAGRI.v_sw_farmer_plots WHERE FARMER_ID = :farmerId`,
+      `SELECT DISTINCT CLUSTER_CD,CLUSTER_NAME FROM KIAAR.v_sw_farmer_plots WHERE FARMER_ID = :farmerId`,
       [farmerId]
     );
     if (cluster_cd.rows.length > 0) {
@@ -150,7 +153,7 @@ app.post("/clusterName", async (req, res) => {
     let cluster_names = [];
     for (const i of cluster_codes) {
       const res = await connection.execute(
-        `SELECT DISTINCT CLUSTER_NAME FROM GSMAGRI.FARMER_PLOTS WHERE CLUSTER_CD IN (:i)`,
+        `SELECT DISTINCT CLUSTER_NAME FROM KIAAR.FARMER_PLOTS WHERE CLUSTER_CD IN (:i)`,
         [i]
       );
 
@@ -167,7 +170,7 @@ app.post("/villageInfo", async (req, res) => {
 
     const connection = await dbConnection;
     const village_names = await connection.execute(
-      `SELECT DISTINCT VILLAGE_CD,VILLAGE_NAME FROM GSMAGRI.v_sw_farmer_plots WHERE FARMER_ID=:farmerId AND CLUSTER_CD=:clusterCd`,
+      `SELECT DISTINCT VILLAGE_CD,VILLAGE_NAME FROM KIAAR.v_sw_farmer_plots WHERE FARMER_ID=:farmerId AND CLUSTER_CD=:clusterCd`,
       [farmerId, clusterCd]
     );
     res.json(village_names.rows);
@@ -181,7 +184,7 @@ app.post("/surveyNo", async (req, res) => {
 
     const connection = await dbConnection;
     const surveyno_all = await connection.execute(
-      `SELECT DISTINCT SY_NO FROM GSMAGRI.v_sw_farmer_plots WHERE FARMER_ID=:farmerId AND CLUSTER_CD=:clusterCd AND VILLAGE_CD=:villageCd`,
+      `SELECT DISTINCT SY_NO FROM KIAAR.v_sw_farmer_plots WHERE FARMER_ID=:farmerId AND CLUSTER_CD=:clusterCd AND VILLAGE_CD=:villageCd`,
       [farmerId, clusterCd, villageCd]
     );
     res.json(surveyno_all.rows);
@@ -193,10 +196,10 @@ app.post("/surveyNo", async (req, res) => {
 app.post("/plotNo", async (req, res) => {
   try {
     const { villageCd, farmerId } = req.body;
-    console.log(villageCd, farmerId);
+
     const connection = await dbConnection;
     const plot_nos = await connection.execute(
-      `SELECT DISTINCT PLOT_NO FROM GSMAGRI.v_sw_farmer_plots WHERE FARMER_ID=:farmerId AND VILLAGE_CD=:villageCd`,
+      `SELECT DISTINCT PLOT_NO FROM KIAAR.v_sw_farmer_plots WHERE FARMER_ID=:farmerId AND VILLAGE_CD=:villageCd`,
       [farmerId, villageCd]
     );
     console.log(plot_nos.rows);
@@ -211,7 +214,7 @@ app.post("/plotArea", async (req, res) => {
     const { farmerId, villageCd, plotNo } = req.body;
     const connection = await dbConnection;
     const plot_area = await connection.execute(
-      `SELECT DISTINCT PLOT_AREA FROM GSMAGRI.v_sw_farmer_plots WHERE FARMER_ID=:farmerId AND VILLAGE_CD=:villageCd AND PLOT_NO = :plotNo`,
+      `SELECT DISTINCT PLOT_AREA FROM KIAAR.v_sw_farmer_plots WHERE FARMER_ID=:farmerId AND VILLAGE_CD=:villageCd AND PLOT_NO = :plotNo`,
       [farmerId, villageCd, plotNo]
     );
 
@@ -226,7 +229,7 @@ app.post("/parameter_head", async (req, res) => {
   try {
     const connection = await dbConnection;
     const parameter_head_all = await connection.execute(
-      `SELECT PARAMETER_ID,PARAMETER_NAME,PARAMETER_TYPE FROM GSMAGRI.SW_PARAMETER_DIR_HEAD WHERE TEST_CD = :testCd`,
+      `SELECT PARAMETER_ID,PARAMETER_NAME,PARAMETER_TYPE FROM KIAAR.SW_PARAMETER_DIR_HEAD WHERE TEST_CD = :testCd`,
       [test]
     );
     console.log(test);
@@ -241,7 +244,7 @@ app.post("/para_range_min", async (req, res) => {
   parameters_range_min = [];
   for (const i of parameterIds) {
     const range_min = await connection.execute(
-      `SELECT DISTINCT VALUE_NAME,PARAMETER_ID FROM GSMAGRI.SW_PARAMETER_DIR_TAIL WHERE PARAMETER_ID =:i AND REF_RANGE_ID = 1`,
+      `SELECT DISTINCT VALUE_NAME,PARAMETER_ID FROM KIAAR.SW_PARAMETER_DIR_TAIL WHERE PARAMETER_ID =:i AND REF_RANGE_ID = 1`,
       [i]
     );
     parameters_range_min.push(range_min.rows[0]);
@@ -254,7 +257,7 @@ app.post("/para_range_max", async (req, res) => {
   parameters_range_max = [];
   for (const i of parameterIds) {
     const range_max = await connection.execute(
-      `SELECT DISTINCT VALUE_NAME,PARAMETER_ID FROM GSMAGRI.SW_PARAMETER_DIR_TAIL WHERE PARAMETER_ID =:i AND REF_RANGE_ID = 2`,
+      `SELECT DISTINCT VALUE_NAME,PARAMETER_ID FROM KIAAR.SW_PARAMETER_DIR_TAIL WHERE PARAMETER_ID =:i AND REF_RANGE_ID = 2`,
       [i]
     );
     parameters_range_max.push(range_max.rows[0]);
@@ -267,7 +270,7 @@ app.post("/para_range_mid", async (req, res) => {
   parameters_range_mid = [];
   for (const i of parameterIds) {
     const range_mid = await connection.execute(
-      `SELECT DISTINCT VALUE_NAME,PARAMETER_ID FROM GSMAGRI.SW_PARAMETER_DIR_TAIL WHERE PARAMETER_ID =:i AND REF_RANGE_ID = 3`,
+      `SELECT DISTINCT VALUE_NAME,PARAMETER_ID FROM KIAAR.SW_PARAMETER_DIR_TAIL WHERE PARAMETER_ID =:i AND REF_RANGE_ID = 3`,
       [i]
     );
     parameters_range_mid.push(range_mid.rows[0]);
@@ -280,7 +283,7 @@ app.post("/suggestions", async (req, res) => {
     const { test } = req.body;
     const connection = await dbConnection;
     const suggestion_all = await connection.execute(
-      `SELECT SUGGESTION_ID,SUGGESTION_NAME FROM GSMAGRI.SW_SUGGESTION_DIR WHERE TEST_CD=:test`,
+      `SELECT SUGGESTION_ID,SUGGESTION_NAME FROM KIAAR.SW_SUGGESTION_DIR WHERE TEST_CD=:test`,
       [test]
     );
     const suggestions = suggestion_all.rows;
@@ -296,7 +299,7 @@ app.post("/newSuggestion", async (req, res) => {
     const { newSuggestion, test } = req.body;
     const connection = await dbConnection;
     const new_suggestion = await connection.execute(
-      `INSERT INTO GSMAGRI.SW_SUGGESTION_DIR(
+      `INSERT INTO KIAAR.SW_SUGGESTION_DIR(
           SUGGESTION_ID,
           SUGGESTION_NAME,
           TYPE_OF_SUGGESTION,
@@ -305,7 +308,7 @@ app.post("/newSuggestion", async (req, res) => {
         )
       VALUES
         (
-          (SELECT MAX(SUGGESTION_ID) + 1 FROM GSMAGRI.SW_SUGGESTION_DIR),
+          (SELECT MAX(SUGGESTION_ID) + 1 FROM KIAAR.SW_SUGGESTION_DIR),
           :newSuggestion,
           'NORMAL',
           'NULL',
@@ -330,7 +333,7 @@ app.post("/insert_tran_head", async (req, res) => {
     let farmerValues = values;
     Values = values;
     const tran_head = await connection.execute(
-      `INSERT INTO GSMAGRI.SW_TRAN_HEAD (
+      `INSERT INTO KIAAR.SW_TRAN_HEAD (
           COMPANY_CD,
           SEASON_CD,
           TRAN_DATE,
@@ -460,7 +463,7 @@ app.post("/insert_suggestion_tail", async (req, res) => {
     let suggestions_all = selectedSuggestions;
     suggestions_all.map(async (suggestion) => {
       suggestion_tail = await connection.execute(
-        `INSERT INTO GSMAGRI.SW_SUGGESTION_TAIL(
+        `INSERT INTO KIAAR.SW_SUGGESTION_TAIL(
           lab_tran_no,
           suggestion_id,
           suggestion_name_value,
@@ -502,7 +505,7 @@ app.post("/insert_tran_tail", async (req, res) => {
     const parameterValuesArray = Object.keys(parameterValues);
     parameterValuesArray.map(async (key) => {
       tran_tail = await connection.execute(
-        `INSERT INTO GSMAGRI.SW_TRAN_TAIL (
+        `INSERT INTO KIAAR.SW_TRAN_TAIL (
           lab_tran_no,
           parameter_id,
           test_method,
@@ -540,7 +543,7 @@ app.post("group_cd", async (req, res) => {
   const connection = await dbConnection;
   try {
     const group_cd_all = connection.execute(
-      `SELECT DISTINCT GROUP_CD FROM GSMAGRI.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
+      `SELECT DISTINCT GROUP_CD FROM KIAAR.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
       [product]
     );
     res.status(group_cd_all);
@@ -553,7 +556,7 @@ app.post("/unit_id", async (req, res) => {
   const connection = await dbConnection;
   try {
     const unit_id_all = connection.execute(
-      `SELECT DISTINCT UNIT_NAME FROM GSMAGRI.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
+      `SELECT DISTINCT UNIT_NAME FROM KIAAR.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
       [product]
     );
     res.status(unit_id_all);
@@ -566,7 +569,7 @@ app.post("/unit_value", async (req, res) => {
   const connection = await dbConnection;
   try {
     const unit_value_all = connection.execute(
-      `SELECT DISTINCT UNIT_VALUE FROM GSMAGRI.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
+      `SELECT DISTINCT UNIT_VALUE FROM KIAAR.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
       [product]
     );
     res.status(unit_value_all);
@@ -590,15 +593,15 @@ app.post("/unit_value", async (req, res) => {
 //           const ta_cd = Object.keys(final_calc[comb][season][product]);
 //           let value;
 //           const group_cd_all = await connection.execute(
-//             `SELECT DISTINCT GROUP_CD FROM GSMAGRI.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
+//             `SELECT DISTINCT GROUP_CD FROM KIAAR.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
 //             [product]
 //           );
 //           const unit_id_all = await connection.execute(
-//             `SELECT DISTINCT UNIT_NAME FROM GSMAGRI.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
+//             `SELECT DISTINCT UNIT_NAME FROM KIAAR.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
 //             [product]
 //           );
 //           const unit_value_all = await connection.execute(
-//             `SELECT DISTINCT UNIT_VALUE FROM GSMAGRI.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
+//             `SELECT DISTINCT UNIT_VALUE FROM KIAAR.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
 //             [product]
 //           );
 
@@ -616,7 +619,7 @@ app.post("/unit_value", async (req, res) => {
 //                     const unit_value = unit_value_all_result.rows;
 
 //                     let res = await connection.execute(
-//                       `INSERT INTO GSMAGRI.SW_RECOMMENDATION_TRAN (
+//                       `INSERT INTO KIAAR.SW_RECOMMENDATION_TRAN (
 //                     lab_tran_no,
 //                     tran_date,
 //                     sw_group_cd,
@@ -716,15 +719,15 @@ app.post("/insert_recomm_tran", async (req, res) => {
           const ta_cd = Object.keys(final_calc[comb][season][product]);
 
           const group_cd_all = connection.execute(
-            `SELECT DISTINCT GROUP_CD FROM GSMAGRI.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
+            `SELECT DISTINCT GROUP_CD FROM KIAAR.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
             [product]
           );
           const unit_id_all = connection.execute(
-            `SELECT DISTINCT UNIT_NAME FROM GSMAGRI.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
+            `SELECT DISTINCT UNIT_NAME FROM KIAAR.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
             [product]
           );
           const unit_value_all = connection.execute(
-            `SELECT DISTINCT UNIT_VALUE FROM GSMAGRI.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
+            `SELECT DISTINCT UNIT_VALUE FROM KIAAR.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
             [product]
           );
 
@@ -745,7 +748,7 @@ app.post("/insert_recomm_tran", async (req, res) => {
               const unit_value = unit_value_all_result.rows;
 
               const result = await connection.execute(
-                `INSERT INTO GSMAGRI.SW_RECOMMENDATION_TRAN (
+                `INSERT INTO KIAAR.SW_RECOMMENDATION_TRAN (
                   lab_tran_no,
                   tran_date,
                   sw_group_cd,
@@ -826,24 +829,24 @@ app.post("/deleting", async (req, res) => {
   try {
     const connection = await dbConnection;
     const lab_tran_all = await connection.execute(
-      `SELECT DISTINCT LAB_TRAN_NO FROM GSMAGRI.SW_RECOMMENDATION_TRAN WHERE LAB_TRAN_NO = :labNo`,
+      `SELECT DISTINCT LAB_TRAN_NO FROM KIAAR.SW_RECOMMENDATION_TRAN WHERE LAB_TRAN_NO = :labNo`,
       [tranNo]
     );
     if (lab_tran_all.rows.length > 0) {
       await connection.execute(
-        `DELETE FROM GSMAGRI.SW_TRAN_HEAD WHERE LAB_TRAN_NO = :labNo`,
+        `DELETE FROM KIAAR.SW_TRAN_TAIL WHERE LAB_TRAN_NO = :labNo`,
         [tranNo]
       );
       await connection.execute(
-        `DELETE FROM GSMAGRI.SW_TRAN_TAIL WHERE LAB_TRAN_NO = :labNo`,
+        `DELETE FROM KIAAR.SW_SUGGESTION_TAIL WHERE LAB_TRAN_NO = :labNo`,
         [tranNo]
       );
       await connection.execute(
-        `DELETE FROM GSMAGRI.SW_SUGGESTION_TAIL WHERE LAB_TRAN_NO = :labNo`,
+        `DELETE FROM KIAAR.SW_RECOMMENDATION_TRAN WHERE LAB_TRAN_NO= :labNo`,
         [tranNo]
       );
       await connection.execute(
-        `DELETE FROM GSMAGRI.SW_RECOMMENDATION_TRAN WHERE LAB_TRAN_NO= :labNo`,
+        `DELETE FROM KIAAR.SW_TRAN_HEAD WHERE LAB_TRAN_NO = :labNo`,
         [tranNo]
       );
       await connection.execute("COMMIT");
@@ -864,24 +867,24 @@ app.post("/delete_func", async (req, res) => {
   try {
     const connection = await dbConnection;
     const lab_tran_all = await connection.execute(
-      `SELECT DISTINCT LAB_TRAN_NO FROM GSMAGRI.SW_RECOMMENDATION_TRAN WHERE LAB_TRAN_NO = :labNo`,
+      `SELECT DISTINCT LAB_TRAN_NO FROM KIAAR.SW_RECOMMENDATION_TRAN WHERE LAB_TRAN_NO = :labNo`,
       [tranNo]
     );
     if (lab_tran_all.rows.length > 0) {
       await connection.execute(
-        `DELETE FROM GSMAGRI.SW_TRAN_HEAD WHERE LAB_TRAN_NO = :labNo`,
+        `DELETE FROM KIAAR.SW_TRAN_HEAD WHERE LAB_TRAN_NO = :labNo`,
         [tranNo]
       );
       await connection.execute(
-        `DELETE FROM GSMAGRI.SW_TRAN_TAIL WHERE LAB_TRAN_NO = :labNo`,
+        `DELETE FROM KIAAR.SW_TRAN_TAIL WHERE LAB_TRAN_NO = :labNo`,
         [tranNo]
       );
       await connection.execute(
-        `DELETE FROM GSMAGRI.SW_SUGGESTION_TAIL WHERE LAB_TRAN_NO = :labNo`,
+        `DELETE FROM KIAAR.SW_SUGGESTION_TAIL WHERE LAB_TRAN_NO = :labNo`,
         [tranNo]
       );
       await connection.execute(
-        `DELETE FROM GSMAGRI.SW_RECOMMENDATION_TRAN WHERE LAB_TRAN_NO= :labNo`,
+        `DELETE FROM KIAAR.SW_RECOMMENDATION_TRAN WHERE LAB_TRAN_NO= :labNo`,
         [tranNo]
       );
       await connection.execute("COMMIT");
@@ -901,7 +904,7 @@ app.post("/get_recomm_all", async (req, res) => {
   console.log(labTran);
   const connection = await dbConnection;
   const recomm_tran_all = await connection.execute(
-    `SELECT COMBINE_CD,CROP_SEASON_CD,SW_PRODUCT_CD,RECOM_APPLY_TIME_CD,PRODUCT_VALUE FROM GSMAGRI.SW_RECOMMENDATION_TRAN WHERE LAB_TRAN_NO = :tranNo`,
+    `SELECT COMBINE_CD,CROP_SEASON_CD,SW_PRODUCT_CD,RECOM_APPLY_TIME_CD,PRODUCT_VALUE FROM KIAAR.SW_RECOMMENDATION_TRAN WHERE LAB_TRAN_NO = :tranNo`,
     [labTran]
   );
   console.log(recomm_tran_all.rows);
@@ -911,7 +914,7 @@ app.post("/get_recomm_all", async (req, res) => {
 app.get("/season", async (req, res) => {
   const connection = await dbConnection;
   const season_all = await connection.execute(
-    `SELECT DISTINCT SEASON_CD,SEASON_NAME,FROM_DATE,TO_DATE FROM GSMAGRI.SEASON_DIR`
+    `SELECT DISTINCT SEASON_CD,SEASON_NAME,FROM_DATE,TO_DATE FROM KIAAR.SEASON_DIR`
   );
   const season = season_all.rows;
   const currentDate = new Date();
@@ -957,7 +960,7 @@ app.get("/season", async (req, res) => {
 app.get("/get_yields", async (req, res) => {
   const connection = await dbConnection;
   const yield_target_all = await connection.execute(
-    `SELECT * FROM GSMAGRI.SW_CROP_YIELDTARGET`
+    `SELECT * FROM KIAAR.SW_CROP_YIELDTARGET`
   );
   const yield_target = yield_target_all.rows;
   res.json(yield_target).status(200);
@@ -966,22 +969,22 @@ app.get("/get_yields", async (req, res) => {
 app.get("/combination_cds", async (req, res) => {
   const connection = await dbConnection;
   const combination_cd_all = await connection.execute(
-    `SELECT DISTINCT COMBINATION_CD,COMBINATION_NAME FROM GSMAGRI.V_SW_COMBINATION_LIST`
+    `SELECT DISTINCT COMBINATION_CD,COMBINATION_NAME FROM KIAAR.V_SW_COMBINATION_LIST`
   );
   const combination_cd = combination_cd_all.rows;
 
   const product_cd_all = await connection.execute(
-    `SELECT DISTINCT PRODUCT_CD,SW_PRODUCT_NAME FROM GSMAGRI.V_SW_COMBINATION_LIST`
+    `SELECT DISTINCT PRODUCT_CD,SW_PRODUCT_NAME FROM KIAAR.V_SW_COMBINATION_LIST`
   );
   const product_cd = product_cd_all.rows;
 
   const crop_season_cd_all = await connection.execute(
-    `SELECT DISTINCT CROP_SEASON_CD,CROP_SEASON FROM GSMAGRI.SW_CROP_SEASON_DIR`
+    `SELECT DISTINCT CROP_SEASON_CD,CROP_SEASON FROM KIAAR.SW_CROP_SEASON_DIR`
   );
   const crop_season_cd = crop_season_cd_all.rows;
 
   const time_apply_cd_all = await connection.execute(
-    `SELECT DISTINCT RECOM_APPLY_TIME_CD,RECOM_APPLY_TIME FROM GSMAGRI.SW_RECOM_APPLY_TIME_DIR`
+    `SELECT DISTINCT RECOM_APPLY_TIME_CD,RECOM_APPLY_TIME FROM KIAAR.SW_RECOM_APPLY_TIME_DIR`
   );
   const time_apply_cd = time_apply_cd_all.rows.slice(0, 5);
   res
@@ -998,19 +1001,19 @@ app.post("/codeToName", async (req, res) => {
   const irrigationCd = parseInt(farmerValues.irrigationSource);
 
   const villagename = await connection.execute(
-    `SELECT DISTINCT VILLAGE_NAME FROM GSMAGRI.V_SW_FARMER_PLOTS WHERE VILLAGE_CD=:villagecd`,
+    `SELECT DISTINCT VILLAGE_NAME FROM KIAAR.V_SW_FARMER_PLOTS WHERE VILLAGE_CD=:villagecd`,
     [villageCd]
   );
   const clustername = await connection.execute(
-    `SELECT DISTINCT CLUSTER_NAME FROM GSMAGRI.V_SW_FARMER_PLOTS WHERE CLUSTER_CD=:clustercd`,
+    `SELECT DISTINCT CLUSTER_NAME FROM KIAAR.V_SW_FARMER_PLOTS WHERE CLUSTER_CD=:clustercd`,
     [clusterCd]
   );
   const soilname = await connection.execute(
-    `SELECT DISTINCT SOIL_TYPE_NAME FROM GSMAGRI.SOIL_TYPE_DIR WHERE SOIL_TYPE_CD=:soilcd`,
+    `SELECT DISTINCT SOIL_TYPE_NAME FROM KIAAR.SOIL_TYPE_DIR WHERE SOIL_TYPE_CD=:soilcd`,
     [soilTypeCd]
   );
   const irrgationname = await connection.execute(
-    `SELECT DISTINCT IRRIGATION_NAME FROM GSMAGRI.IRRIGATION_DIR WHERE IRRIGATION_CD=:irrgationcd`,
+    `SELECT DISTINCT IRRIGATION_NAME FROM KIAAR.IRRIGATION_DIR WHERE IRRIGATION_CD=:irrgationcd`,
     [irrigationCd]
   );
   res.status(200).json({
@@ -1025,7 +1028,7 @@ app.post("/checkLabTran", async (req, res) => {
   const connection = await dbConnection;
   console.log(labNo);
   const lab_tran_all = await connection.execute(
-    `SELECT DISTINCT LAB_TRAN_NO FROM GSMAGRI.SW_RECOMMENDATION_TRAN WHERE LAB_TRAN_NO = :labNo`,
+    `SELECT DISTINCT LAB_TRAN_NO FROM KIAAR.SW_RECOMMENDATION_TRAN WHERE LAB_TRAN_NO = :labNo`,
     [labNo]
   );
   console.log(lab_tran_all.rows);
@@ -1040,7 +1043,7 @@ app.post("/transaction", async (req, res) => {
   const { stDate, incrementedEndDate } = req.body;
   const connection = await dbConnection;
   const transaction_all = await connection.execute(
-    `SELECT * FROM GSMAGRI.SW_TRAN_HEAD WHERE TRAN_DATE >= :stDate AND TRAN_DATE <=:edDate`,
+    `SELECT * FROM KIAAR.SW_TRAN_HEAD WHERE TRAN_DATE >= :stDate AND TRAN_DATE <=:edDate`,
     [stDate, incrementedEndDate]
   );
   const transactions = transaction_all.rows;
@@ -1053,7 +1056,7 @@ app.post("/login", async (req, res) => {
   try {
     const connection = await dbConnection;
     const user_all = await connection.execute(
-      `SELECT LOGIN_CD,USER_NAME,PASSORD_ENC FROM GSMAGRI.U_LOGON_DATA WHERE USER_NAME = :username`,
+      `SELECT LOGIN_CD,USER_NAME,PASSORD_ENC FROM KIAAR.U_LOGON_DATA WHERE USER_NAME = :username`,
       [username]
     );
     console.log(user_all.rows);
@@ -1091,7 +1094,7 @@ app.post("/signUp", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const connection = await dbConnection;
     const new_user = await connection.execute(
-      `INSERT INTO GSMAGRI.u_logon_data (
+      `INSERT INTO KIAAR.u_logon_data (
         login_cd,
         user_name,
         password,

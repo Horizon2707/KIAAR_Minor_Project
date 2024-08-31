@@ -110,8 +110,8 @@ POST http://localhost:7000/signUp
 Content-Type: application/json
 
 {   
-    "username" : "VPATIL",
-    "password" : "patil123"
+    "username" : "kshitij",
+    "password" : "ksh123"
 }
 ###
 POST http://localhost:7000/insert_tran_head
@@ -201,7 +201,7 @@ POST http://localhost:7000/deleting
 Content-Type: application/json
 
 {   
-    "tranNo" : 12368
+    "tranNo" : 12416
 }
 ###
 POST http://localhost:7000/get_recomm_all
@@ -217,3 +217,10 @@ Content-Type: application/json
 ###
 GET http://localhost:7000/get_yields
 Content-Type: application/json
+###
+POST http://localhost:7000/checkLabTran
+Content-Type: application/json
+
+{   
+    "labNo" : 12369
+}
