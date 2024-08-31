@@ -37,14 +37,16 @@ const Login = () => {
   const [greetingName, setGreetingName] = useState("");
   const [selectedSeason, setSelectedSeason] = useState("");
   const [Seasons, setSeasons] = useState([]);
-
+  const [scd, setscd] = useState([]);
   const fetchSeasons = async () => {
     try {
       const response = await fetch("http://localhost:5000/season");
       if (response.ok) {
         console.log("season received");
-        const data = await response.json();
-        setSeasons(data);
+        let data = await response.json();
+        console.log(data);
+        setscd(data);
+        setSeasons(Object.keys(data));
       }
     } catch (error) {
       console.error("Error fetching seasons:", error);
@@ -70,9 +72,7 @@ const Login = () => {
     try {
       setUsernameError("");
       setPasswordError("");
-      setShowErrorAlert(false); // Reset error alert
-
-      // Validation passed, proceed with login
+      setShowErrorAlert(false);
       const response = await fetch("http://localhost:5000/login", {
         method: "POST",
         headers: {
@@ -210,10 +210,13 @@ const Login = () => {
                 <Select
                   placeholder="Select season"
                   value={selectedSeason}
-                  onChange={(e) => setSelectedSeason(e.target.value)}
+                  onChange={(e) => {
+                    console.log(e.target.value);
+                    setSelectedSeason(e.target.value);
+                  }}
                 >
                   {Seasons.map((season) => (
-                    <option key={season} value={season}>
+                    <option key={season} value={scd[season]}>
                       {season}
                     </option>
                   ))}

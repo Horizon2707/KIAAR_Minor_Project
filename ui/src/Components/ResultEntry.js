@@ -48,6 +48,7 @@ function ResultEntry() {
   let userI = sessionStorage.getItem("user");
   values = JSON.parse(values);
   local = JSON.parse(local);
+  userI = JSON.parse(userI);
   const [missing, setMissing] = useState(false);
   const scrollToAlert = () => {
     if (alertRef.current) {
@@ -66,6 +67,7 @@ function ResultEntry() {
     };
     const dataString = JSON.stringify(com);
     sessionStorage.setItem("combined", dataString);
+    console.log(com);
     try {
       fetch("http://localhost:5000/values", {
         method: "POST",

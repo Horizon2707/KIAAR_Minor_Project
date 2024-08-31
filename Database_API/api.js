@@ -232,7 +232,7 @@ app.post("/parameter_head", async (req, res) => {
       `SELECT PARAMETER_ID,PARAMETER_NAME,PARAMETER_TYPE FROM KIAAR.SW_PARAMETER_DIR_HEAD WHERE TEST_CD = :testCd`,
       [test]
     );
-    console.log(test);
+
     res.json(parameter_head_all.rows);
   } catch (error) {
     console.error("Plot area not found");
@@ -275,7 +275,7 @@ app.post("/para_range_mid", async (req, res) => {
     );
     parameters_range_mid.push(range_mid.rows[0]);
   }
-  console.log(parameters_range_mid);
+
   res.json(parameters_range_mid);
 });
 app.post("/suggestions", async (req, res) => {
@@ -326,7 +326,7 @@ app.post("/newSuggestion", async (req, res) => {
 });
 
 app.post("/insert_tran_head", async (req, res) => {
-  const { values, local } = req.body;
+  const { values, local, season_cd } = req.body;
   const connection = await dbConnection;
 
   try {
@@ -374,7 +374,7 @@ app.post("/insert_tran_head", async (req, res) => {
         )
         VALUES (
           1,
-          21,
+          :season_cd,
           SYSDATE,
           :tranNo,
           :farmerId,
@@ -414,6 +414,7 @@ app.post("/insert_tran_head", async (req, res) => {
         `,
       [
         //convertDateFormat(new Date().toISOString().split("T")[0]),
+        parseInt(season_cd),
         parseInt(farmerValues.labNo),
         parseInt(farmerValues.farmerId),
         farmerValues.surveyNo,
@@ -793,7 +794,7 @@ app.post("/insert_recomm_tran", async (req, res) => {
                   parseInt(ta),
                 ]
               );
-              console.log(result);
+              // console.log(result);
             } catch (e) {
               console.error("Insert Error:", e);
               throw e;
@@ -901,13 +902,13 @@ app.post("/delete_func", async (req, res) => {
 });
 app.post("/get_recomm_all", async (req, res) => {
   const { labTran } = req.body;
-  console.log(labTran);
+
   const connection = await dbConnection;
   const recomm_tran_all = await connection.execute(
     `SELECT COMBINE_CD,CROP_SEASON_CD,SW_PRODUCT_CD,RECOM_APPLY_TIME_CD,PRODUCT_VALUE FROM KIAAR.SW_RECOMMENDATION_TRAN WHERE LAB_TRAN_NO = :tranNo`,
     [labTran]
   );
-  console.log(recomm_tran_all.rows);
+
   res.json(recomm_tran_all.rows).status(200);
 });
 
@@ -924,7 +925,7 @@ app.get("/season", async (req, res) => {
       currentDate >= new Date(season.FROM_DATE) &&
       currentDate <= new Date(season.TO_DATE)
   );
-  console.log(currentSeason);
+  let season_obj = {};
   if (currentSeason) {
     const currentIndex = season.findIndex((season) => season === currentSeason);
     const current_season_cd = currentSeason.SEASON_CD;
@@ -936,11 +937,11 @@ app.get("/season", async (req, res) => {
     const nextSeason = season.find(
       (season) => season.SEASON_CD == current_season_cd + 1
     );
-    console.log(currentSeason, prevSeason, nextSeason);
+    // console.log(currentSeason, prevSeason, nextSeason);
     // Push the name of the current season into the array
-    seasonNames.push(prevSeason.SEASON_NAME);
-    seasonNames.push(currentSeason.SEASON_NAME);
-    seasonNames.push(nextSeason.SEASON_NAME);
+    season_obj[prevSeason.SEASON_NAME] = prevSeason.SEASON_CD;
+    season_obj[currentSeason.SEASON_NAME] = currentSeason.SEASON_CD;
+    season_obj[nextSeason.SEASON_NAME] = nextSeason.SEASON_CD;
     // Push the name of the previous season if it exists
     // if (currentIndex > 0) {
     //   seasonNames.push(season[currentIndex - 1].SEASON_NAME);
@@ -950,8 +951,8 @@ app.get("/season", async (req, res) => {
     // if (currentIndex < season.length - 1) {
     //   seasonNames.push(season[currentIndex + 1].SEASON_NAME);
     // }
-    console.log(seasonNames);
-    res.json(seasonNames);
+    // console.log(season_obj);
+    res.json(season_obj);
   } else {
     console.log("Current date does not fall within any season.");
   }
@@ -1031,7 +1032,7 @@ app.post("/checkLabTran", async (req, res) => {
     `SELECT DISTINCT LAB_TRAN_NO FROM KIAAR.SW_RECOMMENDATION_TRAN WHERE LAB_TRAN_NO = :labNo`,
     [labNo]
   );
-  console.log(lab_tran_all.rows);
+  // console.log(lab_tran_all.rows);
   if (lab_tran_all.rows.length > 0) {
     console.log(lab_tran_all.rows);
     res.json(lab_tran_all.rows).status(200);
@@ -1052,14 +1053,14 @@ app.post("/transaction", async (req, res) => {
 
 app.post("/login", async (req, res) => {
   const { username, password } = req.body;
-  console.log(username, password);
+  //
   try {
     const connection = await dbConnection;
     const user_all = await connection.execute(
       `SELECT LOGIN_CD,USER_NAME,PASSORD_ENC FROM KIAAR.U_LOGON_DATA WHERE USER_NAME = :username`,
       [username]
     );
-    console.log(user_all.rows);
+    // console.log(user_all.rows);
     const user = user_all.rows;
 
     if (user.length !== 0) {
@@ -1067,10 +1068,10 @@ app.post("/login", async (req, res) => {
         password,
         user[0].PASSORD_ENC
       );
-      console.log(isPasswordValid);
+
       if (isPasswordValid) {
         req.session.user = req.body;
-        console.log(req.session.user.username);
+
         return res.status(200).json({
           email: req.session.user.username,
           login_cd: user[0].LOGIN_CD,
@@ -1090,7 +1091,7 @@ app.post("/login", async (req, res) => {
 app.post("/signUp", async (req, res) => {
   try {
     const { username, password } = req.body;
-    console.log(username, password);
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const connection = await dbConnection;
     const new_user = await connection.execute(
@@ -1165,11 +1166,13 @@ app.post("/signUp", async (req, res) => {
     );
     await connection.execute("COMMIT");
     if (new_user) {
-      res.sendStatus(201);
+      res.status(201).json({ message: "U_LOGON Updated" });
+    } else {
+      res.status(400).json({ message: "U_LOGON not Updated" });
     }
   } catch (error) {
     console.error("Error creating user:", error);
-    res.sendStatus(500); // Internal Server Error
+    // res.sendStatus(500); // Internal Server Error
   }
 });
 app.listen(7000, () => {

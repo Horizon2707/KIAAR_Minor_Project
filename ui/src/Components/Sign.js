@@ -57,8 +57,6 @@ function Sign() {
         setPasswordError("Password must be at least 6 characters long");
         return;
       }
-
-      // Form data is valid, proceed with signup
       const response = await fetch("http://localhost:5000/signUp", {
         method: "POST",
         headers: {
@@ -72,7 +70,6 @@ function Sign() {
         throw new Error(error.message);
       }
 
-      // Signup successful
       if (response.ok) {
         setSuccessAlert(true);
         setTimeout(() => {
@@ -88,6 +85,18 @@ function Sign() {
 
   return (
     <>
+      {successAlert && (
+        <Alert status="success" position="fixed" bottom="2rem" right="2rem">
+          <AlertIcon />
+          <AlertTitle mr={2}>Signup successful!</AlertTitle>
+          <CloseButton
+            onClick={() => setSuccessAlert(false)}
+            position="absolute"
+            right="8px"
+            top="8px"
+          />
+        </Alert>
+      )}
       <Flex
         flexDirection="column"
         width="100wh"
@@ -200,19 +209,6 @@ function Sign() {
           </Link>
         </Box>
       </Flex>
-      {/* Success Alert */}
-      {successAlert && (
-        <Alert status="success" position="fixed" bottom="2rem" right="2rem">
-          <AlertIcon />
-          <AlertTitle mr={2}>Signup successful!</AlertTitle>
-          <CloseButton
-            onClick={() => setSuccessAlert(false)}
-            position="absolute"
-            right="8px"
-            top="8px"
-          />
-        </Alert>
-      )}
     </>
   );
 }

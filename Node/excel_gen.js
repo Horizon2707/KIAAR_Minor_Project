@@ -78,17 +78,18 @@ async function reportGen(
           ? values.paramValues[paramId]
           : "N/A";
       const data = {
+        sr_no: srNo,
         PARAMETER_NAME: e.PARAMETER_NAME.substring(2),
         PARAMETER_MIN: e.PARAMETER_MIN,
         PARAMETER_MID: e.PARAMETER_MID,
         PARAMETER_MAX: e.PARAMETER_MAX,
         PARAMETER_VALUE: paramValue,
       };
-      data.srNo = srNo++; // Assign Sr No. and increment
+      srNo++; // Assign Sr No. and increment
       return data;
     }
   });
-  console.log(final_calc);
+  // console.log(final_calc);
 
   let npk = [27, 28, 29];
   let npkdata = [];
@@ -193,7 +194,7 @@ async function reportGen(
     }
     return false;
   };
-  console.log(nutrients);
+  // console.log(nutrients);
   const micro_data_func = () => {
     let data = [];
     Object.keys(nutrients[1]).forEach((key) => {
@@ -213,7 +214,7 @@ async function reportGen(
   };
 
   const micro_data = micro_data_func();
-  console.log(micro_data);
+  // console.log(micro_data);
   const data = {
     parameterData: parameterData,
     remarksPara: remarks,
