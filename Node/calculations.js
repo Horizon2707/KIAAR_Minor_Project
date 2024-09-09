@@ -1,3 +1,8 @@
+const defaultP = 7.5;
+const defaultK = 18.7;
+function checkMinValue(value, defaultValue) {
+  return value <= defaultValue ? defaultValue : value;
+}
 function calculations(
   phos,
   pota,
@@ -14,12 +19,33 @@ function calculations(
   const nitr_A = parseFloat((4.39 * SYT_A - 1.56 * nitr).toFixed(1));
   const nitr_P = parseFloat((4.76 * SYT_P - 1.34 * nitr).toFixed(1));
   const nitr_S = parseFloat((4.76 * SYT_S - 1.34 * nitr).toFixed(1));
-  const phos_A = parseFloat((1.24 * SYT_A - 1.55 * phos).toFixed(1));
-  const phos_P = parseFloat((1.24 * SYT_P - 1.55 * phos).toFixed(1));
-  const phos_S = parseFloat((1.24 * SYT_S - 1.55 * phos).toFixed(1));
-  const pota_A = parseFloat((2.73 * SYT_A - 0.21 * pota).toFixed(1));
-  const pota_P = parseFloat((2.73 * SYT_P - 0.21 * pota).toFixed(1));
-  const pota_S = parseFloat((2.73 * SYT_S - 0.21 * pota).toFixed(1));
+  // Phosphorus calculations
+  const phos_A = checkMinValue(
+    parseFloat((1.24 * SYT_A - 1.55 * phos).toFixed(1)),
+    defaultP
+  );
+  const phos_P = checkMinValue(
+    parseFloat((1.24 * SYT_P - 1.55 * phos).toFixed(1)),
+    defaultP
+  );
+  const phos_S = checkMinValue(
+    parseFloat((1.24 * SYT_S - 1.55 * phos).toFixed(1)),
+    defaultP
+  );
+
+  // Potassium calculations
+  const pota_A = checkMinValue(
+    parseFloat((2.73 * SYT_A - 0.21 * pota).toFixed(1)),
+    defaultK
+  );
+  const pota_P = checkMinValue(
+    parseFloat((2.73 * SYT_P - 0.21 * pota).toFixed(1)),
+    defaultK
+  );
+  const pota_S = checkMinValue(
+    parseFloat((2.73 * SYT_S - 0.21 * pota).toFixed(1)),
+    defaultK
+  );
 
   // Recommendations combination 1
 
@@ -650,10 +676,10 @@ function calculations(
           1: nitr_A,
         },
         28: {
-          1: pota_A,
+          1: phos_A,
         },
         29: {
-          1: phos_A,
+          1: pota_A,
         },
         47: {
           1: na,
@@ -664,10 +690,10 @@ function calculations(
           1: nitr_P,
         },
         28: {
-          1: pota_P,
+          1: phos_P,
         },
         29: {
-          1: phos_P,
+          1: pota_P,
         },
       },
       3: {
@@ -675,10 +701,10 @@ function calculations(
           1: nitr_S,
         },
         28: {
-          1: pota_S,
+          1: phos_S,
         },
         29: {
-          1: phos_S,
+          1: pota_S,
         },
       },
     },
@@ -1008,6 +1034,6 @@ function calculations(
 
   return recomm;
 }
-// const data = calculations(8.33, 203, 117.9, 70, 50, 40);
+// const data = calculations(8.33, 203, 117.9, 70, 50, 40, 1, 4, 4, 4, 4);
 // console.log(JSON.stringify(data, null, 2));
 module.exports = { calculations };

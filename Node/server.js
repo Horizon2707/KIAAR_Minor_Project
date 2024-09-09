@@ -437,6 +437,7 @@ app.post("/values", async (req, res) => {
     for (const key in paramValues) {
       parameterValues[key] = parseInt(paramValues[key], 10);
     }
+    // console.log(parameterValues);
     const micro = {
       zincSulphate: parameterValues[26],
       ferrousSulphate: parameterValues[25],
@@ -507,6 +508,7 @@ app.post("/values", async (req, res) => {
               values: values,
               local: local,
               season_cd: user.season,
+              login_cd: user.login_cd,
             }),
             headers: {
               "Content-Type": "application/json",
@@ -622,6 +624,8 @@ app.get("/getValues", async (req, res) => {
         row.RECOM_APPLY_TIME_CD
       ] = parseInt(row.PRODUCT_VALUE);
     });
+    let gypsum = parameterValues[27] * 0.85;
+    let sulphur = parameterValues[27] * 0.16;
     pdfbuffer = await reportGen(
       values_all,
       parameter_names,
@@ -634,7 +638,9 @@ app.get("/getValues", async (req, res) => {
       product_cd,
       time_apply_cd,
       crop_season_cd,
-      final_calc
+      final_calc,
+      gypsum,
+      sulphur
     );
     if (pdfbuffer) {
       res.send(pdfbuffer);
@@ -861,11 +867,10 @@ app.post("/login", async (req, res) => {
 });
 
 app.post("/signUp", async (req, res) => {
-  const { fullName, username, password } = req.body;
+  const { username, password } = req.body;
   const signUp = await fetch("http://localhost:7000/signUp", {
     method: "POST",
     body: JSON.stringify({
-      fullName: fullName,
       username: username,
       password: password,
     }),

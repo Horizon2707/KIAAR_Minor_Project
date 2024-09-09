@@ -22,7 +22,9 @@ async function reportGen(
   product_cd,
   time_apply_cd,
   crop_season_cd,
-  final_calc
+  final_calc,
+  gypsum,
+  sulphur
 ) {
   // console.log(JSON.stringify(final_calc, null, 2));
   time_apply_cd.push({ RECOM_APPLY_TIME_CD: 0, RECOM_APPLY_TIME: "Total" });
@@ -146,6 +148,9 @@ async function reportGen(
   //   });
   //   return new handlebars.SafeString(bodyStart);
   // };
+  function checkNegative(value) {
+    return value < 0 ? 0 : value;
+  }
   const generateTableHeader = (comb_cd) => {
     let entire_name = `<tr><th>${getCombinationName(
       comb_cd
@@ -176,7 +181,10 @@ async function reportGen(
       season_cd.forEach((season) => {
         const prod_cd = Object.keys(final_calc[comb_cd][season]);
         prod_cd.forEach((product) => {
-          bodyStart += `<td>${final_calc[comb_cd][season][product][ta]}</td>`;
+          let final_value = checkNegative(
+            final_calc[comb_cd][season][product][ta]
+          );
+          bodyStart += `<td>${final_value}</td>`;
         });
       });
       bodyStart += `</tr>`;
@@ -226,6 +234,8 @@ async function reportGen(
     farmerInformation: farmerInformation,
     local: local,
     cdtonames: cdtonames,
+    gypsum: gypsum,
+    sulphur: sulphur,
   };
   handlebars.registerHelper("parseInt", function (value) {
     // Use parseInt function to parse the value

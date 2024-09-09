@@ -45,14 +45,16 @@ function formatDate(date) {
 }
 function formatDateAlt(originalDate) {
   const dateParts = originalDate.split("-");
-  const year = dateParts[0];
+  const year = dateParts[0].slice(-2); // Get the last two digits of the year
   const month = new Date(originalDate)
     .toLocaleString("default", { month: "short" })
-    .toUpperCase();
+    .toUpperCase()
+    .slice(0, 3); // Get the first three letters of the month
   const day = dateParts[2];
 
   return `${day}-${month}-${year}`;
 }
+
 const today = new Date();
 let Values;
 app.post("/farmerInfo", async (req, res) => {
@@ -232,7 +234,8 @@ app.post("/parameter_head", async (req, res) => {
       `SELECT PARAMETER_ID,PARAMETER_NAME,PARAMETER_TYPE FROM KIAAR.SW_PARAMETER_DIR_HEAD WHERE TEST_CD = :testCd`,
       [test]
     );
-
+    parameter_head_all.rows.sort((a, b) => a.PARAMETER_ID - b.PARAMETER_ID);
+    console.log(parameter_head_all.rows);
     res.json(parameter_head_all.rows);
   } catch (error) {
     console.error("Plot area not found");
@@ -326,11 +329,13 @@ app.post("/newSuggestion", async (req, res) => {
 });
 
 app.post("/insert_tran_head", async (req, res) => {
-  const { values, local, season_cd } = req.body;
+  const { values, local, season_cd, login_cd } = req.body;
   const connection = await dbConnection;
 
   try {
     let farmerValues = values;
+    console.log(formatDateAlt(farmerValues.dtOfSampling));
+    // console.log(formatDate(farmerValues.dtOfSamplingReceipt));
     Values = values;
     const tran_head = await connection.execute(
       `INSERT INTO KIAAR.SW_TRAN_HEAD (
@@ -389,12 +394,12 @@ app.post("/insert_tran_head", async (req, res) => {
           :prevCrop,
           :cropToBeGrown,
           NULL,       
-          23,
+          :login_cd,
           SYSDATE,
           NULL,       
           NULL,       
           :sampling, 
-          :samplingreciept, 
+          :samplingReceipt, 
           :testCd,
           :pltArea,
           :gunta,
@@ -427,7 +432,7 @@ app.post("/insert_tran_head", async (req, res) => {
         farmerValues.drainage,
         farmerValues.previousCrop,
         farmerValues.cropToBeGrown,
-        // parseInt(user.login_cd),
+        parseInt(login_cd),
         formatDateAlt(farmerValues.dtOfSampling),
         formatDateAlt(farmerValues.dtOfSamplingReceipt),
         parseInt(farmerValues.test),
@@ -578,132 +583,7 @@ app.post("/unit_value", async (req, res) => {
     console.log(e);
   }
 });
-// app.post("/insert_recomm_tran", async (req, res) => {
-//   const { final_calc, farmerValues } = req.body;
 
-//   const connection = await dbConnection;
-//   try {
-//     const promises = [];
-
-//     const comb_cd = Object.keys(final_calc);
-//     comb_cd.forEach((comb) => {
-//       const season_cd = Object.keys(final_calc[comb]);
-//       season_cd.forEach((season) => {
-//         const product_cd = Object.keys(final_calc[comb][season]);
-//         product_cd.forEach(async (product) => {
-//           const ta_cd = Object.keys(final_calc[comb][season][product]);
-//           let value;
-//           const group_cd_all = await connection.execute(
-//             `SELECT DISTINCT GROUP_CD FROM KIAAR.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
-//             [product]
-//           );
-//           const unit_id_all = await connection.execute(
-//             `SELECT DISTINCT UNIT_NAME FROM KIAAR.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
-//             [product]
-//           );
-//           const unit_value_all = await connection.execute(
-//             `SELECT DISTINCT UNIT_VALUE FROM KIAAR.SW_PRODUCT_DIR WHERE PRODUCT_CD = :productCd`,
-//             [product]
-//           );
-
-//           function execute(ta, value) {
-//             try {
-//               promises.push(
-//                 Promise.all([group_cd_all, unit_id_all, unit_value_all]).then(
-//                   async ([
-//                     group_cd_all_result,
-//                     unit_id_all_result,
-//                     unit_value_all_result,
-//                   ]) => {
-//                     const group_cd = group_cd_all_result.rows;
-//                     const unit_id = unit_id_all_result.rows;
-//                     const unit_value = unit_value_all_result.rows;
-
-//                     let res = await connection.execute(
-//                       `INSERT INTO KIAAR.SW_RECOMMENDATION_TRAN (
-//                     lab_tran_no,
-//                     tran_date,
-//                     sw_group_cd,
-//                     sw_product_cd,
-//                     combine_cd,
-//                     product_value,
-//                     option_value,
-//                     ref_sw_product_cd,
-//                     unit_value,
-//                     unit_id,
-//                     value_in_bags,
-//                     convert_unit_name,
-//                     test_cd,
-//                     crop_season_cd,
-//                     recom_apply_time_cd
-//                 ) VALUES (
-//                     :v0,
-//                     SYSDATE,
-//                     :v2,
-//                     :v3,
-//                     :v4,
-//                     :v5,
-//                     NULL,
-//                     :v7,
-//                     NULL,
-//                     1,
-//                     NULL,
-//                     NULL,
-//                     :v12,
-//                     :v13,
-//                     :v14
-//                 )`,
-//                       [
-//                         farmerValues.labNo,
-//                         parseInt(group_cd[0].GROUP_CD),
-//                         parseInt(product),
-//                         parseInt(comb),
-//                         parseInt(value),
-//                         (unit_value[0] && parseInt(unit_value[0].UNIT_VALUE)) ||
-//                           1,
-//                         parseInt(farmerValues.test),
-//                         parseInt(season),
-//                         parseInt(ta),
-//                       ]
-//                     );
-
-//                     console.log(res);
-//                     connection.execute("COMMIT");
-//                   }
-//                 )
-//               );
-//             } catch (e) {
-//               console.log(e);
-//             }
-//           }
-
-//           if (comb == 12) {
-//             value = parseInt(final_calc[comb][season][product][1]);
-
-//             execute(1, value);
-//           } else {
-//             ta_cd.forEach((ta) => {
-//               value = parseInt(final_calc[comb][season][product][ta]);
-//               execute(ta, value);
-//             });
-//           }
-//         });
-//       });
-//     });
-//     console.log(promises);
-//     Promise.all(promises)
-//       .then(async () => {
-//         console.log("Recomm Tran");
-//         await connection.execute("COMMIT");
-//         return res.status(200);
-//       })
-//       .catch((error) => {
-//         console.error("Error:", error);
-//       });
-//   } catch (e) {
-//     console.log(e);
-//   }
-// });
 app.post("/insert_recomm_tran", async (req, res) => {
   const { final_calc, farmerValues } = req.body;
 
@@ -1091,11 +971,11 @@ app.post("/login", async (req, res) => {
 app.post("/signUp", async (req, res) => {
   try {
     const { username, password } = req.body;
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const connection = await dbConnection;
-    const new_user = await connection.execute(
-      `INSERT INTO KIAAR.u_logon_data (
+    if (username !== "" && password !== "") {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const connection = await dbConnection;
+      const new_user = await connection.execute(
+        `INSERT INTO KIAAR.u_logon_data (
         login_cd,
         user_name,
         password,
@@ -1162,13 +1042,16 @@ app.post("/signUp", async (req, res) => {
         NULL,
         :hashed
     )`,
-      [username, password, formatDate(today), hashedPassword]
-    );
-    await connection.execute("COMMIT");
-    if (new_user) {
-      res.status(201).json({ message: "U_LOGON Updated" });
+        [username, password, formatDate(today), hashedPassword]
+      );
+      await connection.execute("COMMIT");
+      if (new_user) {
+        res.status(201).json({ message: "U_LOGON Updated" });
+      } else {
+        res.status(400).json({ message: "U_LOGON not Updated" });
+      }
     } else {
-      res.status(400).json({ message: "U_LOGON not Updated" });
+      console.log("Sign up triggered");
     }
   } catch (error) {
     console.error("Error creating user:", error);
