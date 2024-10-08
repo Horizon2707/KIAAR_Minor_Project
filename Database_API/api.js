@@ -62,7 +62,7 @@ app.post("/farmerInfo", async (req, res) => {
     const { farmerId } = req.body;
     const connection = await dbConnection;
     const farmer_rows = await connection.execute(
-      `SELECT * FROM KIAAR.SW_TRAN_HEAD WHERE FARMER_ID =:farmerId`,
+      `SELECT * FROM KIAAR.V_SW_FARMER_PLOTS WHERE FARMER_ID =:farmerId`,
       [farmerId]
     );
     const personal = await connection.execute(

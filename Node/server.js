@@ -434,6 +434,7 @@ app.post("/values", async (req, res) => {
     } = req.body;
     farmerValues = values;
     parameterValues = {};
+    console.log(paramValues);
     for (const key in paramValues) {
       parameterValues[key] = parseInt(paramValues[key], 10);
     }
@@ -626,6 +627,7 @@ app.get("/getValues", async (req, res) => {
     });
     let gypsum = parameterValues[27] * 0.85;
     let sulphur = parameterValues[27] * 0.16;
+    console.log(final_calc);
     pdfbuffer = await reportGen(
       values_all,
       parameter_names,
