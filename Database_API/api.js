@@ -865,8 +865,11 @@ app.get("/combination_cds", async (req, res) => {
   const crop_season_cd = crop_season_cd_all.rows;
 
   const time_apply_cd_all = await connection.execute(
-    `SELECT DISTINCT RECOM_APPLY_TIME_CD,RECOM_APPLY_TIME FROM KIAAR.SW_RECOM_APPLY_TIME_DIR`
+    `SELECT DISTINCT RECOM_APPLY_TIME_CD, RECOM_APPLY_TIME
+     FROM KIAAR.SW_RECOM_APPLY_TIME_DIR
+     ORDER BY RECOM_APPLY_TIME_CD ASC`
   );
+
   const time_apply_cd = time_apply_cd_all.rows.slice(0, 5);
   res
     .status(200)

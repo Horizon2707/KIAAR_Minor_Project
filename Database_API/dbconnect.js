@@ -15,9 +15,9 @@ async function connectToDatabase() {
     const connection = await oracledb.getConnection({
       user: "kiaar",
       password: "kiaar##",
-      connectString: "182.74.145.94/gsmkk",
+      connectString: "192.168.5.245/gsmkk",
     });
-    // console.log(result);
+    // console.log(connection);
     console.log("Connected to Oracle Database");
     return connection;
   } catch (error) {

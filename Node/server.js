@@ -627,7 +627,7 @@ app.get("/getValues", async (req, res) => {
     });
     let gypsum = parameterValues[27] * 0.85;
     let sulphur = parameterValues[27] * 0.16;
-    console.log(final_calc);
+    console.log(JSON.stringify(final_calc, null, 2));
     pdfbuffer = await reportGen(
       values_all,
       parameter_names,

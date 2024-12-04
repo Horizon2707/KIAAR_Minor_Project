@@ -224,3 +224,6 @@ Content-Type: application/json
 {   
     "labNo" : 12369
 }
+### Get comb cd
+GET http://localhost:7000/combination_cds
+Content-Type: application/json
