@@ -6,11 +6,6 @@ const cookieParser = require("cookie-parser");
 const { calculations } = require("./calculations.js");
 const { reportGen } = require("./excel_gen.js");
 const AWS = require("aws-sdk");
-AWS.config.update({
-  accessKeyId: "AKIA5FTY7W63IQSVYTEC",
-  secretAccessKey: "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",
-  region: "ap-south-1",
-});
 
 const app = express();
 

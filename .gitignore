@@ -7,3 +7,5 @@ Node/node_modules/
 /ui/public/pspdfkit-lib
 /Database_API/node_modules
 /Node/Report/
+/Database_API/dbconnect.js
+/Node/dbconnect.js
