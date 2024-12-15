@@ -109,7 +109,6 @@ function ResultEntry() {
           } catch (error) {
             console.log(error);
           }
-          console.warn("fuckking");
         });
     } catch (error) {
       console.log(error);
@@ -183,7 +182,7 @@ function ResultEntry() {
           Errors[element.PARAMETER_ID] =
             "Please enter a value for " + element.PARAMETER_NAME;
         } else {
-          const value = parseInt(resValues[element.PARAMETER_ID]);
+          const value = parseFloat(resValues[element.PARAMETER_ID]);
           if (isNaN(value)) {
             Errors[element.PARAMETER_ID] =
               "Please enter a valid number for " + element.PARAMETER_NAME;
@@ -204,7 +203,7 @@ function ResultEntry() {
                 element.PARAMETER_NAME;
             }
           } else if (element.PARAMETER_ID === 14) {
-            if (value <= 0 || value >= 5) {
+            if (value <= 0 || value > 5) {
               Errors[element.PARAMETER_ID] =
                 "Please enter a value between 0 and 5 for " +
                 element.PARAMETER_NAME;
@@ -401,21 +400,29 @@ function ResultEntry() {
                                   <Td>{element.PARAMETER_NAME}</Td>
                                   <Td>
                                     <Input
-                                      type="number"
+                                      type="text"
                                       size="sm"
                                       id={element.PARAMETER_ID}
                                       htmlSize={4}
                                       width="auto"
                                       variant="filled"
-                                      value={resValues[element.PARAMETER_ID]}
+                                      value={
+                                        resValues[element.PARAMETER_ID] || ""
+                                      }
                                       onChange={(e) => {
-                                        ressetValues({
-                                          ...resValues,
-                                          // [element.PARAMETER_NAME]:
-                                          //   e.target.value,
-                                          [element.PARAMETER_ID]:
-                                            e.target.value,
-                                        });
+                                        const { id, value } = e.target;
+                                        ressetValues((prevValues) => ({
+                                          ...prevValues,
+                                          [id]: value,
+                                        }));
+                                        // ressetValues({
+                                        //   ...resValues,
+                                        //   // [element.PARAMETER_NAME]:
+                                        //   //   e.target.value,
+                                        //   [element.PARAMETER_ID]:
+                                        //     e.target.value,
+                                        // });
+                                        console.log(resValues);
                                         if (setin) {
                                           let data = JSON.parse(setin);
                                           data[element.PARAMETER_ID] =
@@ -579,6 +586,7 @@ function ResultEntry() {
               color="#000000"
               size="md"
               onClick={() => {
+                console.log(resValues);
                 if (validate()) {
                   const dataString = JSON.stringify(resValues);
                   sessionStorage.setItem("result", dataString);

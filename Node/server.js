@@ -221,13 +221,15 @@ app.post("/villageInfo", async (req, res) => {
 
 app.post("/surveyno", async (req, res) => {
   try {
-    const { farmerId, clusterCd, villageCd } = req.body;
+    const { farmerId, clusterCd, villageCd, plotNo } = req.body;
+    console.log(farmerId, clusterCd, villageCd, plotNo);
     fetch("http://localhost:7000/surveyNo", {
       method: "POST",
       body: JSON.stringify({
         farmerId: farmerId,
         clusterCd: clusterCd,
         villageCd: villageCd,
+        plotNo: plotNo,
       }),
       headers: {
         "Content-Type": "application/json",
@@ -431,7 +433,7 @@ app.post("/values", async (req, res) => {
     parameterValues = {};
     console.log(paramValues);
     for (const key in paramValues) {
-      parameterValues[key] = parseInt(paramValues[key], 10);
+      parameterValues[key] = parseFloat(paramValues[key], 10);
     }
     // console.log(parameterValues);
     const micro = {
@@ -620,9 +622,9 @@ app.get("/getValues", async (req, res) => {
         row.RECOM_APPLY_TIME_CD
       ] = parseInt(row.PRODUCT_VALUE);
     });
-    let gypsum = parameterValues[27] * 0.85;
-    let sulphur = parameterValues[27] * 0.16;
-    console.log(JSON.stringify(final_calc, null, 2));
+    let gypsum = Number((parameterValues[27] * 0.85).toFixed(2));
+    let sulphur = Number((parameterValues[27] * 0.16).toFixed(2));
+    // console.log(JSON.stringify(final_calc, null, 2));
     pdfbuffer = await reportGen(
       values_all,
       parameter_names,

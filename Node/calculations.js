@@ -17,15 +17,15 @@ function calculations(
   mn
 ) {
   const nitr_A = parseFloat((4.39 * SYT_A - 1.56 * nitr).toFixed(1));
-  const nitr_P = parseFloat((4.76 * SYT_P - 1.34 * nitr).toFixed(1));
+  const nitr_P = parseFloat((4.21 * SYT_P - 1.49 * nitr).toFixed(1));
   const nitr_S = parseFloat((4.76 * SYT_S - 1.34 * nitr).toFixed(1));
   // Phosphorus calculations
   const phos_A = checkMinValue(
-    parseFloat((1.24 * SYT_A - 1.55 * phos).toFixed(1)),
+    parseFloat((1.62 * SYT_A - 4.56 * phos).toFixed(1)),
     defaultP
   );
   const phos_P = checkMinValue(
-    parseFloat((1.24 * SYT_P - 1.55 * phos).toFixed(1)),
+    parseFloat((1.39 * SYT_P - 2.75 * phos).toFixed(1)),
     defaultP
   );
   const phos_S = checkMinValue(
@@ -35,11 +35,11 @@ function calculations(
 
   // Potassium calculations
   const pota_A = checkMinValue(
-    parseFloat((2.73 * SYT_A - 0.21 * pota).toFixed(1)),
+    parseFloat((1.86 * SYT_A - 0.37 * pota).toFixed(1)),
     defaultK
   );
   const pota_P = checkMinValue(
-    parseFloat((2.73 * SYT_P - 0.21 * pota).toFixed(1)),
+    parseFloat((2.36 * SYT_P - 0.58 * pota).toFixed(1)),
     defaultK
   );
   const pota_S = checkMinValue(

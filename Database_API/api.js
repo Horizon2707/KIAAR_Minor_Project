@@ -182,14 +182,15 @@ app.post("/villageInfo", async (req, res) => {
 });
 app.post("/surveyNo", async (req, res) => {
   try {
-    const { farmerId, clusterCd, villageCd } = req.body;
-
+    const { farmerId, clusterCd, villageCd, plotNo } = req.body;
+    console.log(farmerId, clusterCd, villageCd, plotNo);
     const connection = await dbConnection;
     const surveyno_all = await connection.execute(
-      `SELECT DISTINCT SY_NO FROM KIAAR.v_sw_farmer_plots WHERE FARMER_ID=:farmerId AND CLUSTER_CD=:clusterCd AND VILLAGE_CD=:villageCd`,
-      [farmerId, clusterCd, villageCd]
+      `SELECT DISTINCT SY_NO FROM KIAAR.v_sw_farmer_plots WHERE FARMER_ID=:farmerId AND CLUSTER_CD=:clusterCd AND VILLAGE_CD=:villageCd AND PLOT_NO = :plotNo`,
+      [farmerId, clusterCd, villageCd, plotNo]
     );
-    res.json(surveyno_all.rows);
+    res.json(surveyno_all.rows[0]);
+    console.log(surveyno_all.rows[0]);
   } catch (error) {
     console.log(error);
   }
@@ -234,9 +235,26 @@ app.post("/parameter_head", async (req, res) => {
       `SELECT PARAMETER_ID,PARAMETER_NAME,PARAMETER_TYPE FROM KIAAR.SW_PARAMETER_DIR_HEAD WHERE TEST_CD = :testCd`,
       [test]
     );
-    parameter_head_all.rows.sort((a, b) => a.PARAMETER_ID - b.PARAMETER_ID);
     console.log(parameter_head_all.rows);
-    res.json(parameter_head_all.rows);
+    parameter_head_all.rows.sort((a, b) => a.PARAMETER_ID - b.PARAMETER_ID);
+    // let h = new HashMap();
+    // console.log(parameter_head_all.rows);
+    const customOrder = [
+      10, 11, 12, 13, 14, 15, 16, 17, 21, 18, 19, 20, 27, 22, 26, 25, 24, 23,
+    ];
+
+    const sortedArray = parameter_head_all.rows.sort((a, b) => {
+      const indexA = customOrder.indexOf(a.PARAMETER_ID);
+      const indexB = customOrder.indexOf(b.PARAMETER_ID);
+
+      if (indexA === -1) return 1;
+      if (indexB === -1) return -1;
+
+      return indexA - indexB;
+    });
+
+    console.log(sortedArray);
+    res.json(sortedArray);
   } catch (error) {
     console.error("Plot area not found");
   }
@@ -331,9 +349,9 @@ app.post("/newSuggestion", async (req, res) => {
 app.post("/insert_tran_head", async (req, res) => {
   const { values, local, season_cd, login_cd } = req.body;
   const connection = await dbConnection;
-
   try {
     let farmerValues = values;
+    console.log(farmerValues, local);
     console.log(formatDateAlt(farmerValues.dtOfSampling));
     // console.log(formatDate(farmerValues.dtOfSamplingReceipt));
     Values = values;
@@ -422,7 +440,7 @@ app.post("/insert_tran_head", async (req, res) => {
         parseInt(season_cd),
         parseInt(farmerValues.labNo),
         parseInt(farmerValues.farmerId),
-        farmerValues.surveyNo,
+        local.surveyNo,
         parseInt(farmerValues.cluster),
         parseInt(farmerValues.village),
         parseInt(farmerValues.plotNo),

@@ -18,10 +18,11 @@ import {
 } from "@chakra-ui/react";
 function Form() {
   let ref = useRef();
+  let ref1 = useRef();
   const location = useLocation();
   const [newErrors, setErrors] = useState({});
   const [wild, setWild] = useState([]);
-  const [surveyNo, setSurveyNo] = useState([]);
+  const [surveyNo, setSurveyNo] = useState("");
   const [drainage, setdrainage] = useState([]);
   const [cultivationType, setCultivationType] = useState([]);
   const [cropToBeGrown, setCropToBeGrown] = useState([]);
@@ -38,7 +39,7 @@ function Form() {
     farmerId: "",
     labNo: "",
     test: "",
-    surveyNo: [],
+    surveyNo: "",
     cluster: [],
     village: [],
     plotNo: [],
@@ -170,7 +171,7 @@ function Form() {
       });
   };
 
-  const fetchSurveyNo = (villageCd, farmerId, clusterCd) => {
+  const fetchSurveyNo = (villageCd, plotNo, farmerId, clusterCd) => {
     fetch("http://localhost:5000/surveyno", {
       method: "POST",
       headers: {
@@ -180,11 +181,15 @@ function Form() {
         farmerId: values.farmerId || farmerId,
         villageCd: villageCd,
         clusterCd: values.cluster || clusterCd,
+        plotNo: plotNo,
       }),
     })
       .then((res) => res.json())
       .then((data) => {
-        setSurveyNo(data);
+        setSurveyNo(data.SY_NO);
+      })
+      .then(() => {
+        ref1.current.value = surveyNo;
       });
   };
 
@@ -321,7 +326,6 @@ function Form() {
         .then((res) => res.json())
         .then((data) => {
           console.log(data);
-
           setplotNo(data);
         });
     } catch (e) {
@@ -355,9 +359,9 @@ function Form() {
     if (values.village.length === 0) {
       errors.village = "Village is required";
     }
-    if (values.surveyNo.length === 0) {
-      errors.surveyNo = "Survey number is required";
-    }
+    // if (values.surveyNo.length === 0) {
+    //   errors.surveyNo = "Survey number is required";
+    // }
     if (values.plotNo.length === 0) {
       errors.plotNo = "Plot number is required";
     }
@@ -812,7 +816,7 @@ function Form() {
                 onChange={(e) => {
                   const village = e.target.value;
                   setValues({ ...values, village: village });
-                  fetchSurveyNo(village);
+                  //fetchSurveyNo(village);
                 }}
                 value={values.village}
               >
@@ -829,10 +833,47 @@ function Form() {
               )}
             </div>
             <div className="item morspace">
+              <label className="mLabel" htmlFor="plotNo">
+                Plot No.
+              </label>
+              <Select
+                id="plotNo"
+                size="sm"
+                placeholder="Select one..."
+                variant="filled"
+                onChange={(e) => {
+                  const plotNo = parseInt(e.target.value);
+                  setValues({
+                    ...values,
+                    plotNo: plotNo,
+                  });
+                  fetchPlotarea(plotNo);
+                  fetchSurveyNo(
+                    values.village,
+                    plotNo,
+                    values.farmerId,
+                    values.cluster
+                  );
+                }}
+                value={values.plotNo}
+              >
+                {plotNo
+                  .sort((a, b) => parseInt(a.PLOT_NO) - parseInt(b.PLOT_NO))
+                  .map((plot, index) => (
+                    <option key={index} value={parseInt(plot.PLOT_NO)}>
+                      {parseInt(plot.PLOT_NO)}
+                    </option>
+                  ))}
+              </Select>
+              {newErrors.plotNo && (
+                <div className="error">{newErrors.plotNo}</div>
+              )}
+            </div>
+            <div className="item morspace">
               <label className="mLabel" htmlFor="surveyNo">
                 SY No.
               </label>
-              <Select
+              {/* <Select
                 size="sm"
                 id="surveyNo"
                 placeholder="Select one..."
@@ -851,38 +892,19 @@ function Form() {
               </Select>
               {newErrors.surveyNo && (
                 <div className="error">{newErrors.surveyNo}</div>
-              )}
-            </div>
-            <div className="item morspace">
-              <label className="mLabel" htmlFor="plotNo">
-                Plot No.
-              </label>
-              <Select
-                id="plotNo"
+              )} */}
+              <Input
                 size="sm"
-                placeholder="Select one..."
+                htmlSize={3}
                 variant="filled"
+                id="surveyNo"
+                ref={ref1}
+                value={surveyNo}
                 onChange={(e) => {
-                  const areaNo = parseInt(e.target.value);
-                  setValues({
-                    ...values,
-                    plotNo: areaNo,
-                  });
-                  fetchPlotarea(areaNo);
+                  const surveyNo = e.target.value;
+                  setValues({ ...values, surveyNo: surveyNo });
                 }}
-                value={values.plotNo}
-              >
-                {plotNo
-                  .sort((a, b) => parseInt(a.PLOT_NO) - parseInt(b.PLOT_NO))
-                  .map((plot, index) => (
-                    <option key={index} value={parseInt(plot.PLOT_NO)}>
-                      {parseInt(plot.PLOT_NO)}
-                    </option>
-                  ))}
-              </Select>
-              {newErrors.plotNo && (
-                <div className="error">{newErrors.plotNo}</div>
-              )}
+              ></Input>
             </div>
             <div className="item morspace">
               <label className="mLabel" htmlFor="area">

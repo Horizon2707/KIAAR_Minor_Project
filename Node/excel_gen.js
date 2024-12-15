@@ -67,6 +67,7 @@ async function reportGen(
   delete final_calc[12];
   let srNo = 1;
   const comb_cd = Object.keys(final_calc);
+
   const parameterData = parameter_names.map((e) => {
     if (e.PARAMETER_TYPE === "HEADING") {
       return {

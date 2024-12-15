@@ -44,7 +44,8 @@ Content-Type: application/json
 {
     "farmerId" : 153227,
     "clusterCd" : 3,
-    "villageCd" : 27
+    "villageCd" : 27,
+    "plotNo": 2
     
 }
 ### PLOT Info
